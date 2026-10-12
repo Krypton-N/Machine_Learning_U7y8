@@ -3,8 +3,8 @@
 App web de diapositivas (Vite + React 19 + TypeScript) para una exposición de Aprendizaje Máquina en ESCOM-IPN.
 Solo la editamos el usuario y Claude. Responder siempre en español.
 
-**Antes de trabajar, leer `docs/HANDOFF.md`** (estado actual y qué sigue) y, para la diapositiva que toque, su entrada en
-`docs/PLAN-DIAPOSITIVAS.md`.
+**Antes de trabajar, leer `docs/HANDOFF.md`** (estado actual y qué toca en esta sesión) y el plan del hito vigente en
+`docs/hitos/`. Si ese plan no existe todavía, lo primero es escribirlo (ver "Cómo se trabaja: un plan por hito").
 
 ## Reglas del usuario (no negociables)
 
@@ -22,11 +22,44 @@ Solo la editamos el usuario y Claude. Responder siempre en español.
    clase 3 = 41–64. No proponer versiones cortas.
 6. **Estilo:** negro/gris oscuro con acento rojo, sobrio y editorial. Prohibido el estilo genérico "AI slop": nada de
    degradados de colores, tarjetas con íconos, emojis ni glassmorphism. 3D solo cuando ayuda a entender.
-7. **Commits solo cuando el usuario los pida.** El repo git es la carpeta abuela (`Ingenieria-en-Inteligencia-Artificial-IIA-`).
+7. **Git lo maneja el usuario.** Él hace los commits y los push; Claude no sube nada y solo hace commit si se le pide.
+   Esta carpeta tiene su propio repo, `https://github.com/Krypton-N/Machine_Learning_U7y8` (rama `main`), aunque viva
+   dentro de la carpeta del repo `Ingenieria-en-Inteligencia-Artificial-IIA-`. Cada push a `main` compila y publica en
+   `https://krypton-n.github.io/Machine_Learning_U7y8/` (`.github/workflows/pages.yml`). Los pasos para publicar y para
+   revisar un despliegue están en `README.md` ("Publicar en GitHub Pages"): si el usuario pregunta cómo subir algo, se le
+   dan esos pasos. Al terminar una sesión, recordarle que lo hecho no se publica hasta que haga commit y push. El repo
+   es público: no dejar en él notas privadas (`.remember/` está en `.gitignore`).
 8. **El dataset se enseña crudo antes de usarlo.** La primera vez que un tema usa un dataset se muestran sus primeras 5
    filas tal como llegan (como `df.head()`, con `TablaCruda`), explicando ese dataset en concreto: de dónde sale, qué es
    cada columna y qué se quiere predecir. Luego, qué se le cambia. Solo después va el método. Ya está en la 3 (Adult) y
    en la 4 (Adult con 3 columnas); falta en pasajeros aéreos (29–31) y en cualquier dato que use HMM.
+
+## Cómo se trabaja: un plan por hito
+
+La exposición se construye por hitos (tabla en `docs/HANDOFF.md`). Desde el hito 4, **cada hito tiene su propio plan** en
+`docs/hitos/HITO-N.md`, escrito a partir de `docs/hitos/PLANTILLA.md`, y pasa por cuatro pasos:
+
+1. **Planear.** Se leen las entradas del hito en el plan maestro y su especificación, se revisa esa especificación con ojo
+   crítico (es un borrador) y se escribe `HITO-N.md` con estado *Borrador*. **Mientras sea borrador no se construye ninguna
+   diapositiva**; sí se puede comprobar lo que el plan necesita saber (que una dependencia instala, cómo llega un dataset).
+2. **Aprobar.** El usuario lo lee, responde las "Decisiones que necesita el usuario" y pide cambios. Cuando da el visto
+   bueno, el estado pasa a *Aprobado* con la fecha.
+3. **Construir.** En el orden de tandas del plan, marcando cada casilla al terminarla. Lo que cambie respecto al plan, y lo
+   que digan los datos, se anota en su bitácora en el momento. Así otra sesión puede seguir a medio hito.
+4. **Cerrar.** Lo que pide la sección 8 del plan del hito; el estado pasa a *Cerrado*.
+
+Qué es cada documento, para no duplicar:
+
+| Documento | Qué contiene | Cuándo se toca |
+|---|---|---|
+| `CLAUDE.md` | Reglas permanentes, convenciones y piezas disponibles | Cuando cambia una regla o se agrega una pieza |
+| `docs/PLAN-DIAPOSITIVAS.md` | Plan maestro: qué lleva cada una de las 64 diapositivas | Si cambia lo que lleva una diapositiva |
+| `docs/especificaciones/` | Borradores largos de diseño de F, G, H y apertura/cierre. **Son insumo, no verdad** | No se editan; lo que se corrige va al plan del hito |
+| `docs/hitos/HITO-N.md` | Plan de trabajo de un hito y su bitácora | Durante todo el hito |
+| `docs/HANDOFF.md` | Estado actual y qué toca en la siguiente sesión. Corto: apunta al hito vigente | Al terminar cada sesión |
+
+Los hitos 0 a 3 son anteriores a este flujo y no tienen archivo propio: su registro está en las secciones "Lo que cambió al
+construir…" del plan maestro y en el handoff.
 
 ## Casos de estudio
 
@@ -82,4 +115,5 @@ npm run verify   # compara src/lib contra las referencias de Python; debe decir 
 
 1. `npm run build` sin errores y `npm run verify` con "Todo coincide".
 2. Revisada en el navegador clic por clic, sin errores en consola ni textos encimados.
-3. Lo que cambió respecto al plan se anota en `docs/PLAN-DIAPOSITIVAS.md` ("Lo que cambió al construir…").
+3. Lo que cambió respecto al plan se anota en la bitácora del hito (`docs/hitos/HITO-N.md`, sección 9). Si cambió lo que
+   lleva la diapositiva, se corrige además su entrada en `docs/PLAN-DIAPOSITIVAS.md`.

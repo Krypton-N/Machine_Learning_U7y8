@@ -1,7 +1,9 @@
 # Exposición ML — U7 Ensambles y U8 Datos secuenciales
 
 Presentación como aplicación web (Vite + React + TypeScript). Cada diapositiva es un archivo en `src/slides/`.
-La estructura completa (64 diapositivas) está en la nota de ListKeeper "Handoff — Estructura exposición ML U7 y U8".
+La estructura completa (64 diapositivas) está en `docs/PLAN-DIAPOSITIVAS.md`.
+
+**Publicada en:** https://krypton-n.github.io/Machine_Learning_U7y8/
 
 ## Correr
 
@@ -12,6 +14,37 @@ npm run dev
 
 Para presentar sin internet: `npm run build` genera **un solo archivo** `dist/index.html` con todo adentro, incluidas las fuentes.
 Se abre con doble clic en cualquier navegador.
+
+## Publicar en GitHub Pages
+
+La página se actualiza sola: **cada push a la rama `main`** dispara el workflow `.github/workflows/pages.yml`, que en
+GitHub instala las dependencias, corre `npm run build` y publica `dist/index.html`. No hay rama `gh-pages` ni hay que subir
+el archivo compilado (`dist/` está en `.gitignore`).
+
+Para actualizar la página:
+
+```bash
+git add .
+git commit -m "Lo que cambió"
+git push
+```
+
+Un commit sin `push` no publica nada: lo que cuenta es que llegue a `main` en GitHub. Tarda cerca de un minuto.
+
+- **Antes de subir**, comprobar en local que compila: `npm run build` y `npm run verify`. Si el build falla en GitHub, la
+  página se queda con la versión anterior.
+- **Para ver si se publicó:** pestaña *Actions* del repo → "Publicar en GitHub Pages". Deben quedar en verde `build` y
+  `deploy`. Si alguno falla, al abrirlo se ve el paso y el mensaje de error; se corrige y se vuelve a hacer push, o se
+  repite con *Re-run all jobs*.
+- **Para publicar sin cambios** (por ejemplo, si un despliegue se quedó a medias): *Actions* → "Publicar en GitHub Pages" →
+  *Run workflow*.
+- **Configuración que ya está hecha y no hay que repetir:** en *Settings → Pages*, *Source* = **GitHub Actions**. El repo
+  tiene que ser público para que Pages funcione con cuenta gratuita.
+- **Enlaces directos:** la posición va en la URL, así que se puede compartir una diapositiva concreta:
+  `https://krypton-n.github.io/Machine_Learning_U7y8/#/26/3` abre la 26 en su paso 3.
+- Los avisos amarillos de "Node.js 20 is deprecated" en *Actions* no son errores.
+
+No hace falta Python para publicar: los JSON de `src/data/` van en el repo. Solo se regeneran a mano cuando cambian los datos.
 
 ## Controles
 

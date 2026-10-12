@@ -4,6 +4,8 @@ Estado al 2026-10-11: **28 de 64 construidas** (1, 3–28 y 60). Hitos 0 a 3 ter
 
 ## Cómo leer este plan
 
+- **Este es el plan maestro**: dice qué lleva cada diapositiva. Desde el hito 4, **cómo y en qué orden se construye cada hito está en su propio plan**, `docs/hitos/HITO-N.md` (flujo en `CLAUDE.md`). Los cambios al construir se anotan en la bitácora de ese archivo, no aquí; aquí solo se corrige la entrada de una diapositiva si cambia lo que lleva.
+
 - Cada diapositiva tiene: **Concepto** (se explica desde cero, con un esquema o ejemplo mínimo), **Caso** (lo mismo sobre el caso de estudio; aparece la etiqueta "Caso · …"), **Cierre** (la frase que se lleva el público), **Gráficos** y **Datos**.
 - En **Datos**: *vivo* = se calcula en el navegador (TypeScript); *JSON* = se precalcula con Python y la diapositiva lo lee; *esquema* = ilustrativo y marcado como tal en pantalla.
 - Los números que aparecen aquí son los esperados. Al construir se recalculan y se muestra lo que salga.

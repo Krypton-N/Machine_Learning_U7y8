@@ -1,13 +1,63 @@
-# Handoff — estado al 2026-10-11
+# Handoff — estado al 2026-10-12
 
-Este archivo es para retomar el trabajo en una sesión nueva. Las reglas permanentes están en `CLAUDE.md`; el detalle de
-cada diapositiva, en `docs/PLAN-DIAPOSITIVAS.md`.
+Este archivo es para retomar el trabajo en una sesión nueva. Las reglas permanentes y el flujo de trabajo están en
+`CLAUDE.md`; qué lleva cada diapositiva, en `docs/PLAN-DIAPOSITIVAS.md`; el plan de cada hito, en `docs/hitos/`.
+
+## Qué toca en la siguiente sesión: escribir el plan del hito 4
+
+Desde el hito 4 se trabaja con **un plan por hito** (`CLAUDE.md`, "Cómo se trabaja: un plan por hito"). El plan del hito 4
+**todavía no existe**. La siguiente sesión hace esto, en este orden:
+
+1. Leer `CLAUDE.md`, este archivo, las entradas 29–40 de `docs/PLAN-DIAPOSITIVAS.md` y las dos especificaciones:
+   `docs/especificaciones/F1-puente-fundamentos-29-35.md` y `F2-fundamentos-36-40.md`.
+2. Escribir `docs/hitos/HITO-4.md` a partir de `docs/hitos/PLANTILLA.md`, con estado *Borrador*.
+3. Enseñarle el plan al usuario y **esperar su aprobación**. No se construye ninguna diapositiva antes.
+4. Ya aprobado, construir por tandas, marcando casillas y llenando la bitácora.
+
+### Lo que el plan del hito 4 tiene que resolver
+
+Alcance: **29–40** (12 diapositivas): el puente (29–30) y F. Fundamentos de series (31–40). Con ellas queda completa la
+clase 2 (20–40). Caso: pasajeros aéreos 1949–1960, la serie completa (1960 se aparta como prueba hasta la 41).
+
+- **La especificación es un borrador sin revisar.** Cada diapositiva trae Pasos, Visuales, Datos, Fórmulas, Rigor y Riesgos,
+  y al final de cada archivo hay "Componentes nuevos propuestos" y "Datos nuevos propuestos". Salió de agentes de diseño y
+  nunca pasó por revisión de rigor ni de pedagogía. La sección 2 del plan del hito es justo esa revisión.
+- **Dataset crudo primero (regla 8).** El primer contacto con pasajeros es el caso de la 29, antes de la 31, que es donde el
+  plan maestro pone la tabla de 12 × 12. Hay que decidir en qué clic de la 29 se enseña la tabla tal como llega (dos
+  columnas: mes y pasajeros, 144 filas) y cómo la retoma la 31 sin repetirla.
+- **De dónde sale el dataset.** No está en el repo. Decidir la fuente (por ejemplo `statsmodels.datasets.get_rdataset`, que
+  necesita internet, o un CSV guardado en el repo) y dejarlo en caché como Adult. Anotar unidades (miles de pasajeros
+  internacionales por mes) y origen (Box y Jenkins).
+- **`statsmodels` en Python 3.14.** Comprobar que instala en el `.venv` **antes** de planear lo demás: de él dependen las
+  referencias de la 34 (`seasonal_decompose`), la 37 (ADF) y las 39–40 (ACF y PACF). Si no instala, recrear el entorno con 3.12.
+- **Una sola librería y nombres únicos.** Las especificaciones usan nombres distintos para lo mismo. Unificar: una
+  `lib/series.ts` (diferencias, promedio móvil, descomposición clásica, ACF, PACF por Durbin-Levinson, mínimos cuadrados,
+  métricas) y los componentes `SeriesChart`, `Correlogram`, `LagScatter`, `ImpulseResponse`, `LagCloud3D` y un solo
+  `AnioMes3D` (barras, superficie, cintas) para 32, 36 y 47. **Ya existe `Lineas`**: decidir si `SeriesChart` la extiende
+  o la sustituye, para no tener dos gráficas de líneas.
+- **Qué se verifica contra qué.** Cada función de `lib/series.ts` contra su equivalente de statsmodels, con la variante
+  exacta nombrada (la PACF tiene varios métodos; la descomposición clásica tiene su propio manejo de los extremos).
+- **Números "esperados" que hay que recalcular.** Los p-valores de ADF de la 37 (p ≈ 0.07 y ≈ 0.0003), las medias anuales de
+  la 32 (126.7 → 476.2), el embudo de la 34 (44 → 232) y el "quedan 131 meses" de la 36. Si salen distintos, se muestra el dato.
+- **La 30 necesita un resultado real.** Dice que el mismo modelo, evaluado con K-Fold barajado, "parece mucho mejor de lo que
+  es". Hay que decidir qué modelo y medirlo (`validacion_temporal.json`); si no sale así, se cuenta lo que salga.
+- **Simulaciones con semilla:** las 200 historias de la 35, las 20,000 del histograma de ADF de la 37 (esas, precalculadas)
+  y el AR(1) de la nube 3D de la 40.
+- **Lo aprendido en la parte 1 que aplica aquí:** ejes calculados de los datos, no escritos a mano (`ejeQueCubre`); toda
+  escena 3D dentro de `Scene3D`; textos con cifras leídas de los datos; etiquetas con letras griegas con `label natural`
+  (aquí habrá ∇, φ, ρ).
+- **El puente.** La 28 cierra con "¿y si el orden importa?" y la 29 tiene que recogerlo.
+- **Son 12 diapositivas.** Conviene partir la construcción en tandas (base y datos, 29–31, 32–35, 36–38, 39–40) y contar
+  con que puede llevar más de una sesión.
+
 
 ## Dónde estamos
 
 **28 de 64 diapositivas construidas:** 1, 3–28 y 60. Compila, `npm run verify` pasa completo y no hay errores en consola.
-**Nada de esto tiene commit todavía** (≈ 80 archivos nuevos o modificados). El usuario pidió expresamente no hacer commit en
-la sesión del hito 3; preguntarle antes de hacerlo.
+**Ya está en su propio repo y publicado** (2026-10-12): `https://github.com/Krypton-N/Machine_Learning_U7y8`, rama `main`;
+cada push compila y publica en `https://krypton-n.github.io/Machine_Learning_U7y8/` (comprobado: la página carga y navega con
+`#/3/3`). **Los commits y los push los hace el usuario**; Claude no sube nada. No se sabe si ya sacó la carpeta del repo
+grande (`git rm -r --cached` ahí): si `git status` en la carpeta abuela sigue listando estos archivos, falta ese paso.
 
 **Después de cerrar el hito 3 hubo una ronda de correcciones (misma fecha)** que cambió casi todos los números de Adult:
 se quitó `fnlwgt` de las variables y se regeneraron todos los JSON. Los hallazgos de abajo ya son los nuevos; las secciones
@@ -61,17 +111,12 @@ Pedida por el usuario después de preguntar si los datos seguían buenas prácti
 - **No se hizo:** la revisión de rigor y de claridad "al cerrar el hito" fue una sola pasada propia, no una revisión aparte.
   El puente de la 28 ("¿y si el orden importa?") es una frase; la 29 debe retomarla.
 
-## Lo que sigue: hito 4 (29–40) y después
+## Después del hito 4
 
-- **Hitos 4–6 (series y HMM):** hay especificaciones largas en `docs/especificaciones/` (medidas, animaciones, fórmulas,
-  datos). Son **borradores sin revisar**: salieron de agentes de diseño y la revisión de rigor y pedagogía se cortó por
-  límite de uso. Solo `apertura-cierre-respaldo.md` tiene revisión (`apertura-revisiones.md`), ya incorporada al plan.
-  Antes de construir cada sección, revisar su especificación con ojo crítico.
-- **Dependencias Python que faltan:** `statsmodels` (hitos 4, 5 y R3) y `hmmlearn` (hito 6 y R4). El `.venv` es Python 3.14:
-  confirmar que instalan; si no, recrear el entorno con 3.12.
-- **Nombres distintos para lo mismo** en las especificaciones de series. Unificar al construir: `SeriesChart`,
-  `Correlogram`, `LagScatter`, `ImpulseResponse`, `LagCloud3D` y un solo `AnioMes3D` (barras, superficie, cintas) para
-  32, 36 y 47. Una sola `lib/series.ts`.
+- **Hitos 5 y 6 (modelos de series y HMM):** mismas condiciones. Sus especificaciones (`G-modelos-series-41-50.md` y
+  `H-hmm-51-61.md`) también son borradores sin revisar; cada uno arranca escribiendo su `docs/hitos/HITO-N.md`. Solo
+  `apertura-cierre-respaldo.md` tiene revisión (`apertura-revisiones.md`), ya incorporada al plan maestro.
+- **Dependencias Python:** `statsmodels` (hitos 4, 5 y R3) y `hmmlearn` (hito 6 y R4).
 - **Hito 7:** saltos entre diapositivas (`IrA` + contexto en `Deck`), `MapaExposicion` con la marca "vamos aquí" para abrir
   las clases 2 y 3, diapositivas de respaldo con `num` tipo "R1" (hoy `SlideDef.num` es numérico), `src/deck/meta.ts` con
   equipo, grupo, profesor y fecha.
@@ -90,7 +135,8 @@ Pedida por el usuario después de preguntar si los datos seguían buenas prácti
   falta verlas en pantalla.
 - **Legibilidad a distancia:** nunca se probó en proyector, solo en el panel del navegador.
 - **Decisiones que debe dar el usuario:** nombres para la portada, fecha, reparto por expositor.
-- `tsconfig.tsbuildinfo` ya está en `.gitignore`, pero sigue versionado: al hacer el commit hay que sacarlo con `git rm --cached tsconfig.tsbuildinfo`.
+- El workflow de Pages avisa que `actions/*@v4` (y `configure-pages@v5`) apuntan a Node 20 y se ejecutan forzados en Node 24.
+  Es solo un aviso; cuando haya versiones mayores nuevas de esas acciones, subirlas en `.github/workflows/pages.yml`.
 
 ## Hallazgos que ya moldearon el contenido (no contradecirlos)
 
