@@ -1,0 +1,7 @@
+node_modules
+dist
+.venv
+scripts/cache
+tsconfig.tsbuildinfo
+.remember/
+.claude/settings.local.json

@@ -1,0 +1,1 @@
+{"variable":"relationship","nombre_es":"parentesco","umbral":0.5,"categorias":{"izquierda":["Husband"],"derecha":["Not-in-family","Other-relative","Own-child","Unmarried","Wife"]},"izquierda":{"n":19716,"positivos":8846},"derecha":{"n":29126,"positivos":2841},"accuracy_cv":0.7607182362198229,"accuracy_mayoritaria":0.7607182343065395}
