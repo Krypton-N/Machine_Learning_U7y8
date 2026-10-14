@@ -90,7 +90,11 @@ Los JSON de `src/data/` se generan con Python (entorno propio en `.venv`):
 .venv/Scripts/python scripts/exportar_hito2.py
 .venv/Scripts/python scripts/exportar_hito3.py      # comparación de los 7 modelos, matrices, curvas y ruido (≈ 15 min)
 .venv/Scripts/python scripts/comparar_ensambles.py  # solo imprime la comparación; no escribe JSON
+.venv/Scripts/python scripts/exportar_hito4.py      # pasajeros aéreos: dataset, validación temporal, ADF y referencias (≈ 1.5 min)
 ```
+
+Los scripts de series necesitan `statsmodels` (`.venv/Scripts/python -m pip install statsmodels`; probado con 0.15.0 en
+Python 3.14). El dataset de pasajeros se descarga una sola vez de Rdatasets y queda en `scripts/cache/rdatasets/`.
 
 Para comprobar que los cálculos del navegador coinciden con los de Python:
 

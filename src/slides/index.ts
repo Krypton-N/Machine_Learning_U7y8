@@ -26,6 +26,18 @@ import LosCincoLadoALado from "./25-los-cinco-lado-a-lado";
 import ComoSeComparan from "./26-como-se-comparan";
 import DemoSieteModelos from "./27-demo-siete-modelos";
 import CuandoUsarCadaUno from "./28-cuando-usar-cada-uno";
+import ElOrdenImporta from "./29-el-orden-importa";
+import ValidacionTemporal from "./30-validacion-temporal";
+import QueEsUnaSerie from "./31-que-es-una-serie";
+import TendenciaYEstacionalidad from "./32-tendencia-y-estacionalidad";
+import CicloYRuido from "./33-ciclo-y-ruido";
+import AditivaOMultiplicativa from "./34-aditiva-o-multiplicativa";
+import Estacionariedad from "./35-estacionariedad";
+import Diferenciar from "./36-diferenciar";
+import PruebaADF from "./37-prueba-adf";
+import PromedioMovil from "./38-promedio-movil";
+import RezagosYACF from "./39-rezagos-y-acf";
+import PACF from "./40-pacf";
 import ForwardVsViterbi from "./60-forward-vs-viterbi";
 
 // Orden de la exposición. `num` es el número en la estructura completa (docs/PLAN-DIAPOSITIVAS.md).
@@ -57,5 +69,17 @@ export const slides: SlideDef[] = [
   { id: "como-se-comparan", num: 26, steps: 10, Component: ComoSeComparan },
   { id: "demo-siete-modelos", num: 27, steps: 8, Component: DemoSieteModelos },
   { id: "cuando-usar-cada-uno", num: 28, steps: 6, Component: CuandoUsarCadaUno },
+  { id: "el-orden-importa", num: 29, steps: 7, Component: ElOrdenImporta },
+  { id: "validacion-temporal", num: 30, steps: 7, Component: ValidacionTemporal },
+  { id: "que-es-una-serie", num: 31, steps: 4, Component: QueEsUnaSerie },
+  { id: "tendencia-y-estacionalidad", num: 32, steps: 4, Component: TendenciaYEstacionalidad },
+  { id: "ciclo-y-ruido", num: 33, steps: 4, Component: CicloYRuido },
+  { id: "aditiva-o-multiplicativa", num: 34, steps: 6, Component: AditivaOMultiplicativa },
+  { id: "estacionariedad", num: 35, steps: 5, Component: Estacionariedad },
+  { id: "diferenciar", num: 36, steps: 7, Component: Diferenciar },
+  { id: "prueba-adf", num: 37, steps: 7, Component: PruebaADF },
+  { id: "promedio-movil", num: 38, steps: 4, Component: PromedioMovil },
+  { id: "rezagos-y-acf", num: 39, steps: 5, Component: RezagosYACF },
+  { id: "pacf", num: 40, steps: 5, Component: PACF },
   { id: "forward-vs-viterbi", num: 60, steps: 6, Component: ForwardVsViterbi },
 ];

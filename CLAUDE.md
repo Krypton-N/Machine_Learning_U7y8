@@ -93,7 +93,7 @@ npm run verify   # compara src/lib contra las referencias de Python; debe decir 
 - **Toda escena 3D va dentro de `Scene3D`:** así hereda el giro, el zoom con la rueda (acotado) y el doble clic que
   regresa a la vista inicial.
 - **Los archivos de `src/lib/` son puros** (no importan JSON) y se importan entre sí con extensión `.ts`, para que
-  `node scripts/verificar.ts` los pueda ejecutar. Solo `lib/adult.ts` lee los JSON.
+  `node scripts/verificar.ts` los pueda ejecutar. Solo `lib/adult.ts` y `lib/pasajeros.ts` leen los JSON.
 - **Cálculo pesado al montar:** dentro de `useEffect` con `setTimeout`, o por tandas (ver `11-agregacion.tsx`). No usar
   guardas con `useRef` que rompan en StrictMode.
 - **Semillas fijas** (`mulberry32`) en todo lo aleatorio: la exposición debe ser repetible.
@@ -107,9 +107,19 @@ npm run verify   # compara src/lib contra las referencias de Python; debe decir 
   pliegue y media ± desviación; se desliza si cambia la escala), `TablaCruda` (un dataset tal como llega, por bloques de
   columnas, con la opción de marcar lo que se quita, lo que se predice y los faltantes), `Receta`, `TreeDiagram` (+ `diagramaDe`),
   `FlujoEnsamble` (`FlujoParalelo`, `FlujoSecuencial`, `ArbolGlifo`), `TableroSorteos`, `RejillaRaices`, `JugueteAdaBoost`,
-  `Scene3D`, `Adult3DScene` (personas, cajas, planos, `vista`, `vistaX/Y`), `VoteVolume3D` (+ `REJILLA`), `Surface3D`.
+  `Scene3D` (con `vista` la cámara viaja a una posición), `Adult3DScene` (personas, cajas, planos, `vista`, `vistaX/Y`),
+  `VoteVolume3D` (+ `REJILLA`), `Surface3D`.
+- `components/` para series (hito 4): `SeriesChart` (una serie mensual sobre `Lineas`: eje de años, `desde`, `ventana`,
+  `cursor`; exporta `pasoRedondo`), `Barras` (barras desde el 0 que viajan al cambiar los datos, con banda), `Correlogram`
+  (ACF o PACF con su banda; + `fueraDeBanda`), `Dispersion` (puntos que viajan; recta diagonal o ajustada), `SplitDiagram`
+  (particiones de validación con fuga; + `futuroUsado`), `CalendarGrid` (rejilla año × mes en números, calor o puntos, que
+  vuela a la línea de tiempo y de regreso), `AnioMes3D` (barras o superficie; + `VISTAS_ANIO_MES`), `OperacionAnimada`
+  (diferencia o ventana, paso a paso, sobre una serie de juguete), `LagCloud3D` (nube antier–ayer–hoy con sombra y plano).
+  `Lineas` acepta además `NaN` (corta la línea), `bandas`, `segmentos`, `escalaY` y `transicion`.
 - `lib/`: `tree` (CART Gini), `bagging`, `adaboost`, `gboost`, `logistic`, `metricas` (matriz de confusión, accuracy,
-  precision, recall, F1, F1-macro, media y desviación), `hmm`, `rng`, `scale`, `adult` (todos los JSON).
+  precision, recall, F1, F1-macro, media y desviación), `hmm`, `rng`, `scale`, `adult` (los JSON de Adult), `series`
+  (diferencias, promedio móvil, descomposición clásica, ACF, PACF, mínimos cuadrados, particiones temporales, simulación;
+  verificada contra numpy, pandas, statsmodels y sklearn), `pasajeros` (los JSON de pasajeros, fechas y transformaciones).
 
 ## Cómo se da por terminada una diapositiva
 

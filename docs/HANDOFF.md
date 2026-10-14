@@ -3,57 +3,41 @@
 Este archivo es para retomar el trabajo en una sesión nueva. Las reglas permanentes y el flujo de trabajo están en
 `CLAUDE.md`; qué lleva cada diapositiva, en `docs/PLAN-DIAPOSITIVAS.md`; el plan de cada hito, en `docs/hitos/`.
 
-## Qué toca en la siguiente sesión: escribir el plan del hito 4
+## Qué toca en la siguiente sesión: cerrar el hito 4
 
-Desde el hito 4 se trabaja con **un plan por hito** (`CLAUDE.md`, "Cómo se trabaja: un plan por hito"). El plan del hito 4
-**todavía no existe**. La siguiente sesión hace esto, en este orden:
+El plan del hito 4 (`docs/hitos/HITO-4.md`) se aprobó el 2026-10-12 con la opción recomendada en sus cinco decisiones, y
+ese mismo día se construyeron **las 12 diapositivas (29–40)** en cinco tandas. Compila y `npm run verify` dice "Todo
+coincide". **El hito no está cerrado.** Falta, en este orden:
 
-1. Leer `CLAUDE.md`, este archivo, las entradas 29–40 de `docs/PLAN-DIAPOSITIVAS.md` y las dos especificaciones:
-   `docs/especificaciones/F1-puente-fundamentos-29-35.md` y `F2-fundamentos-36-40.md`.
-2. Escribir `docs/hitos/HITO-4.md` a partir de `docs/hitos/PLANTILLA.md`, con estado *Borrador*.
-3. Enseñarle el plan al usuario y **esperar su aprobación**. No se construye ninguna diapositiva antes.
-4. Ya aprobado, construir por tandas, marcando casillas y llenando la bitácora.
+1. **Verlas a tamaño real, clic por clic.** Todo se revisó en capturas de 626 × 391 px, que sirven para la distribución
+   pero no para leer el texto ni los ejes. La bitácora del plan (sección 9) lista qué pasos no se vieron, qué botones no
+   se probaron y qué ajustes se hicieron después de la última captura.
+2. **Revisión de rigor y de claridad** de las 12 (cada afirmación con su dato; que se entienda desde cero).
+3. **Volver a ver las 10 diapositivas que usan `Lineas`** (8, 11, 12, 14, 16, 18, 19, 21, 22 y 27): la pieza se amplió
+   con opciones optativas; se comprobó por DOM que 9 de ellas siguen trazando igual, pero no en captura, y falta la 11.
+4. Pasar el estado del plan a *Cerrado* y anotar el avance en la subtarea 195 de ListKeeper.
 
-### Lo que el plan del hito 4 tiene que resolver
+**El usuario todavía no ha visto las diapositivas nuevas**: lo primero es enseñárselas y recoger sus cambios.
 
-Alcance: **29–40** (12 diapositivas): el puente (29–30) y F. Fundamentos de series (31–40). Con ellas queda completa la
-clase 2 (20–40). Caso: pasajeros aéreos 1949–1960, la serie completa (1960 se aparta como prueba hasta la 41).
+### Lo que el hito 4 le hereda al hito 5
 
-- **La especificación es un borrador sin revisar.** Cada diapositiva trae Pasos, Visuales, Datos, Fórmulas, Rigor y Riesgos,
-  y al final de cada archivo hay "Componentes nuevos propuestos" y "Datos nuevos propuestos". Salió de agentes de diseño y
-  nunca pasó por revisión de rigor ni de pedagogía. La sección 2 del plan del hito es justo esa revisión.
-- **Dataset crudo primero (regla 8).** El primer contacto con pasajeros es el caso de la 29, antes de la 31, que es donde el
-  plan maestro pone la tabla de 12 × 12. Hay que decidir en qué clic de la 29 se enseña la tabla tal como llega (dos
-  columnas: mes y pasajeros, 144 filas) y cómo la retoma la 31 sin repetirla.
-- **De dónde sale el dataset.** No está en el repo. Decidir la fuente (por ejemplo `statsmodels.datasets.get_rdataset`, que
-  necesita internet, o un CSV guardado en el repo) y dejarlo en caché como Adult. Anotar unidades (miles de pasajeros
-  internacionales por mes) y origen (Box y Jenkins).
-- **`statsmodels` en Python 3.14.** Comprobar que instala en el `.venv` **antes** de planear lo demás: de él dependen las
-  referencias de la 34 (`seasonal_decompose`), la 37 (ADF) y las 39–40 (ACF y PACF). Si no instala, recrear el entorno con 3.12.
-- **Una sola librería y nombres únicos.** Las especificaciones usan nombres distintos para lo mismo. Unificar: una
-  `lib/series.ts` (diferencias, promedio móvil, descomposición clásica, ACF, PACF por Durbin-Levinson, mínimos cuadrados,
-  métricas) y los componentes `SeriesChart`, `Correlogram`, `LagScatter`, `ImpulseResponse`, `LagCloud3D` y un solo
-  `AnioMes3D` (barras, superficie, cintas) para 32, 36 y 47. **Ya existe `Lineas`**: decidir si `SeriesChart` la extiende
-  o la sustituye, para no tener dos gráficas de líneas.
-- **Qué se verifica contra qué.** Cada función de `lib/series.ts` contra su equivalente de statsmodels, con la variante
-  exacta nombrada (la PACF tiene varios métodos; la descomposición clásica tiene su propio manejo de los extremos).
-- **Números "esperados" que hay que recalcular.** Los p-valores de ADF de la 37 (p ≈ 0.07 y ≈ 0.0003), las medias anuales de
-  la 32 (126.7 → 476.2), el embudo de la 34 (44 → 232) y el "quedan 131 meses" de la 36. Si salen distintos, se muestra el dato.
-- **La 30 necesita un resultado real.** Dice que el mismo modelo, evaluado con K-Fold barajado, "parece mucho mejor de lo que
-  es". Hay que decidir qué modelo y medirlo (`validacion_temporal.json`); si no sale así, se cuenta lo que salga.
-- **Simulaciones con semilla:** las 200 historias de la 35, las 20,000 del histograma de ADF de la 37 (esas, precalculadas)
-  y el AR(1) de la nube 3D de la 40.
-- **Lo aprendido en la parte 1 que aplica aquí:** ejes calculados de los datos, no escritos a mano (`ejeQueCubre`); toda
-  escena 3D dentro de `Scene3D`; textos con cifras leídas de los datos; etiquetas con letras griegas con `label natural`
-  (aquí habrá ∇, φ, ρ).
-- **El puente.** La 28 cierra con "¿y si el orden importa?" y la 29 tiene que recogerlo.
-- **Son 12 diapositivas.** Conviene partir la construcción en tandas (base y datos, 29–31, 32–35, 36–38, 39–40) y contar
-  con que puede llevar más de una sesión.
-
+- **Dos tamaños de muestra.** Las 36–40 usan los 144 meses; la sección G ajusta con 1949–1959 (132). Los números no van a
+  coincidir y hay que decidir cómo se cuenta: ADF de `∇ log` da p = 0.071 con 144 meses y 0.029 con 132; las barras de
+  `∇∇₁₂ log` fuera de la banda son 1, 3, 9, 12, 23 y 32 con 144, y 1, 3, 12, 23, 32 y 35 con 132. Los rezagos 1 y 12 son
+  los mayores en los dos casos. `adf_pasajeros.json` ya trae `sensibilidad.sin_1960`.
+- **La banda del correlograma.** `Correlogram` dibuja ±1.96/√n (ruido blanco). La especificación G pide la de Bartlett en
+  la 46: decidir si se agrega como opción.
+- **PACF:** `pacf` de `lib/series.ts` es Durbin-Levinson sobre la ACF, idéntico a `method="ywm"` y a `"ldb"` de
+  statsmodels (la especificación G nombra "ldb": es el mismo cálculo). Los demás métodos sacan otras barras de la banda.
+- **Piezas listas:** `SeriesChart`, `Barras` (sirve de `ImpulseResponse`), `Correlogram`, `Dispersion`, `SplitDiagram`,
+  `CalendarGrid`, `AnioMes3D` (falta la forma "cintas" de la 47), `LagCloud3D`, `OperacionAnimada`, `lib/series.ts`
+  (`simularAR` es de un solo coeficiente: la 42 necesita dos) y `lib/pasajeros.ts` (`nEntrenamiento` = 132).
+- **Un dato para la 49:** el Random Forest de la 30, entrenado con 1949–1959, pronostica 1960 con MAE 44.1; copiar 1959
+  da 47.8.
 
 ## Dónde estamos
 
-**28 de 64 diapositivas construidas:** 1, 3–28 y 60. Compila, `npm run verify` pasa completo y no hay errores en consola.
+**40 de 64 diapositivas construidas:** 1, 3–40 y 60 (las 29–40, sin cerrar su revisión). Compila, `npm run verify` pasa completo y no hay errores en consola. **Lo del hito 4 está sin commit:** no se publica hasta que el usuario haga commit y push.
 **Ya está en su propio repo y publicado** (2026-10-12): `https://github.com/Krypton-N/Machine_Learning_U7y8`, rama `main`;
 cada push compila y publica en `https://krypton-n.github.io/Machine_Learning_U7y8/` (comprobado: la página carga y navega con
 `#/3/3`). **Los commits y los push los hace el usuario**; Claude no sube nada. No se sabe si ya sacó la carpeta del repo
@@ -69,7 +53,7 @@ se quitó `fnlwgt` de las variables y se regeneraron todos los JSON. Los hallazg
 | 1 | A. Bases y B. Bagging | 3, 4, 6–12 | ✅ |
 | 2 | C. Random Forest y D. Boosting | 13–19, 21–24 | ✅ |
 | 3 | E. Cierre de la parte 1 | 25–28 | ✅ |
-| **4** | **Puente y F. Fundamentos de series** | **29–40** | **← sigue** |
+| **4** | **Puente y F. Fundamentos de series** | **29–40** | **construido; falta el cierre** |
 | 5 | G. Modelos de series | 41–50 | pendiente |
 | 6 | H. HMM | 51–59, 61 y ajustes de la 60 | pendiente |
 | 7 | Apertura, cierre y respaldo | 2, 62–64, R1–R4, ajuste de la 1 | pendiente |
@@ -116,7 +100,7 @@ Pedida por el usuario después de preguntar si los datos seguían buenas prácti
 - **Hitos 5 y 6 (modelos de series y HMM):** mismas condiciones. Sus especificaciones (`G-modelos-series-41-50.md` y
   `H-hmm-51-61.md`) también son borradores sin revisar; cada uno arranca escribiendo su `docs/hitos/HITO-N.md`. Solo
   `apertura-cierre-respaldo.md` tiene revisión (`apertura-revisiones.md`), ya incorporada al plan maestro.
-- **Dependencias Python:** `statsmodels` (hitos 4, 5 y R3) y `hmmlearn` (hito 6 y R4).
+- **Dependencias Python:** `statsmodels` (hitos 4, 5 y R3; ya instalado, 0.15.0) y `hmmlearn` (hito 6 y R4; falta probarlo).
 - **Hito 7:** saltos entre diapositivas (`IrA` + contexto en `Deck`), `MapaExposicion` con la marca "vamos aquí" para abrir
   las clases 2 y 3, diapositivas de respaldo con `num` tipo "R1" (hoy `SlideDef.num` es numérico), `src/deck/meta.ts` con
   equipo, grupo, profesor y fecha.
@@ -178,6 +162,11 @@ Todos con Adult **sin `fnlwgt`** (13 variables), 5 pliegues estratificados, semi
 
 ## Cosas que cuestan tiempo si no se saben
 
+- **Capturas sin animaciones a medias (hito 4):** ya cargada la página, en la consola: buscar en
+  `performance.getEntriesByType("resource")` la URL de `motion_react.js`, importarla y poner
+  `MotionGlobalConfig.skipAnimations = true`. Después avanzar con las flechas, sin recargar. La primera captura tras un
+  cambio suele fallar por tiempo: se repite. Con el tamaño emulado de 1280 × 720 las capturas salieron en mosaico; con el
+  tamaño propio del panel (626 × 391), bien pero chicas.
 - **Revisar en el navegador (preview):** el panel congela las animaciones cuando no se está capturando. Receta que funciona:
   fijar el tamaño con `resize_window` a 1280×720 y **recargar**; para ir a un paso, `location.hash = '#/NN/paso';
   location.reload()` (el deck solo lee el hash al cargar); esperar ~6 s; tomar una captura desechable a escala 0.15 y luego

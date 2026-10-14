@@ -1,6 +1,6 @@
 # Plan de las diapositivas — Ensambles y datos secuenciales (U7 y U8)
 
-Estado al 2026-10-11: **28 de 64 construidas** (1, 3–28 y 60). Hitos 0 a 3 terminados: toda la parte 1 (ensambles) está completa, salvo el mapa de la 2. Después del hito 3 hubo una ronda de correcciones que quitó `fnlwgt` y regeneró todos los datos de Adult (ver "Lo que cambió en la ronda de correcciones"). Este documento fija qué lleva cada diapositiva **antes** de construirla; al construir, cada sección anota aquí lo que cambió.
+Estado al 2026-10-12: **40 de 64 construidas** (1, 3–40 y 60). Hitos 0 a 3 terminados: toda la parte 1 (ensambles) está completa, salvo el mapa de la 2. El hito 4 (29–40) está construido y le falta su cierre (ver `docs/hitos/HITO-4.md`). Después del hito 3 hubo una ronda de correcciones que quitó `fnlwgt` y regeneró todos los datos de Adult (ver "Lo que cambió en la ronda de correcciones"). Este documento fija qué lleva cada diapositiva **antes** de construirla; al construir, cada sección anota aquí lo que cambió.
 
 ## Cómo leer este plan
 
@@ -287,15 +287,15 @@ Especificaciones detalladas: `docs/especificaciones/F1-…`, `F2-…`, `G-…` y
 ### 29 · El orden importa (70 s)
 - **Recordatorio · i.i.d.:** independientes (saber un dato no cambia lo que esperas del siguiente) e idénticamente distribuidos.
 - **Concepto:** dos tiras de 24 valores: tiradas de un dado y una serie con memoria. Botón "barajar": el dado se ve igual; la serie pierde sus subidas y bajadas.
-- **Caso:** los pasajeros 1949–1960 con el mismo botón. Al lado, la dispersión "este mes contra el siguiente" con su correlación; al barajar, la nube se deshace.
+- **Caso:** primero el dataset crudo (`pasajeros.head()`: `time` en decimal y `value`) y qué se le cambia (regla 8). Después, los pasajeros 1949–1960 con el mismo botón. Al lado, la dispersión "este mes contra el siguiente" con su correlación; al barajar, la nube se deshace. 7 clics.
 - **Cierre:** "en una serie, el orden también es dato".
-- **Gráficos:** `ShuffleSeries`, `LagScatter`. **Datos:** dado y serie con memoria (esquema); pasajeros (JSON); correlación (vivo).
+- **Gráficos:** tiras locales, `TablaCruda`, `SeriesChart`, `Dispersion`. **Datos:** dado y serie con memoria (esquema); pasajeros (JSON); correlación (vivo).
 
 ### 30 · Validación temporal (90 s) — no recortar
 - **Recordatorio · validación cruzada** (liga con la 3).
 - **Concepto:** K-Fold barajado sobre 20 momentos: una flecha roja señala una celda de prueba cuyo vecino del futuro está en entrenamiento. Es fuga de datos. El diagrama se transforma en `TimeSeriesSplit` (el entrenamiento siempre antes que la prueba) y en *walk-forward*.
-- **Caso:** las dos particiones sobre los 144 meses y el mismo modelo evaluado de las dos formas: barajado parece mucho mejor de lo que es.
-- **Cierre:** "siempre se prueba con fechas posteriores a las de entrenamiento".
+- **Caso:** las dos particiones sobre los 144 meses y el mismo modelo evaluado de las dos formas en los mismos 24 meses (1959–1960; para esta demostración se entrena hasta 1958): barajado parece mucho mejor de lo que es (Random Forest 26.2 contra 67.2; regresión lineal 23.1 contra 43.0), y se muestra con 20 barajados porque con uno solo, o probando solo 1960, el resultado no es estable.
+- **Cierre:** "siempre se prueba con fechas posteriores a las de entrenamiento"; y que describir la serie no es evaluar un modelo: desde la 41, 1960 se guarda como prueba.
 - **Gráficos:** `SplitDiagram` (se reutiliza en 50 y 62), `SeriesChart`. **Datos:** `validacion_temporal.json` (JSON).
 
 ## F. Fundamentos de series (31–40)
@@ -319,7 +319,7 @@ Especificaciones detalladas: `docs/especificaciones/F1-…`, `F2-…`, `G-…` y
 ### 34 · Descomposición: aditiva o multiplicativa (90 s)
 - **Concepto:** dos esquemas. Aditiva: la onda mide siempre lo mismo. Multiplicativa: la onda crece con el nivel y forma un embudo.
 - **Caso:** pasajeros con su embudo (la onda pasa de 44 a 232). Botón "lineal / log": con logaritmo el embudo se vuelve una banda pareja. Luego los 4 paneles (observada, tendencia, estacional, residuo), con botones aditiva y multiplicativa y el error de cada una.
-- **Cierre:** "en pasajeros es multiplicativa: se trabaja en logaritmo".
+- **Cierre:** "en pasajeros es multiplicativa: para modelarla se usa el logaritmo" (36, 37 y la sección G; la 38 y la 39 siguen con pasajeros sin transformar). El logaritmo la vuelve casi aditiva, no del todo. 6 clics: aditiva y multiplicativa en pasos separados.
 - **Gráficos:** `SeriesChart` (escala log), `MiniBars`, `DecompositionPanels`. **Datos:** descomposición clásica (vivo; se compara con `seasonal_decompose`).
 
 ### 35 · Estacionariedad (90 s)
@@ -331,7 +331,7 @@ Especificaciones detalladas: `docs/especificaciones/F1-…`, `F2-…`, `G-…` y
 
 ### 36 · Diferenciar (90 s)
 - **Concepto:** los modelos estiman números fijos (una media, un peso), y eso solo tiene sentido si la serie no cambia de comportamiento. Con una serie de juguete de 12 valores: restar el anterior quita la tendencia; restar el mismo trimestre del año pasado quita la estacionalidad.
-- **Caso (3D):** superficie año × mes del logaritmo de pasajeros. Botones: log → ∇ log → ∇₁₂ log → ∇∇₁₂ log. La superficie se va aplanando hasta quedar como ruido alrededor de cero.
+- **Caso (3D):** superficie año × mes del logaritmo de pasajeros. Botones: log → ∇ log → ∇₁₂ log → ∇∇₁₂ log, cada uno con su clic (7 en total). La superficie se va aplanando hasta quedar como ruido alrededor de cero.
 - **Cierre:** "logaritmo, una diferencia y una diferencia estacional: se pierden 13 meses y quedan 131".
 - **Gráficos:** `OperacionAnimada`, `AnioMes3D` (superficie). **Datos:** vivo.
 
@@ -339,7 +339,8 @@ Especificaciones detalladas: `docs/especificaciones/F1-…`, `F2-…`, `G-…` y
 - **Concepto:** dos series con los mismos choques: una regresa a su media; la otra acumula cada choque para siempre (raíz unitaria). ADF mide si la serie "tira" hacia su media.
 - **Recordatorio · p-valor.** El histograma del estadístico cuando sí hay raíz unitaria (20 000 simulaciones) con la línea del 5 %.
 - **Caso:** la tabla de ADF para cada transformación de pasajeros, fila por fila: log (no), ∇ log (no, p ≈ 0.07), ∇₁₂ log (no), ∇∇₁₂ log (sí, p ≈ 0.0003). Cada fila pone su marcador en el histograma.
-- **Cierre:** "H₀: hay raíz unitaria. Queremos p < 0.05. Para pasajeros: d = 1 y D = 1."
+- **Advertencia (clic propio):** las filas de ∇ log y ∇₁₂ log están en la frontera: con rezagos elegidos por BIC dan p = 0.030 y 0.013.
+- **Cierre:** "ADF descarta la raíz unitaria con las dos diferencias. Que haga falta la diferencia estacional no lo dice ADF: lo dicen el patrón por mes de la 36 y los picos cada 12 de la 39. Para pasajeros: d = 1 y D = 1."
 - **Gráficos:** `SeriesChart`, `ScatterFit`, `NullDistribution`. **Datos:** `adf_pasajeros.json` (JSON, statsmodels).
 
 ### 38 · Promedio móvil como suavizado (75 s)
@@ -519,12 +520,13 @@ Un solo λ en `src/lib/clima.ts` y un solo formato de números para toda la secc
 | `TreeDiagram` | Árbol como diagrama con conteos y valores de hoja | 4, 23, 24 |
 | `VoteVolume3D`, `Corte2D` | Región que predice un ensamble | 11, 18 |
 | `FlujoEnsamble` | Diagramas paralelo y secuencial | 9, 17, 25 |
-| `Lineas` / `SeriesChart` | Toda gráfica de líneas (ejes, bandas, marcadores, escala log, cursor) | casi todas |
-| `PuntosIntervalo`, `BarrasH`, `MiniBars` | Comparaciones con media ± desviación y barras | 9, 15, 26–28, 34, 35, 61, 62 |
+| `Lineas` / `SeriesChart` | Toda gráfica de líneas (ejes, bandas, marcadores, escala log, cursor). `SeriesChart` es un envoltorio de `Lineas` | casi todas |
+| `PuntosIntervalo`, `BarrasH`, `Barras` | Comparaciones con media ± desviación y barras (`Barras` sustituye a `MiniBars` y a `ImpulseResponse`) | 9, 15, 26–28, 34, 35, 37, 38, 42–44, 61, 62 |
 | `MatrizConfusion` | Matriz animada | 26 |
 | `TablaAMano` | Tablas que se llenan con su operación | 19, 24, 58, 59 |
 | `Receta`, `Particiones`, `SplitDiagram` | Receta y diagramas de validación | 3, 26, 30, 50, 62 |
-| `Correlogram`, `LagScatter`, `ImpulseResponse` | ACF/PACF, dispersión de rezagos, eco de un choque | 29, 39–48 |
+| `Correlogram`, `Dispersion` | ACF/PACF; dispersión de rezagos o de una regresión (sustituye a `LagScatter` y `ScatterFit`) | 29, 35, 37, 39–48 |
+| `CalendarGrid`, `OperacionAnimada` | Rejilla año × mes que vuela a la línea de tiempo; diferencia o ventana paso a paso | 31, 33, 36, 38 |
 | `AnioMes3D` (barras, superficie, cintas) | Pasajeros como año × mes | 32, 36, 47 |
 | `LagCloud3D` | Nube de rezagos con plano de regresión | 40, 42 |
 | `ClimaDiagram`, `GraphicalModel`, `LambdaTables`, `DayStrip`, `Trellis` | Piezas del HMM | 51–61, R4 |
@@ -557,7 +559,7 @@ Un solo λ en `src/lib/clima.ts` y un solo formato de números para toda la secc
 | 1 · Bases y bagging ✅ | A y B | 3, 4, 6–12 |
 | 2 · Random Forest y boosting ✅ | C y D | 13–19, 21–24 |
 | 3 · Cierre de la parte 1 ✅ | E | 25–28 |
-| 4 · Puente y fundamentos | Puente y F | 29–40 |
+| 4 · Puente y fundamentos (construido; falta el cierre) | Puente y F | 29–40 |
 | 5 · Modelos de series | G | 41–50 |
 | 6 · HMM | H | 51–59, 61 y ajustes de la 60 |
 | 7 · Apertura, cierre y respaldo | Incluye el mapa con la marca "vamos aquí" para abrir las clases 2 y 3 | 2, 62–64, R1–R4 y ajuste de la 1 |

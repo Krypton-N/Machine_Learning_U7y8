@@ -8,6 +8,25 @@ import { forward, viterbi } from "../src/lib/hmm.ts";
 import { logLoss, logLossGrad, type Grupo } from "../src/lib/logistic.ts";
 import { contar, desdeSklearn, desviacion, exactitud, f1Macro, media, sumar, total } from "../src/lib/metricas.ts";
 import { mulberry32 } from "../src/lib/rng.ts";
+import {
+  acf,
+  banda95,
+  barajar,
+  caminata,
+  descomponer,
+  desviacionMuestral,
+  diferencia,
+  kfoldBarajado,
+  mae,
+  minimosCuadrados,
+  pacf,
+  particionTemporal,
+  pearson,
+  porPeriodo,
+  productosRezago,
+  promedioMovil,
+  simularAR,
+} from "../src/lib/series.ts";
 import { accuracy, fitClassifier, predictProba, type ClassNode } from "../src/lib/tree.ts";
 
 const leer = (nombre: string) => JSON.parse(readFileSync(new URL(`../src/data/${nombre}`, import.meta.url), "utf-8"));
@@ -232,6 +251,139 @@ comprobar(
   Math.abs(alpha[2][0] + alpha[2][1] - 0.033612) < 1e-12 && Math.abs(v.best - 0.01344) < 1e-12 && v.path.join("") === "100",
   `P(O) = ${(alpha[2][0] + alpha[2][1]).toFixed(6)}, mejor camino ${v.path.join("")} con ${v.best.toFixed(5)}`,
 );
+
+// ---------- Series de tiempo (pasajeros aéreos) contra numpy, pandas, statsmodels y sklearn ----------
+{
+  const y: number[] = leer("pasajeros.json").valores;
+  const ref = leer("referencias_hito4.json");
+  const ly = y.map(Math.log);
+  // Diferencia máxima entre dos listas; donde la referencia no tiene valor (null), el cálculo debe dar NaN.
+  const dif = (mio: number[], suyo: (number | null)[]) =>
+    mio.length !== suyo.length ? Infinity : Math.max(...mio.map((v, i) => (suyo[i] === null ? (Number.isNaN(v) ? 0 : Infinity) : Math.abs(v - (suyo[i] as number)))));
+
+  const dlog = diferencia(ly, 1);
+  const d12 = diferencia(ly, 12);
+  const dd12 = diferencia(d12, 1);
+  const dDif = Math.max(dif(dlog, ref.dlog), dif(d12, ref.d12log), dif(dd12, ref.dd12log));
+  comprobar("diferencias vs numpy (∇, ∇₁₂ y ∇∇₁₂ del logaritmo)", dDif < 1e-12, `${dlog.length}, ${d12.length} y ${dd12.length} valores · diferencia máxima ${dDif.toExponential(1)}`);
+
+  const M = porPeriodo(y, 12);
+  const dAnio = Math.max(
+    dif(M.map(media), ref.por_anio.media),
+    dif(M.map(desviacionMuestral), ref.por_anio.desv),
+    dif(M.map((f) => media(f.map(Math.log))), ref.por_anio.log_media),
+    dif(M.map((f) => desviacionMuestral(f.map(Math.log))), ref.por_anio.log_desv),
+    Math.abs(pearson(y.slice(0, -1), y.slice(1)) - ref.pearson_r1),
+  );
+  comprobar("media y desviación por año, y correlación de pares, vs numpy", dAnio < 1e-12, `r de este mes contra el siguiente ${pearson(y.slice(0, -1), y.slice(1)).toFixed(4)} · diferencia máxima ${dAnio.toExponential(1)}`);
+
+  const pm = ref.promedio_movil;
+  const dos12 = promedioMovil(y, 12);
+  const dPM = Math.max(
+    ...[3, 5, 7].map((k) => dif(promedioMovil(y, k), pm.centrado[String(k)])),
+    dif(promedioMovil(y, 12, "atrasado"), pm.atrasado_12),
+    dif(dos12, pm.dos_por_12),
+    dif(dos12, ref.descomposicion.aditiva.tendencia),
+  );
+  const validos = dos12.filter((v) => !Number.isNaN(v)).length;
+  comprobar("promedio móvil vs pandas (3, 5, 7, 2×12 y atrasado de 12)", dPM < 1e-9, `el 2×12 tiene ${validos} meses · diferencia máxima ${dPM.toExponential(1)}`);
+
+  let dDesc = 0;
+  for (const modo of ["aditiva", "multiplicativa"] as const) {
+    const d = descomponer(y, 12, modo);
+    const r = ref.descomposicion[modo];
+    dDesc = Math.max(dDesc, dif(d.tendencia, r.tendencia), dif(d.indices, r.indices), dif(d.residuo, r.residuo));
+  }
+  comprobar("descomposición clásica vs seasonal_decompose (aditiva y multiplicativa)", dDesc < 1e-9, `diferencia máxima ${dDesc.toExponential(1)}`);
+
+  const aY = acf(y, 36);
+  const aDD = acf(dd12, 36);
+  const dAcf = Math.max(dif(aY, ref.acf.original), dif(aDD, ref.acf.dd12log));
+  const sumaProductos = Math.abs(productosRezago(y, 12).reduce((s, v) => s + v, 0) / y.reduce((s, v) => s + (v - media(y)) ** 2, 0) - aY[12]);
+  comprobar("ACF vs statsmodels (pasajeros y ∇∇₁₂ log, 36 rezagos)", dAcf < 1e-12 && sumaProductos < 1e-15, `r₁ = ${aY[1].toFixed(4)} · diferencia máxima ${dAcf.toExponential(1)}`);
+
+  const pDD = pacf(aDD);
+  const dPacf = Math.max(dif(pacf(acf(ly, 36)), ref.pacf.log), dif(pDD, ref.pacf.dd12log));
+  comprobar('PACF por Durbin-Levinson vs statsmodels (method="ywm")', dPacf < 1e-10 && pDD[1] === aDD[1], `φ₁₁ = r₁ = ${pDD[1].toFixed(4)} · diferencia máxima ${dPacf.toExponential(1)}`);
+
+  // Mínimos cuadrados: el logaritmo de un mes contra el de los dos anteriores.
+  const ols = minimosCuadrados(
+    ly.slice(2).map((_, i) => [ly[i + 1], ly[i]]),
+    ly.slice(2),
+  );
+  const dOls = Math.max(dif(ols.beta, ref.ols_log.beta), dif(ols.ee, ref.ols_log.ee), ...ols.t.map((v, j) => Math.abs(v - ref.ols_log.t[j]) / Math.abs(ref.ols_log.t[j])));
+  comprobar("mínimos cuadrados vs statsmodels OLS (coeficientes, error estándar y t)", dOls < 1e-9, `diferencia máxima ${dOls.toExponential(1)}`);
+
+  // El τ de Dickey-Fuller del esquema de la 37 es el t de la pendiente de "cambio de hoy contra valor de ayer".
+  const esq = leer("adf_pasajeros.json").esquema;
+  let dDF = 0;
+  for (const k of ["ar1", "caminata"]) {
+    const x: number[] = esq[k];
+    const r = minimosCuadrados(
+      x.slice(0, -1).map((v) => [v]),
+      diferencia(x, 1),
+    );
+    dDF = Math.max(dDF, Math.abs(r.beta[1] - esq.df[k].gamma), Math.abs(r.t[1] - esq.df[k].estadistico));
+  }
+  // Las series del esquema se guardan con 6 decimales: de ahí la tolerancia.
+  comprobar("Dickey-Fuller del esquema vs adfuller sin rezagos (pendiente y τ)", dDF < 1e-4, `diferencia máxima ${dDF.toExponential(1)}`);
+
+  const iguales = [20, 144].every((n) => {
+    const suyas: { entrenamiento: number; prueba_desde: number; prueba_hasta: number }[] = ref.particion_temporal[String(n)];
+    return particionTemporal(n, 5).every((c, i) => c.entrenamiento === suyas[i].entrenamiento && c.pruebaDesde === suyas[i].prueba_desde && c.pruebaHasta === suyas[i].prueba_hasta);
+  });
+  comprobar("ventana creciente vs TimeSeriesSplit de sklearn (20 y 144 momentos)", iguales, `con 144: entrena ${particionTemporal(144, 5).map((c) => c.entrenamiento).join(", ")}`);
+
+  // Diapositiva 30: el MAE se recalcula de las predicciones guardadas.
+  const vt = leer("validacion_temporal.json");
+  const real = y.slice(vt.corte);
+  let dMae = 0;
+  for (const m of vt.modelos) {
+    dMae = Math.max(dMae, Math.abs(mae(real, m.pred_barajado.slice(vt.corte)) - m.mae_barajado), Math.abs(mae(real, m.pronostico) - m.mae_pronostico));
+  }
+  const bosque = vt.modelos[0];
+  const techo = Math.max(...y.slice(0, vt.corte));
+  comprobar(
+    "MAE vs sklearn, y el bosque no pasa de su máximo de entrenamiento",
+    dMae < 1e-12 && Math.max(...bosque.pronostico) <= techo && bosque.mae_barajados.every((v: number) => v < bosque.mae_pronostico),
+    `barajado ${bosque.mae_barajado.toFixed(1)} · pronóstico ${bosque.mae_pronostico.toFixed(1)} · máximo pronosticado ${Math.max(...bosque.pronostico).toFixed(0)} de ${techo}`,
+  );
+
+  // Afirmaciones que sostienen un texto en pantalla.
+  const picoEnVerano = M.every((f) => f.every((v, mes) => v < Math.max(...f) || mes === 6 || mes === 7));
+  const picos12 = aY[12] > aY[11] && aY[12] > aY[13] && aY[24] > aY[23] && aY[24] > aY[25];
+  const mayores = aDD
+    .map((v, k) => ({ k, v: Math.abs(v) }))
+    .slice(1)
+    .sort((a, b) => b.v - a.v)
+    .slice(0, 2)
+    .map((o) => o.k)
+    .sort((a, b) => a - b);
+  comprobar(
+    "pasajeros: pico en julio o agosto, picos de la ACF en 12 y 24, y huellas en 1 y 12 tras diferenciar",
+    picoEnVerano && picos12 && mayores.join() === "1,12",
+    `rezagos mayores de ∇∇₁₂ log: ${mayores.join(" y ")} · fuera de ±${banda95(dd12.length).toFixed(3)}: ${aDD.map((v, k) => (k > 0 && Math.abs(v) > banda95(dd12.length) ? k : -1)).filter((k) => k > 0).join(", ")}`,
+  );
+
+  // Lo que usa azar propio no tiene referencia externa: se comprueban sus propiedades.
+  const r29 = mulberry32(29);
+  const perm = barajar(144, r29);
+  const pliegues = kfoldBarajado(20, 5, r29);
+  const ar = simularAR(0.7, 500, mulberry32(35));
+  const reconstruye = Math.max(...ar.x.slice(1).map((v, t) => Math.abs(v - 0.7 * ar.x[t] - ar.choques[t + 1])));
+  // 200 historias de 100 pasos: la varianza entre historias debe quedar cerca de la teórica en cualquier instante.
+  const rh = mulberry32(35);
+  const historias = Array.from({ length: 200 }, () => simularAR(0.7, 100, rh).x);
+  const paseos = Array.from({ length: 200 }, () => caminata(100, rh));
+  const varEn = (hs: number[][], t: number) => desviacionMuestral(hs.map((h) => h[t])) ** 2;
+  const margen = 3 * Math.sqrt(2 / 199); // tres errores estándar de una varianza muestral con 200 datos
+  const dentro = [4, 49, 94].every((t) => Math.abs(varEn(historias, t) / (1 / (1 - 0.49)) - 1) < margen && Math.abs(varEn(paseos, t) / (t + 1) - 1) < margen);
+  comprobar(
+    "azar propio: permutación, pliegues completos, serie con memoria y varianza de las 200 historias",
+    [...perm].sort((a, b) => a - b).every((v, i) => v === i) && [0, 1, 2, 3, 4].every((f) => pliegues.filter((p) => p === f).length === 4) && reconstruye < 1e-12 && dentro,
+    `varianza en t = 50: estacionaria ${varEn(historias, 49).toFixed(2)} (teórica ${(1 / 0.51).toFixed(2)}) · paseo ${varEn(paseos, 49).toFixed(1)} (teórica 50)`,
+  );
+}
 
 console.log(fallos ? `\n${fallos} comprobación(es) fallaron` : "\nTodo coincide");
 process.exit(fallos ? 1 : 0);
