@@ -54,7 +54,7 @@ Las duraciones anotadas en cada diapositiva suman ≈ 82 minutos de explicación
 ### 1 · Portada (20 s) — hecha, con un ajuste
 - **Ajuste:** una línea con equipo, grupo, profesor y fecha, que sale de `src/deck/meta.ts`. Si está vacío, no aparece.
 
-### 2 · Mapa de la exposición (55 s)
+### 2 · Mapa de la exposición (55 s) — hecha en el hito 7 (`HITO-7.md` manda: sin palabras clave ni minigráficas, con la marca "vamos aquí")
 - **Concepto:** una línea de recorrido tipo metro con las 11 paradas (Apertura, A–E, Puente, F–H, Cierre). Cada tramo mide lo que dura su sección y lleva 3 palabras clave. Dos corchetes: U7 y U8.
 - **Caso:** bajo la línea aparecen los tres casos, cada uno con una miniatura real: barra 76 % / 24 % de Adult, la curva de pasajeros y el esquema de dos estados del clima.
 - **Cierre:** se enciende en rojo el tramo Puente ("aquí cambia la validación") y un hilo "modelo → validación → métrica" que termina en la 62.
@@ -503,21 +503,21 @@ Un solo λ en `src/lib/clima.ts` y un solo formato de números para toda la secc
 
 # Cierre (62–64)
 
-### 62 · La misma receta en los tres casos (85 s)
+### 62 · La misma receta en los tres casos (85 s) — hecha en el hito 7 (celdas de texto; el renglón nuevo completo y los anteriores en palabras clave)
 - La rejilla de la receta con tres renglones (Adult, Pasajeros, Clima) que se llenan uno por clic: qué datos, qué modelo, cómo se validó y con qué se midió.
 - **Cierre:** se enmarca en rojo la columna **Validación**: es lo que cambió entre los casos. Frase final: "antes de creer un número, pregunta: ¿con qué datos?, ¿cómo se validó?, ¿con qué métrica?"
 - **Corrección de la revisión:** celdas de texto de 24 px o más, y una sola miniatura por renglón (la de validación).
 - **Gráficos:** `Receta`, `Particiones`, `SplitDiagram`. **Datos:** los JSON de resultados.
 
-### 63 · Referencias (35 s)
+### 63 · Referencias (35 s) — hecha en el hito 7 (citas en `src/deck/referencias.ts`)
 - Cinco fuentes principales, cada una con las diapositivas donde se usó: Breiman (2001), Hastie, Tibshirani y Friedman (*ESL*), Box y Jenkins, Rabiner (1989), Chen y Guestrin (2016). Un clic muestra las complementarias.
 
-### 64 · Preguntas (15 s)
+### 64 · Preguntas (15 s) — fuera, por decisión del usuario (2026-10-17)
 - El índice navegable por sección: un clic salta a cualquier diapositiva o a las de respaldo. Cuatro preguntas "para pensar", cada una con su enlace.
 
 ---
 
-# Respaldo (no se presentan; son para preguntas)
+# Respaldo (no se presentan; son para preguntas) — fuera, por decisión del usuario (2026-10-17): se llevan de palabra
 
 - **R1 · ¿Por qué queda fuera el 36.8 %?** El tablero de 5 pelotas, los dos caminos al límite e⁻¹ y la curva de (1 − 1/n)ⁿ con n = 400 marcado.
 - **R2 · AdaBoost y la pérdida exponencial.** Gráfica de las pérdidas contra el margen; el álgebra de donde salen los pesos y α; las 400 personas sobre la curva e^(−m). Texto corregido: "si la pérdida exponencial llega cerca de 0, el error también; mientras tanto, el error puede quedarse igual o subir un poco".

@@ -1,5 +1,6 @@
 import type { SlideDef } from "../deck/types";
 import Portada from "./01-portada";
+import Mapa from "./02-mapa";
 import ComoSabemosSiSirve from "./03-como-sabemos-si-sirve";
 import ArbolDeDecision from "./04-arbol-de-decision";
 import ErrorEntrenamientoPrueba from "./05-error-entrenamiento-prueba";
@@ -59,10 +60,13 @@ import TablaForward from "./58-tabla-forward";
 import Viterbi from "./59-viterbi";
 import ForwardVsViterbi from "./60-forward-vs-viterbi";
 import PizarronPractica from "./61-pizarron-practica";
+import RecetaTresCasos from "./62-receta-tres-casos";
+import Referencias from "./63-referencias";
 
 // Orden de la exposición. `num` es el número en la estructura completa (docs/PLAN-DIAPOSITIVAS.md).
 export const slides: SlideDef[] = [
   { id: "portada", num: 1, steps: 1, Component: Portada },
+  { id: "mapa", num: 2, steps: 4, Component: Mapa },
   { id: "como-sabemos-si-sirve", num: 3, steps: 10, Component: ComoSabemosSiSirve },
   { id: "arbol-de-decision", num: 4, steps: 6, Component: ArbolDeDecision },
   { id: "error-entrenamiento-prueba", num: 5, steps: 4, Component: ErrorEntrenamientoPrueba },
@@ -122,4 +126,6 @@ export const slides: SlideDef[] = [
   { id: "viterbi", num: 59, steps: 7, Component: Viterbi },
   { id: "forward-vs-viterbi", num: 60, steps: 6, Component: ForwardVsViterbi },
   { id: "pizarron-practica", num: 61, steps: 14, Component: PizarronPractica },
+  { id: "receta-tres-casos", num: 62, steps: 6, Component: RecetaTresCasos },
+  { id: "referencias", num: 63, steps: 4, Component: Referencias },
 ];

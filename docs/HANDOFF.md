@@ -3,7 +3,23 @@
 Este archivo es para retomar el trabajo en una sesión nueva. Las reglas permanentes y el flujo de trabajo están en
 `CLAUDE.md`; qué lleva cada diapositiva, en `docs/PLAN-DIAPOSITIVAS.md`; el plan de cada hito, en `docs/hitos/`.
 
-## Hito 6 (HMM): construido, falta la revisión del usuario
+## Estado al 2026-10-17 (noche): la exposición ya empezó; solo falta actualizar la guía de estudio
+
+- **La exposición está en curso.** La clase 1 llegó hasta el inicio de boosting (sección D). El hito 6 ya se publicó (el
+  usuario hizo push y lo vio en la página). La 2 tiene una marca "vamos aquí" (botones "clase 2" y "clase 3", y ↑ ↓) para
+  abrir las clases que siguen.
+- **El usuario recortó el alcance:** fuera el ajuste de la portada, la 64 (preguntas), las de respaldo R1–R4 y el hito 8
+  (ensayo). Sin la 64 tampoco hacen falta los saltos entre diapositivas.
+- **Hito 7 (`docs/hitos/HITO-7.md`): construidas la 2 (mapa), la 62 (la misma receta) y la 63 (referencias).** Sin commit:
+  el usuario las sube cuando quiera. Con eso, **la exposición está completa: 63 diapositivas (1–63)**; la 64 no se hace.
+- **La guía de estudio ya cubre las 63** (artifact "Guía de estudio U7 y U8",
+  `https://claude.ai/artifact/YEyweL2V3ozZDBPdsVZy8N`, versión 2 del 2026-10-17): fichas de 2 y 41–63, glosario de series y
+  HMM y 9 preguntas probables nuevas. Si cambia una diapositiva, se lee la guía (`action: read`) y se corrige su ficha con
+  el mismo formato (*Qué se ve*, *Qué decir*, *Datos*, *Estudiar*). No queda trabajo pendiente del plan.
+- **Navegación táctil** (2026-10-17): en el celular, un toque a la derecha o deslizar a la izquierda avanza; lo contrario
+  regresa (`Deck.tsx`).
+
+## Hito 6 (HMM): construido y publicado
 
 **`docs/hitos/HITO-6.md`** (2026-10-17): el usuario aprobó el plan pidiendo "decide lo más recomendable y empieza"
 (opciones A de las 7 decisiones). **Las 10 diapositivas nuevas (51–59, 61) y los ajustes de la 60 están construidos**, con
@@ -94,7 +110,7 @@ base y la demo. Regla de la sección: todo se ajusta con 1949–1959 (132 meses)
 
 ## Dónde estamos
 
-**60 de 64 diapositivas construidas:** 1 y 3–61 (las 41–61 sin commit; 51–59 y 61 del 2026-10-17). Compila y `npm run verify` pasa completo. **El hito 4 ya está publicado** (commit `abe12f3`, 2026-10-13; lo subió Claude porque el usuario se lo pidió esa vez).
+**63 diapositivas construidas (la exposición completa): 1–63.** La 64 y R1–R4 quedaron fuera por decisión del usuario. Las 2, 62 y 63 (2026-10-17) no tienen commit. Compila y `npm run verify` pasa completo. **El hito 4 ya está publicado** (commit `abe12f3`, 2026-10-13; lo subió Claude porque el usuario se lo pidió esa vez).
 **Ya está en su propio repo y publicado** (2026-10-12): `https://github.com/Krypton-N/Machine_Learning_U7y8`, rama `main`;
 cada push compila y publica en `https://krypton-n.github.io/Machine_Learning_U7y8/` (comprobado: la página carga y navega con
 `#/3/3`). **Los commits y los push los hace el usuario**; Claude solo sube si él lo pide expresamente, cada vez. No se sabe si ya sacó la carpeta del repo
@@ -112,9 +128,9 @@ se quitó `fnlwgt` de las variables y se regeneraron todos los JSON. Los hallazg
 | 3 | E. Cierre de la parte 1 | 25–28 | ✅ |
 | 4 | Puente y F. Fundamentos de series | 29–40 | ✅ |
 | **5** | **G. Modelos de series** | **41–50** | **construido; falta la revisión del usuario** |
-| 6 | H. HMM | 51–59, 61 y ajustes de la 60 | **construido; falta la revisión del usuario** (`HITO-6.md`) |
-| 7 | Apertura, cierre y respaldo | 2, 62–64, R1–R4, ajuste de la 1 | pendiente |
-| 8 | Ensayo | cronometrar las 3 clases, exportar a PDF | pendiente |
+| 6 | H. HMM | 51–59, 61 y ajustes de la 60 | **construido y publicado** (`HITO-6.md`) |
+| 7 | Mapa y cierre | 2, 62, 63 (sin portada, 64 ni R1–R4, por decisión del usuario) | **construido** (`HITO-7.md`) |
+| 8 | Ensayo | — | **descartado por el usuario** (la exposición ya empezó) |
 
 Ya existían antes de los hitos: 1 (portada), 5, 20 y 60.
 

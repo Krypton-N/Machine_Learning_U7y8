@@ -1,6 +1,6 @@
 # Hito 6 — H. Modelos ocultos de Markov (diapositivas 51–59, 61 y ajustes de la 60)
 
-**Estado:** En construcción · *(Borrador → Aprobado el 2026-10-17 → En construcción → Cerrado el AAAA-MM-DD)*
+**Estado:** Cerrado · *(Borrador → Aprobado el 2026-10-17 → En construcción → Cerrado el 2026-10-17: el usuario lo vio publicado y le gustó)*
 **Última actualización:** 2026-10-17 (construido; falta la revisión del usuario)
 
 ## 1. Alcance
