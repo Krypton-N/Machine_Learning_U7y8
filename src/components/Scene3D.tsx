@@ -108,7 +108,7 @@ export function Scene3D({
             {e.contenido}
           </div>
         ))}
-        <span className="label" style={{ position: "absolute", right: 0, bottom: 0, fontSize: 14, opacity: 0.75 }}>
+        <span className="label pista3d">
           rueda: acercar · doble clic: vista inicial
         </span>
       </div>

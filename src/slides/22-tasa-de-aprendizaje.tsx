@@ -28,8 +28,8 @@ function Particion() {
       {partes.map((p) => (
         <div key={p.nombre} style={{ width: `${(p.n / total) * 100}%` }}>
           <div style={{ height: 22, background: p.color }} />
-          <div style={{ fontSize: 21, marginTop: 8 }}>{p.nombre}</div>
-          <div className="mono" style={{ fontSize: 15, color: "var(--text-3)" }}>
+          <div style={{ fontSize: 26, marginTop: 8 }}>{p.nombre}</div>
+          <div className="mono" style={{ fontSize: 20, color: "var(--text-3)" }}>
             {Math.round((p.n / total) * 100)} % · {p.uso}
           </div>
         </div>
@@ -114,7 +114,7 @@ export default function TasaDeAprendizaje({ step }: SlideProps) {
                   lineaV={lx(t.paro_n)}
                 />
               </div>
-              <div className="label" style={{ fontSize: 14 }}>
+              <div className="label" style={{ fontSize: 20 }}>
                 línea vertical = donde se habría detenido el paro temprano (20 árboles sin mejorar)
               </div>
             </div>
@@ -124,7 +124,7 @@ export default function TasaDeAprendizaje({ step }: SlideProps) {
                 <Dato rojo valor={pct(t.prueba_en_paro.error, 2)} rotulo="error de prueba parando a tiempo" />
                 <Dato valor={pct(t.prueba_al_final.error, 2)} rotulo={`error de prueba con los ${N_MAX.toLocaleString("es-MX")}`} />
               </div>
-              <p style={{ fontSize: 21, color: "var(--text-3)", margin: 0, lineHeight: 1.45 }}>
+              <p style={{ fontSize: 26, color: "var(--text-3)", margin: 0, lineHeight: 1.45 }}>
                 {tasa >= 1
                   ? `Pasos tan grandes que su mejor punto llega con solo ${t.mejor_n} árboles, y es el peor de las cuatro tasas. Después la validación sube de golpe.`
                   : tasa >= 0.3
@@ -136,7 +136,7 @@ export default function TasaDeAprendizaje({ step }: SlideProps) {
                         : `Tan lento que necesita ${t.mejor_n.toLocaleString("es-MX")} árboles para llegar a su mínimo.`}
               </p>
               <Reveal step={step} at={2} style={{ marginTop: "auto" }}>
-                <p className="takeaway" style={{ margin: 0, fontSize: 24 }}>
+                <p className="takeaway" style={{ margin: 0, fontSize: 26 }}>
                   Boosting <em>sí se sobreajusta</em> con demasiados árboles. El mejor punto es casi igual con ν = 0.3, 0.1 o 0.03; lo que cambia es qué tan fácil es pasarse. Por eso: ν chica y parar a tiempo.
                 </p>
               </Reveal>

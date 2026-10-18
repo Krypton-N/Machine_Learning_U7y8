@@ -77,7 +77,7 @@ const TEXTO_ESQUEMA = [
 
 function Leyenda({ color, guion, children }: { color: string; guion?: boolean; children: ReactNode }) {
   return (
-    <span style={{ display: "inline-flex", alignItems: "center", gap: 10, fontSize: 19, color: "var(--text-2)" }}>
+    <span data-rotulo style={{ display: "inline-flex", alignItems: "center", gap: 10, fontSize: 20, color: "var(--text-2)" }}>
       <svg width={34} height={6}>
         <line x1={0} x2={34} y1={3} y2={3} stroke={color} strokeWidth={3} strokeDasharray={guion ? "6 5" : undefined} />
       </svg>
@@ -88,7 +88,7 @@ function Leyenda({ color, guion, children }: { color: string; guion?: boolean; c
 
 export default function ValidacionTemporal({ step }: SlideProps) {
   const filas = step <= 1 ? BARAJADO : step === 2 ? CRECIENTE : MOVIL;
-  const celda = { padding: "9px 14px", borderBottom: "1px solid var(--line)", fontSize: 21, verticalAlign: "top" } as const;
+  const celda = { padding: "9px 14px", borderBottom: "1px solid var(--line)", fontSize: 26, verticalAlign: "top" } as const;
   return (
     <SlideFrame
       section={["U8 · Datos secuenciales", "Puente"]}
@@ -115,13 +115,13 @@ export default function ValidacionTemporal({ step }: SlideProps) {
               </span>
             </div>
             <SplitDiagram n={N} filas={filas} ancho={1100} altoCelda={44} fuga={step === 1} flecha={step === 1 ? { fila: 0, desde: FUGA + 1, hacia: FUGA } : undefined} />
-            <div style={{ display: "flex", gap: 28, marginTop: 4, fontSize: 18, color: "var(--text-3)" }} className="mono">
+            <div style={{ display: "flex", gap: 28, marginTop: 4, fontSize: 20, color: "var(--text-3)" }} className="mono">
               <span style={{ color: "var(--red-2)" }}>■ prueba</span>
               <span>■ entrenamiento</span>
               {step === 1 && <span style={{ color: "var(--red-2)" }}>▨ futuro usado para entrenar</span>}
               {step >= 2 && <span>┄ todavía no existe</span>}
             </div>
-            <div style={{ fontSize: 24, lineHeight: 1.42, marginTop: 16, minHeight: 104 }}>
+            <div style={{ fontSize: 26, lineHeight: 1.42, marginTop: 16, minHeight: 104 }}>
               {step === 1 ? (
                 <>
                   Para predecir el momento {FUGA + 1}, el modelo ya vio el {FUGA + 2}. Y no es un caso raro: {VECINO_FUTURO} de {N - 1} momentos tienen al
@@ -139,16 +139,16 @@ export default function ValidacionTemporal({ step }: SlideProps) {
       {step === 4 && (
         <motion.div key="particiones" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-            <span style={{ fontSize: 23 }}>K-Fold barajado, {K} rondas</span>
+            <span style={{ fontSize: 26 }}>K-Fold barajado, {K} rondas</span>
             <span className="label">los {N_MESES} meses de pasajeros · rojo = prueba</span>
           </div>
           <SplitDiagram n={N_MESES} filas={KFOLD_REAL} ancho={1696} altoCelda={28} separacion={6} anchoEtiqueta={110} hueco={1} marcas={MARCAS_ANIO} />
-          <div style={{ fontSize: 23, marginTop: 14 }}>
+          <div style={{ fontSize: 26, marginTop: 14 }}>
             Ventana creciente, {K} rondas: entrena con {CORTES.map((c) => c.entrenamiento).join(", ")} meses y prueba los {CORTES[0].pruebaHasta - CORTES[0].pruebaDesde + 1}{" "}
             siguientes
           </div>
           <SplitDiagram n={N_MESES} filas={CRECIENTE_REAL} ancho={1696} altoCelda={28} separacion={6} anchoEtiqueta={110} hueco={1} marcas={MARCAS_ANIO} />
-          <p style={{ fontSize: 25, margin: "12px 0 0", lineHeight: 1.4 }}>
+          <p style={{ fontSize: 26, margin: "12px 0 0", lineHeight: 1.4 }}>
             Barajados, <span style={{ color: "var(--red-2)" }}>{CON_FUGA} de {N_MESES - 1} meses</span> tienen al mes siguiente en el entrenamiento de su ronda. Con la
             ventana creciente, ninguno.
           </p>
@@ -157,7 +157,7 @@ export default function ValidacionTemporal({ step }: SlideProps) {
 
       {step >= 5 && (
         <motion.div key="resultado" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <div style={{ display: "grid", gridTemplateColumns: "980px 1fr", gap: 50 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "900px 1fr", gap: 46 }}>
             <div>
               <div style={{ display: "flex", gap: 30, marginBottom: 4 }}>
                 <Leyenda color="var(--text)">lo que pasó</Leyenda>
@@ -167,7 +167,7 @@ export default function ValidacionTemporal({ step }: SlideProps) {
                 <Leyenda color="var(--red)">pronosticado desde {ANIO_CORTE - 1}</Leyenda>
               </div>
               <SeriesChart
-                ancho={980}
+                ancho={900}
                 alto={370}
                 ventana={VENTANA}
                 recortar
@@ -182,15 +182,17 @@ export default function ValidacionTemporal({ step }: SlideProps) {
                 lineasH={step >= 6 ? [{ y: TECHO, texto: `máximo de entrenamiento: ${TECHO}`, color: "var(--red-2)" }] : []}
               />
             </div>
+            {/* A la derecha, un bloque por clic: la tabla de MAE (5), el tope del bosque (6) y la conclusión (7). */}
+            {step === 5 && (
             <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}>
               <span className="label">solo para esta demostración se pronostican dos años</span>
-              <p style={{ fontSize: 21, color: "var(--text-2)", margin: "10px 0 12px", lineHeight: 1.4 }}>
+              <p style={{ fontSize: 26, color: "var(--text-2)", margin: "10px 0 12px", lineHeight: 1.4 }}>
                 <b style={{ color: "var(--text)" }}>MAE:</b> en promedio, por cuántos miles de pasajeros se equivoca cada mes. El mismo modelo, los mismos{" "}
                 {REAL.length} meses.
               </p>
               <table style={{ borderCollapse: "collapse", width: "100%" }}>
                 <thead>
-                  <tr className="mono" style={{ fontSize: 15, color: "var(--text-3)", textAlign: "left" }}>
+                  <tr className="mono" style={{ fontSize: 20, color: "var(--text-3)", textAlign: "left" }}>
                     <th style={celda}>modelo</th>
                     <th style={{ ...celda, textAlign: "right" }}>barajado</th>
                     <th style={{ ...celda, textAlign: "right" }}>pronosticando</th>
@@ -201,11 +203,11 @@ export default function ValidacionTemporal({ step }: SlideProps) {
                     <tr key={m.id}>
                       <td style={celda}>
                         {m.nombre}
-                        <div style={{ fontSize: 16, color: "var(--text-3)", lineHeight: 1.3 }}>{m.descripcion}</div>
+                        <div data-rotulo style={{ fontSize: 20, color: "var(--text-3)", lineHeight: 1.3 }}>{m.descripcion}</div>
                       </td>
                       <td className="mono" style={{ ...celda, textAlign: "right", fontSize: 30, whiteSpace: "nowrap" }}>
                         {m.barajado.toFixed(1)}
-                        <div style={{ fontSize: 15, color: "var(--text-3)" }}>
+                        <div data-rotulo style={{ fontSize: 20, color: "var(--text-3)" }}>
                           {m.min.toFixed(1)} a {m.max.toFixed(1)} en {m.mae_barajados.length} barajados
                         </div>
                       </td>
@@ -216,18 +218,21 @@ export default function ValidacionTemporal({ step }: SlideProps) {
                   ))}
                 </tbody>
               </table>
-              <Reveal step={step} at={6} style={{ fontSize: 20, color: "var(--text-2)", lineHeight: 1.4, marginTop: 12 }}>
+            </motion.div>
+            )}
+            {step === 6 && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.4, paddingTop: 40 }}>
                 Un bosque promedia valores que ya vio: lo más que pronostica es {MAX_PRONOSTICO.toFixed(0)}, y {PRUEBA.slice(-4)} llegó a {Math.max(...REAL)}.
                 {REPITE && ` Su pronóstico de ${ANIO_CORTE + 1} es idéntico al de ${ANIO_CORTE}.`}
-              </Reveal>
-            </motion.div>
-          </div>
-          <Reveal step={step} at={6} style={{ marginTop: 14 }}>
-            <p className="takeaway" style={{ margin: 0, fontSize: 25 }}>
+              </motion.div>
+            )}
+            {step >= 7 && (
+            <motion.p className="takeaway" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ margin: 0, paddingTop: 30, fontSize: 28 }}>
               Barajado, el modelo solo rellena huecos entre meses que ya vio; pronosticar es ir más allá. <em>La prueba siempre va después.</em> Describir la serie no
               es evaluar un modelo: desde la 41, {ANIOS[ANIOS.length - 1]} se guarda como prueba y todo se decide con {ANIOS[0]}–{ANIOS[ANIOS.length - 2]}.
-            </p>
-          </Reveal>
+            </motion.p>
+            )}
+          </div>
         </motion.div>
       )}
     </SlideFrame>

@@ -1,3 +1,4 @@
+import { R } from "../deck/tipografia";
 import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 import { media } from "../lib/metricas";
@@ -76,7 +77,7 @@ export function OperacionAnimada({
           <g key={`${a}-${b}`}>
             <rect x={fx(a) - 18} y={6} width={fx(b) - fx(a) + 36} height={hSerie - 44} fill="var(--red-dim)" />
             <line x1={fx(a) - 18} x2={fx(b) + 18} y1={fy(mu)} y2={fy(mu)} stroke="var(--red)" strokeWidth={3} />
-            <text x={(fx(a) + fx(b)) / 2} y={hSerie - 44 + 2} textAnchor="middle" className="mono" fontSize={18} fill="var(--red-2)">
+            <text x={(fx(a) + fx(b)) / 2} y={hSerie - 44 + 2} textAnchor="middle" className="mono" fontSize={R} fill="var(--red-2)">
               media {num(mu)}
             </text>
           </g>
@@ -133,10 +134,10 @@ export function OperacionAnimada({
       {x.map((v, i) => (
         <g key={i}>
           <circle cx={fx(i)} cy={fy(v)} r={6} fill="var(--data)" />
-          <text x={fx(i)} y={fy(v) - 14} textAnchor="middle" className="mono" fontSize={19} fill="var(--text)">
+          <text x={fx(i)} y={fy(v) - 14} textAnchor="middle" className="mono" fontSize={R} fill="var(--text)">
             {num(v)}
           </text>
-          <text x={fx(i)} y={hSerie - 8} textAnchor="middle" className="mono" fontSize={15} fill="var(--text-3)">
+          <text x={fx(i)} y={hSerie - 8} textAnchor="middle" className="mono" fontSize={R} fill="var(--text-3)">
             {etiquetas?.[i] ?? i + 1}
           </text>
         </g>
@@ -146,7 +147,7 @@ export function OperacionAnimada({
       {conPanel && (
         <g>
           <line x1={m.l - 30} x2={ancho - m.r + 20} y1={fd(0)} y2={fd(0)} stroke="var(--line-2)" />
-          <text x={m.l - 36} y={fd(0) + 5} textAnchor="end" className="mono" fontSize={15} fill="var(--text-3)">
+          <text x={m.l - 36} y={fd(0) + 5} textAnchor="end" className="mono" fontSize={R} fill="var(--text-3)">
             0
           </text>
           {pasos.slice(0, hechos).map((t, j) => {
@@ -156,7 +157,7 @@ export function OperacionAnimada({
             return (
               <g key={t}>
                 <motion.rect x={fx(t) - anchoBarra / 2} width={anchoBarra} fill={v >= 0 ? "var(--red)" : "var(--data)"} initial={{ y: fd(0), height: 0 }} animate={{ y: arriba, height: h }} transition={{ duration: 0.25 }} />
-                <text x={fx(t)} y={v >= 0 ? arriba - 8 : arriba + h + 20} textAnchor="middle" className="mono" fontSize={18} fill="var(--text)">
+                <text x={fx(t)} y={v >= 0 ? arriba - 8 : arriba + h + 20} textAnchor="middle" className="mono" fontSize={R} fill="var(--text)">
                   {v > 0 ? "+" : ""}
                   {num(v)}
                 </text>
@@ -166,7 +167,7 @@ export function OperacionAnimada({
           {completa && (
             <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               <line x1={m.l - 30} x2={ancho - m.r + 20} y1={fd(media(dif))} y2={fd(media(dif))} stroke="var(--red-2)" strokeDasharray="6 6" />
-              <text x={m.l - 30} y={fd(media(dif)) - 8} className="mono" fontSize={17} fill="var(--red-2)">
+              <text x={m.l - 30} y={fd(media(dif)) - 8} className="mono" fontSize={R} fill="var(--red-2)">
                 media {num(media(dif))}
               </text>
             </motion.g>

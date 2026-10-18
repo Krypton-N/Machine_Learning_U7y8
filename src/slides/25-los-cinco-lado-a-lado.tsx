@@ -2,7 +2,6 @@ import { AnimatePresence, motion } from "motion/react";
 import type { ReactNode } from "react";
 import { ArbolGlifo } from "../components/FlujoEnsamble";
 import { pct } from "../components/Piezas";
-import { Reveal } from "../components/Reveal";
 import { SlideFrame } from "../deck/SlideFrame";
 import type { SlideProps } from "../deck/types";
 import { adultMuestra, comparacion, ruidoEtiquetas, xgbFaltantes } from "../lib/adult";
@@ -26,36 +25,44 @@ function Miniatura({ secuencia = false }: { secuencia?: boolean }) {
 }
 
 // ---------- Concepto: en qué se parecen y en qué no ----------
-// Una celda abarca varias columnas cuando esos modelos coinciden.
+// Una celda abarca varias columnas cuando esos modelos coinciden. `claves` resume cada celda en una o dos palabras:
+// el renglón que se explica va completo y los anteriores quedan resumidos (regla 9: la tabla completa no cabe a 26 px).
 type Celda = [texto: ReactNode, columnas?: number];
-const RENGLONES: { titulo: string; celdas: Celda[] }[] = [
+const RENGLONES: { titulo: string; celdas: Celda[]; claves: string[] }[] = [
   {
     titulo: "Cada árbol es",
     celdas: [["profundo, sin límite: por sí solo memoriza", 2], ["un stump: una sola pregunta"], ["chico: 3 preguntas en cadena"], ["mediano: 6 niveles, y cada hoja paga un cobro"]],
+    claves: ["profundo", "stump", "chico", "mediano"],
   },
   {
     titulo: "Qué problema ataca",
     celdas: [["la varianza: promedia árboles inestables", 2], ["el sesgo: cada árbol corrige lo que le faltó al anterior", 3]],
+    claves: ["la varianza", "el sesgo"],
   },
   {
     titulo: "Cómo se combinan",
     celdas: [["voto o promedio: todos los árboles valen igual", 2], ["voto con peso α: vale más el que menos falla"], ["suma: cada árbol entra encogido por ν", 2]],
+    claves: ["voto o promedio", "voto con peso α", "suma con ν"],
   },
   {
     titulo: "Por qué salen distintos",
     celdas: [["cada uno ve otra muestra bootstrap"], ["bootstrap más sorteo de variables"], ["cambia el peso de cada persona"], ["cada uno aprende lo que falta (el gradiente)", 2]],
+    claves: ["bootstrap", "+ sorteo", "pesos", "el gradiente"],
   },
   {
     titulo: "¿Más árboles sobreajusta?",
     celdas: [["no: el error se estabiliza", 2], ["puede, pero con stumps tarda mucho"], ["sí: hay que parar a tiempo", 2]],
+    claves: ["no", "tarda mucho", "sí"],
   },
   {
     titulo: "Etiquetas equivocadas",
     celdas: [["cada árbol las memoriza; el voto solo las diluye", 2], ["les sube el peso ronda tras ronda"], ["las persigue como a cualquier otro error", 2]],
+    claves: ["las diluye", "les sube el peso", "las persigue"],
   },
   {
     titulo: "Qué se ajusta",
     celdas: [["cuántos árboles"], ["variables sorteadas y tamaño de hoja"], ["cuántas rondas"], ["ν, cuántos árboles y su profundidad"], ["lo mismo, más los cobros λ y γ"]],
+    claves: ["árboles", "variables, hoja", "rondas", "ν, árboles, niveles", "lo mismo + λ, γ"],
   },
 ];
 
@@ -105,8 +112,10 @@ const MEDIDO: Medida[] = [
   },
 ];
 
-const celda = { fontSize: 22, lineHeight: 1.25, padding: "10px 22px 11px 0", borderTop: "1px solid var(--line)", color: "var(--text)" } as const;
-const titulo = { ...celda, color: "var(--text-3)", fontSize: 21 } as const;
+const celda = { fontSize: 26, lineHeight: 1.25, padding: "10px 22px 11px 0", borderTop: "1px solid var(--line)", color: "var(--text)" } as const;
+const titulo = { ...celda, color: "var(--text-3)", fontSize: 26 } as const;
+// Renglón ya explicado: una línea, en gris, con su palabra clave.
+const resumida = { ...celda, padding: "5px 22px 6px 0", color: "var(--text-2)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" } as const;
 
 function RenglonMedido({ r }: { r: Medida }) {
   const valores = MODELOS.map(r.valor);
@@ -117,8 +126,8 @@ function RenglonMedido({ r }: { r: Medida }) {
   return (
     <div style={REJILLA}>
       <div style={{ borderTop: "1px solid var(--line)", padding: "18px 22px 18px 0" }}>
-        <div style={{ fontSize: 24, color: "var(--red-2)" }}>{r.titulo}</div>
-        <div style={{ fontSize: 17, color: "var(--text-3)", lineHeight: 1.3, marginTop: 4 }}>{r.nota}</div>
+        <div style={{ fontSize: 26, color: "var(--red-2)" }}>{r.titulo}</div>
+        <div data-rotulo style={{ fontSize: 20, color: "var(--text-3)", lineHeight: 1.3, marginTop: 4 }}>{r.nota}</div>
       </div>
       {MODELOS.map((m, i) => (
         <div key={m} style={{ borderTop: "1px solid var(--line)", padding: "18px 26px 18px 0", minWidth: 0 }}>
@@ -134,7 +143,7 @@ function RenglonMedido({ r }: { r: Medida }) {
             />
           </div>
           {r.abajo && (
-            <div className="mono" style={{ fontSize: 17, color: "var(--text-3)", marginTop: 8 }}>
+            <div className="mono" style={{ fontSize: 20, color: "var(--text-3)", marginTop: 8 }}>
               {r.abajo(m)}
             </div>
           )}
@@ -169,32 +178,48 @@ export default function LosCincoLadoALado({ step }: SlideProps) {
         <AnimatePresence mode="wait">
           {!caso ? (
             <motion.div key="concepto" exit={{ opacity: 0, transition: { duration: 0.2 } }}>
-              {RENGLONES.map((r, i) => (
-                <Reveal key={r.titulo} step={step} at={i} style={REJILLA} y={8}>
-                  <div style={titulo}>{r.titulo}</div>
-                  {r.celdas.map(([texto, columnas = 1], k) => (
-                    <div key={k} style={{ ...celda, gridColumn: `span ${columnas}`, textAlign: columnas > 1 ? "center" : "left" }}>
-                      {texto}
-                    </div>
-                  ))}
-                </Reveal>
-              ))}
+              {RENGLONES.slice(0, step + 1).map((r, i) =>
+                i < step ? (
+                  <div key={r.titulo} style={REJILLA}>
+                    <div style={{ ...resumida, color: "var(--text-3)", whiteSpace: "normal" }}>{r.titulo}</div>
+                    {r.celdas.map(([, columnas = 1], k) => (
+                      <div key={k} style={{ ...resumida, gridColumn: `span ${columnas}`, textAlign: columnas > 1 ? "center" : "left" }}>
+                        {r.claves[k]}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <motion.div key={r.titulo} style={REJILLA} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
+                    <div style={{ ...titulo, color: "var(--red-2)" }}>{r.titulo}</div>
+                    {r.celdas.map(([texto, columnas = 1], k) => (
+                      <div key={k} style={{ ...celda, gridColumn: `span ${columnas}`, textAlign: columnas > 1 ? "center" : "left" }}>
+                        {texto}
+                      </div>
+                    ))}
+                  </motion.div>
+                ),
+              )}
             </motion.div>
           ) : (
             <motion.div key="medido" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
-              {MEDIDO.map((r) => (
+              {/* Primero los tres renglones medidos; en el último clic, solo el de etiquetas equivocadas con su explicación. */}
+              {(step === RENGLONES.length ? MEDIDO : MEDIDO.slice(2)).map((r) => (
                 <RenglonMedido key={r.titulo} r={r} />
               ))}
-              <div className="label" style={{ fontSize: 14, marginTop: 10 }}>
-                barras: la de F1-macro arranca en 0.75; las otras dos, en 0 · rojo = el mejor de los cinco en ese renglón
-              </div>
-              <p style={{ fontSize: 25, color: "var(--text-2)", lineHeight: 1.42, margin: "24px 0 0", maxWidth: 1640 }}>
+              {step === RENGLONES.length && (
+                <div className="label" style={{ fontSize: 20, marginTop: 10 }}>
+                  barras: la de F1-macro arranca en 0.75; las otras dos, en 0 · rojo = el mejor de los cinco en ese renglón
+                </div>
+              )}
+              {step > RENGLONES.length && (
+              <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.42, margin: "24px 0 0", maxWidth: 1640 }}>
                 Con {pct(FRACCION, 0)} de las etiquetas de entrenamiento volteadas al azar, los bosques pierden de {rango(["Bagging", "Random Forest"])} de
                 F1-macro y los de boosting, de {rango(["AdaBoost", "Gradient Boosting", "XGBoost"])}.{" "}
                 <b style={{ color: "var(--text)" }}>No es por la forma de combinar, es por el tamaño del árbol:</b> un Random Forest con árboles podados a{" "}
                 {ruidoEtiquetas.profundidad_podado} niveles pierde {Math.max(0, caida("Random Forest podado")).toFixed(3)}, y un XGBoost con árboles de{" "}
                 {ruidoEtiquetas.profundidad_profundo} niveles pierde {caida("XGBoost profundo").toFixed(3)}.
               </p>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

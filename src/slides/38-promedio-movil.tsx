@@ -56,7 +56,7 @@ function Caja({ x, y, tex, punteada, rojo }: { x: number; y: number; tex: string
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        fontSize: 24,
+        fontSize: 26,
         border: `1.5px ${punteada ? "dashed" : "solid"} ${rojo ? "var(--red)" : "var(--text-3)"}`,
         borderRadius: punteada ? 30 : 0,
         background: "var(--bg)",
@@ -81,7 +81,7 @@ function Diagrama({ entradas, pesos, salida, punteada }: { entradas: string[]; p
         <Caja key={i} x={x} y={36} tex={entradas[i]} punteada={punteada} />
       ))}
       {xs.map((x, i) => (
-        <div key={i} style={{ position: "absolute", left: 380 + (x - 380) * 0.6 - 40, top: 98, width: 80, textAlign: "center", fontSize: 22, color: "var(--red-2)", background: "var(--bg)" }}>
+        <div key={i} style={{ position: "absolute", left: 380 + (x - 380) * 0.6 - 40, top: 98, width: 80, textAlign: "center", fontSize: 26, color: "var(--red-2)", background: "var(--bg)" }}>
           <TeX>{pesos[i]}</TeX>
         </div>
       ))}
@@ -116,8 +116,8 @@ export default function PromedioMovil({ step, active }: SlideProps) {
             <div style={{ fontSize: 34 }}>
               <TeX>{"m_t = \\frac{1}{k}\\sum_{j=-h}^{h} x_{t+j}, \\qquad k = 2h + 1"}</TeX>
             </div>
-            <p style={{ fontSize: 24, lineHeight: 1.42, color: "var(--text-2)", marginTop: 20 }}>Centrado: h vecinos antes, el punto, y h vecinos después.</p>
-            <p style={{ fontSize: 24, lineHeight: 1.42, marginTop: 30 }}>
+            <p style={{ fontSize: 26, lineHeight: 1.42, color: "var(--text-2)", marginTop: 20 }}>Centrado: h vecinos antes, el punto, y h vecinos después.</p>
+            <p style={{ fontSize: 26, lineHeight: 1.42, marginTop: 30 }}>
               Esta serie sube 1 en cada paso y además repite un patrón ({PATRON.map((v) => (v > 0 ? `+${v}` : v)).join(", ")}) cada {K_JUGUETE}. Con una ventana de{" "}
               {K_JUGUETE}, el patrón completo cabe dentro: <span style={{ color: "var(--red-2)" }}>se cancela y queda la recta.</span>
             </p>
@@ -168,7 +168,7 @@ export default function PromedioMovil({ step, active }: SlideProps) {
               />
             )}
           </div>
-          <div style={{ fontSize: 23, lineHeight: 1.42, paddingTop: 50 }}>
+          <div style={{ fontSize: 26, lineHeight: 1.42, paddingTop: 50 }}>
             {!zoom && k % 2 === 1 && (
               <p style={{ margin: 0 }}>
                 Promedia {k} meses: {(k - 1) / 2} antes, el mes y {(k - 1) / 2} después. La curva se alisa, pero la onda del año sigue ahí: la ventana no cubre el año
@@ -183,13 +183,13 @@ export default function PromedioMovil({ step, active }: SlideProps) {
                 <p style={{ color: "var(--text-2)", marginTop: 16 }}>
                   {k} es par y no tiene centro. Se promedian dos ventanas de {k} seguidas: son {k + 1} meses, con medio peso en los extremos.
                 </p>
-                <div style={{ fontSize: 21, marginTop: 10 }}>
+                <div style={{ fontSize: 26, marginTop: 10 }}>
                   <TeX>{`m_t = \\tfrac{1}{${2 * k}}x_{t-${k / 2}} + \\tfrac{1}{${k}}\\textstyle\\sum_{j=-${k / 2 - 1}}^{${k / 2 - 1}} x_{t+j} + \\tfrac{1}{${2 * k}}x_{t+${k / 2}}`}</TeX>
                 </div>
               </>
             )}
             {!zoom && (
-              <p className="mono" style={{ fontSize: 19, color: "var(--text-3)", marginTop: 18 }}>
+              <p className="mono" style={{ fontSize: 20, color: "var(--text-3)", marginTop: 18 }}>
                 sin promedio: {sinDato} {sinDato === 1 ? "mes" : "meses"} al inicio y {sinDato} al final · ↑ ↓ cambian la ventana
               </p>
             )}
@@ -202,7 +202,7 @@ export default function PromedioMovil({ step, active }: SlideProps) {
                 <p style={{ marginTop: 18 }}>
                   <b>Atrasado:</b> usa solo los últimos {PERIODO} meses y llega a {etiqueta(N - 1)}, pero va {(PERIODO - 1) / 2} meses detrás.
                 </p>
-                <div style={{ fontSize: 24, margin: "14px 0" }}>
+                <div style={{ fontSize: 26, margin: "14px 0" }}>
                   <TeX>{`a_t = \\tfrac{1}{${PERIODO}}\\textstyle\\sum_{j=0}^{${PERIODO - 1}} x_{t-j}`}</TeX>
                 </div>
                 <p style={{ color: "var(--text-2)" }}>
@@ -220,7 +220,7 @@ export default function PromedioMovil({ step, active }: SlideProps) {
             <div>
               <div style={{ fontSize: 28, fontWeight: 600, marginBottom: 14 }}>Promedio móvil · suavizado</div>
               <Diagrama entradas={["x_{t-1}", "x_t", "x_{t+1}"]} pesos={["\\tfrac13", "\\tfrac13", "\\tfrac13"]} salida="m_t" />
-              <ul style={{ fontSize: 23, lineHeight: 1.6, color: "var(--text-2)", margin: "14px 0 0", paddingLeft: 24 }}>
+              <ul style={{ fontSize: 26, lineHeight: 1.6, color: "var(--text-2)", margin: "14px 0 0", paddingLeft: 24 }}>
                 <li>Promedia observaciones, que sí se ven.</li>
                 <li>Se aplica: no hay nada que estimar.</li>
                 <li>No pronostica.</li>
@@ -228,10 +228,10 @@ export default function PromedioMovil({ step, active }: SlideProps) {
             </div>
             <div>
               <div style={{ fontSize: 28, fontWeight: 600, marginBottom: 14 }}>
-                MA(q) · modelo <span style={{ fontSize: 20, fontWeight: 400, color: "var(--text-3)" }}>(diapositiva 43)</span>
+                MA(q) · modelo <span data-rotulo style={{ fontSize: 20, fontWeight: 400, color: "var(--text-3)" }}>(diapositiva 43)</span>
               </div>
               <Diagrama entradas={["\\varepsilon_{t-2}", "\\varepsilon_{t-1}", "\\varepsilon_t"]} pesos={["\\theta_2", "\\theta_1", "1"]} salida="x_t" punteada />
-              <ul style={{ fontSize: 23, lineHeight: 1.6, color: "var(--text-2)", margin: "14px 0 0", paddingLeft: 24 }}>
+              <ul style={{ fontSize: 26, lineHeight: 1.6, color: "var(--text-2)", margin: "14px 0 0", paddingLeft: 24 }}>
                 <li>Combina choques, que no se ven.</li>
                 <li>Los pesos θ se estiman de los datos.</li>
                 <li>Es un modelo: sirve para pronosticar.</li>

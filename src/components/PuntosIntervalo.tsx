@@ -1,3 +1,4 @@
+import { R } from "../deck/tipografia";
 import { motion } from "motion/react";
 import { desviacion, media } from "../lib/metricas";
 import { linear } from "../lib/scale";
@@ -41,11 +42,11 @@ export function PuntosIntervalo({
   const fx = linear(dominio, [x0, x1]);
   const alto = filas.length * altoFila;
   return (
-    <svg width={ancho} height={alto + 30} style={{ display: "block" }}>
+    <svg width={ancho} height={alto + R + 14} style={{ display: "block" }}>
       {ticks.map((t) => (
         <motion.g key={t} initial={{ opacity: 0, x: fx(t) }} animate={{ opacity: 1, x: fx(t) }} transition={mover}>
           <line y1={0} y2={alto} stroke="var(--line)" />
-          <text y={alto + 22} textAnchor="middle" className="mono" fontSize={15} fill="var(--text-3)">
+          <text y={alto + R + 4} textAnchor="middle" className="mono" fontSize={R} fill="var(--text-3)">
             {t.toFixed(2)}
           </text>
         </motion.g>
@@ -69,10 +70,10 @@ export function PuntosIntervalo({
               <motion.line y1={y + 8} y2={y + 8} stroke={color} strokeWidth={3} initial={false} animate={{ x1: fx(m - d), x2: fx(m + d) }} transition={mover} />
               <motion.circle cy={y + 8} r={6.5} fill={color} initial={false} animate={{ cx: fx(m) }} transition={mover} />
             </motion.g>
-            <motion.text x={x0 + 6} y={y + 6} className="mono" fontSize={16} fill="var(--text-3)" initial={false} animate={{ opacity: fuera ? 1 : 0 }} transition={mover}>
+            <motion.text x={x0 + 6} y={y + 6} className="mono" fontSize={R} fill="var(--text-3)" initial={false} animate={{ opacity: fuera ? 1 : 0 }} transition={mover}>
               ← {fmt(m)}, fuera de esta escala
             </motion.text>
-            <text x={ancho} y={y + 7} textAnchor="end" className="mono" fontSize={19} fill={f.tenue ? "var(--text-2)" : "var(--text)"}>
+            <text x={ancho} y={y + 7} textAnchor="end" className="mono" fontSize={R} fill={f.tenue ? "var(--text-2)" : "var(--text)"}>
               {fmt(m)} <tspan fill="var(--text-3)">± {fmt(d)}</tspan>
             </text>
           </motion.g>

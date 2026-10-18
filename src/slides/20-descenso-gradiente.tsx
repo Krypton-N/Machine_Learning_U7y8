@@ -2,7 +2,6 @@ import { Line } from "@react-three/drei";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useMemo, useState } from "react";
 import { Recap } from "../components/Recap";
-import { Reveal } from "../components/Reveal";
 import { Scene3D } from "../components/Scene3D";
 import { etiquetasSuperficie, inDomain, Surface3D, toWorld, type SurfaceSpec } from "../components/Surface3D";
 import { TeX } from "../components/TeX";
@@ -122,7 +121,7 @@ function RateChips({ mode, eta, setEta }: { mode: Mode; eta: number; setEta: (e:
   );
 }
 
-const p = { fontSize: 22, color: "var(--text-2)", lineHeight: 1.5, margin: 0 } as const;
+const p = { fontSize: 26, color: "var(--text-2)", lineHeight: 1.5, margin: 0 } as const;
 const strong = { color: "var(--text)", fontWeight: 500 } as const;
 
 export default function DescensoGradiente({ step }: SlideProps) {
@@ -161,7 +160,7 @@ export default function DescensoGradiente({ step }: SlideProps) {
       lede="Estás en una montaña con niebla: no ves el valle, solo sientes la inclinación bajo tus pies. Das un paso cuesta abajo y repites."
     >
       <div style={{ display: "grid", gridTemplateColumns: "1000px 1fr", gap: 72, height: "100%" }}>
-        <div style={{ position: "relative", height: 640, borderTop: "1px solid var(--line)" }}>
+        <div style={{ position: "relative", height: "100%", borderTop: "1px solid var(--line)" }}>
           <AnimatePresence mode="wait">
             <motion.div
               key={key}
@@ -177,11 +176,11 @@ export default function DescensoGradiente({ step }: SlideProps) {
               </Scene3D>
             </motion.div>
           </AnimatePresence>
-          <div className="label" style={{ position: "absolute", left: 0, bottom: 0, fontSize: 14 }}>
+          <div className="label" style={{ position: "absolute", left: 0, bottom: 8, fontSize: 20 }}>
             Arrastra para girar
           </div>
           {running && (
-            <div className="mono" style={{ position: "absolute", right: 0, top: 18, textAlign: "right", fontSize: 19, lineHeight: 1.7, color: "var(--text-2)" }}>
+            <div className="mono" style={{ position: "absolute", right: 0, top: 18, textAlign: "right", fontSize: 20, lineHeight: 1.7, color: "var(--text-2)" }}>
               <div>
                 t = <span style={{ color: "var(--text)" }}>{Math.min(shown, pts.length) - 1}</span>
               </div>
@@ -203,12 +202,14 @@ export default function DescensoGradiente({ step }: SlideProps) {
               style={{ display: "flex", flexDirection: "column", gap: 32 }}
               exit={{ opacity: 0, transition: { duration: 0.2 } }}
             >
+              {step === 0 && (
               <Recap title="gradiente">
                 <p>
                   <TeX>{"\\nabla f"}</TeX> es el vector de derivadas parciales. Apunta hacia donde <TeX>f</TeX> sube más rápido;
                   su negativo, hacia donde baja más rápido.
                 </p>
               </Recap>
+              )}
               <div>
                 <div className="label" style={{ marginBottom: 14 }}>
                   La regla
@@ -221,7 +222,9 @@ export default function DescensoGradiente({ step }: SlideProps) {
                   <TeX>{"f(x,y)=\\tfrac12 x^2 + 2y^2"}</TeX> y <TeX>{"\\nabla f = (x,\\ 4y)"}</TeX>.
                 </p>
               </div>
-              <Reveal step={step} at={1}>
+              {/* Solo existe en su clic: oculto también ocuparía lugar y empujaría la escena fuera del cuerpo. */}
+              {step === 1 && (
+              <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
                 <div className="label" style={{ marginBottom: 14 }}>
                   Prueba otro tamaño de paso
                 </div>
@@ -230,7 +233,8 @@ export default function DescensoGradiente({ step }: SlideProps) {
                   Si <TeX>{"\\eta"}</TeX> es muy grande, el paso se pasa del valle: oscila o diverge. Aquí converge solo si{" "}
                   <TeX>{"\\eta < 2/4 = 0.5"}</TeX>, donde 4 es la curvatura en <TeX>y</TeX>.
                 </p>
-              </Reveal>
+              </motion.div>
+              )}
             </motion.div>
           ) : (
             <motion.div
@@ -247,17 +251,22 @@ export default function DescensoGradiente({ step }: SlideProps) {
                 <div style={{ fontSize: 30 }}>
                   <TeX>{"P(\\text{gana} > 50\\text{K}) = \\sigma(w\\cdot z + b)"}</TeX>
                 </div>
+                {step === 2 && (
+                <>
                 <p style={{ ...p, marginTop: 14 }}>
                   <TeX>z</TeX> son los años de educación estandarizados. La montaña es la <b style={strong}>log-loss</b> de las{" "}
                   {N.toLocaleString("es-MX")} personas para cada par <TeX>(w, b)</TeX>: bajar es equivocarse menos.
                 </p>
-                <p className="mono" style={{ ...p, fontSize: 18, marginTop: 12, color: "var(--text-3)" }}>
+                <p className="mono" style={{ ...p, fontSize: 20, marginTop: 12, color: "var(--text-3)" }}>
                   mínimo según sklearn: w* = {educacion.sklearn.w.toFixed(3)} · b* = {educacion.sklearn.b.toFixed(3)} · log-loss ={" "}
                   {educacion.sklearn.logloss.toFixed(4)}
                 </p>
+                </>
+                )}
               </div>
 
-              <Reveal step={step} at={3}>
+              {step === 3 && (
+              <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
                 <div className="label" style={{ marginBottom: 14 }}>
                   Prueba otro tamaño de paso
                 </div>
@@ -267,14 +276,17 @@ export default function DescensoGradiente({ step }: SlideProps) {
                   ahí converge si <TeX>{`\\eta < 2/\\lambda_{\\max} \\approx ${(2 / lambdaMax).toFixed(1)}`}</TeX>. Lejos del mínimo la
                   curvatura es otra: no hay un único límite.
                 </p>
-              </Reveal>
+              </motion.div>
+              )}
 
-              <Reveal step={step} at={4} style={{ marginTop: "auto" }}>
+              {step >= 4 && (
+              <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
                 <p className="takeaway" style={{ margin: 0, fontSize: 26 }}>
                   En Gradient Boosting el paso <em>no mueve w y b: agrega un árbol</em>. Con log-loss, el árbol aprende{" "}
                   <TeX>{"-\\partial L/\\partial F = y - p"}</TeX>: lo que le falta a cada predicción.
                 </p>
-              </Reveal>
+              </motion.div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

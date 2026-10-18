@@ -35,17 +35,17 @@ export function Receta({
           style={{ borderTop: `2px solid ${resaltar === i ? "var(--red)" : "var(--line-2)"}`, paddingTop: franja ? 12 : 22 }}
         >
           <div style={{ display: "flex", alignItems: "baseline", gap: 14 }}>
-            <span className="mono" style={{ color: "var(--red)", fontSize: franja ? 16 : 20 }}>
+            <span className="mono" style={{ color: "var(--red)", fontSize: 20 }}>
               0{i + 1}
             </span>
-            <span style={{ fontSize: franja ? 24 : 36, fontWeight: 600, letterSpacing: "-0.015em" }}>{p}</span>
+            <span style={{ fontSize: franja ? 26 : 36, fontWeight: 600, letterSpacing: "-0.015em" }}>{p}</span>
             {i < 3 && !franja && (
               <span className="mono" style={{ marginLeft: "auto", color: "var(--text-3)", fontSize: 26 }}>
                 →
               </span>
             )}
           </div>
-          <div style={{ fontSize: franja ? 20 : 24, color: "var(--text-2)", lineHeight: 1.45, marginTop: franja ? 6 : 14 }}>{textos[i]}</div>
+          <div data-rotulo={franja || undefined} style={{ fontSize: franja ? 20 : 26, color: "var(--text-2)", lineHeight: 1.45, marginTop: franja ? 6 : 14 }}>{textos[i]}</div>
         </motion.div>
       ))}
     </div>

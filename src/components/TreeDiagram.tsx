@@ -1,3 +1,4 @@
+import { R, anchoMono } from "../deck/tipografia";
 import { motion } from "motion/react";
 import type { ClassNode } from "../lib/tree";
 
@@ -15,7 +16,7 @@ export type NodoDiagrama = {
 };
 
 const NW_MAX = 250;
-const NH = 96;
+const NH_BASE = 96;
 const DY = 170;
 
 type Colocado = { nodo: NodoDiagrama; x: number; y: number; nivel: number; padre?: Colocado; lado?: "sí" | "no" };
@@ -60,6 +61,9 @@ export function TreeDiagram({
   // Con muchas hojas, los nodos se angostan para no encimarse.
   const NW = Math.min(NW_MAX, ancho / nodos.filter((n) => !n.nodo.hijos).length - 16);
   const niveles = Math.max(...nodos.map((n) => n.nivel));
+  // Si el detalle no cabe en un renglón a tamaño de rótulo, se parte en dos ("3,306" / "5.3 % sí") y el nodo crece.
+  const partir = nodos.some((c) => c.nodo.detalle && anchoMono(c.nodo.detalle) > NW - 12);
+  const NH = partir ? NH_BASE + 26 : NH_BASE;
   return (
     <svg width={ancho} height={niveles * DY + NH + 4} style={{ display: "block", overflow: "visible" }}>
       {nodos.map((c, i) => {
@@ -76,7 +80,7 @@ export function TreeDiagram({
                   y={(c.padre.y + NH + c.y) / 2 + 2}
                   textAnchor={c.lado === "sí" ? "end" : "start"}
                   className="mono"
-                  fontSize={17}
+                  fontSize={R}
                   fill="var(--text-3)"
                 >
                   {c.lado}
@@ -95,11 +99,12 @@ export function TreeDiagram({
             <text x={c.x} y={c.y + 34} textAnchor="middle" fontSize={22} fontWeight={hoja ? 400 : 500} fill="var(--text)">
               {c.nodo.texto}
             </text>
-            {c.nodo.detalle && (
-              <text x={c.x} y={c.y + 60} textAnchor="middle" className="mono" fontSize={15} fill="var(--text-3)">
-                {c.nodo.detalle}
-              </text>
-            )}
+            {c.nodo.detalle &&
+              (partir ? c.nodo.detalle.split(" · ") : [c.nodo.detalle]).map((t, k) => (
+                <text key={k} x={c.x} y={c.y + 60 + k * 24} textAnchor="middle" className="mono" fontSize={R} fill="var(--text-3)">
+                  {t}
+                </text>
+              ))}
             {c.nodo.proporcion !== undefined && (
               <g>
                 <rect x={c.x - NW / 2 + 18} y={c.y + NH - 20} width={NW - 36} height={7} fill="var(--data-dim)" />

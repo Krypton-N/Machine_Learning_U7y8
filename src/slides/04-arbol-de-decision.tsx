@@ -34,7 +34,7 @@ function Adult3Crudo() {
       <TablaCruda datos={CRUDO_3D} tamano={24} />
       <div style={{ display: "grid", gap: 8, marginTop: 26 }}>
         {COLUMNAS_3D.map((c, i) => (
-          <div key={c} style={{ display: "grid", gridTemplateColumns: "250px 30px 1fr", fontSize: 22, alignItems: "baseline" }}>
+          <div key={c} style={{ display: "grid", gridTemplateColumns: "250px 30px 1fr", fontSize: 26, alignItems: "baseline" }}>
             <span className="mono" style={{ color: "var(--text-2)" }}>
               {c}
             </span>
@@ -45,7 +45,7 @@ function Adult3Crudo() {
           </div>
         ))}
       </div>
-      <p style={{ fontSize: 22, color: "var(--text-2)", lineHeight: 1.45, margin: "24px 0 0" }}>
+      <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.45, margin: "24px 0 0" }}>
         Cada fila pasa a ser un punto; el color es su <span className="mono">class</span>. Se entrena con {miles(E.X.length)} personas, se examina con otras{" "}
         {miles(adult3d.prueba.X.length)} y se dibujan {miles(adult3d.vista.length)}.
       </p>
@@ -138,7 +138,7 @@ export default function ArbolDeDecision({ step }: SlideProps) {
               <div style={{ marginTop: 22 }}>
                 <TreeDiagram raiz={esquema} ancho={820} />
               </div>
-              <p style={{ fontSize: 24, color: "var(--text-2)", lineHeight: 1.45, margin: "26px 0 0" }}>
+              <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.45, margin: "26px 0 0" }}>
                 <b style={{ color: "var(--text)", fontWeight: 500 }}>Profundidad:</b> cuántas preguntas hay, como máximo, antes de responder.
                 Este árbol tiene profundidad 2.
               </p>
@@ -189,7 +189,7 @@ export default function ArbolDeDecision({ step }: SlideProps) {
                 <span className="label">Se dibujan 400 personas · arrastra para girar</span>
                 <LeyendaAdult />
               </div>
-              <div style={{ height: 470, marginTop: 8 }}>
+              <div style={{ height: 420, marginTop: 8 }}>
                 <Adult3DScene planos={planos} cajas={cajas} />
               </div>
               <Reveal step={step} at={5}>

@@ -4,31 +4,20 @@ import { Reveal } from "../components/Reveal";
 import { TeX } from "../components/TeX";
 import { SlideFrame } from "../deck/SlideFrame";
 import type { SlideProps } from "../deck/types";
-import { forward, viterbi, type HMM } from "../lib/hmm";
+import { CLIMA, CORTO, fmtP, OBS_EJEMPLO, SUB } from "../lib/clima";
+import { forward, viterbi } from "../lib/hmm";
 
-// Ejemplo clásico del clima (el mismo λ de la diapositiva 54).
-const model: HMM = {
-  states: ["Lluvioso", "Soleado"],
-  symbols: ["caminar", "comprar", "limpiar"],
-  pi: [0.6, 0.4],
-  A: [
-    [0.7, 0.3],
-    [0.4, 0.6],
-  ],
-  B: [
-    [0.1, 0.4, 0.5],
-    [0.6, 0.3, 0.1],
-  ],
-};
-const obs = [0, 1, 2];
-const short = ["L", "S"];
-const sub = ["₁", "₂", "₃"];
+// El mismo λ de toda la sección (lib/clima.ts).
+const model = CLIMA;
+const obs = OBS_EJEMPLO;
+const short = CORTO;
+const sub = SUB;
 
 const alpha = forward(model, obs);
 const vit = viterbi(model, obs);
 const pObs = alpha[2].reduce((s, v) => s + v, 0);
 
-const fmt = (v: number) => v.toPrecision(4);
+const fmt = (v: number) => fmtP(v);
 
 // Geometría del trellis
 const W = 790;
@@ -92,7 +81,7 @@ function Trellis({ kind, step }: { kind: Kind; step: number }) {
   return (
     <svg width={W} height={H} style={{ display: "block" }}>
       {model.states.map((s, j) => (
-        <text key={s} x={0} y={ROWS[j] + 7} fontSize={21} fill="var(--text-2)">
+        <text key={s} x={0} y={ROWS[j] + 7} fontSize={24} fill="var(--text-2)">
           {s}
         </text>
       ))}
@@ -118,7 +107,7 @@ function Trellis({ kind, step }: { kind: Kind; step: number }) {
                 y={cy + 8}
                 textAnchor="middle"
                 className="mono"
-                fontSize={22}
+                fontSize={24}
                 fill={hot ? "var(--text)" : shown ? "var(--text)" : "var(--text-3)"}
                 initial={false}
                 animate={{ opacity: shown ? 1 : 0.5 }}
@@ -136,7 +125,7 @@ function Trellis({ kind, step }: { kind: Kind; step: number }) {
 // Renglones de cálculo de la última columna llenada.
 function Calc({ kind, step }: { kind: Kind; step: number }) {
   const sym = kind === "forward" ? "α" : "δ";
-  if (step === 0) return <div style={{ color: "var(--text-3)" }}>Avanza para llenar la primera columna.</div>;
+  if (step === 0) return null;
 
   if (step >= 4) {
     return kind === "forward" ? (
@@ -164,7 +153,7 @@ function Calc({ kind, step }: { kind: Kind; step: number }) {
         if (t === 0) {
           return (
             <div key={j}>
-              {lhs} = π<sub>{short[j]}</sub>·b<sub>{short[j]}</sub> = {model.pi[j]}·{b} = {fmt(alpha[0][j])}
+              {lhs} = π<sub style={{ fontSize: "0.9em" }}>{short[j]}</sub>·b<sub style={{ fontSize: "0.9em" }}>{short[j]}</sub> = {model.pi[j]}·{b} = {fmt(alpha[0][j])}
             </div>
           );
         }
@@ -199,7 +188,7 @@ function Panel({ kind, step }: { kind: Kind; step: number }) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", borderBottom: "1px solid var(--line)", paddingBottom: 16 }}>
         <div>
           <span style={{ fontSize: 32, fontWeight: 600, letterSpacing: "-0.015em" }}>{isF ? "Forward" : "Viterbi"}</span>
-          <span style={{ fontSize: 20, color: "var(--text-3)", marginLeft: 16 }}>
+          <span style={{ fontSize: 26, color: "var(--text-3)", marginLeft: 16 }}>
             {isF ? "¿qué tan probable es lo que vi?" : "¿qué secuencia de estados lo explica mejor?"}
           </span>
         </div>
@@ -212,7 +201,7 @@ function Panel({ kind, step }: { kind: Kind; step: number }) {
         )}
       </div>
       <Trellis kind={kind} step={step} />
-      <div className="mono" style={{ fontSize: 20, lineHeight: 1.5, color: "var(--text-2)", minHeight: 84, paddingLeft: 4, marginTop: 8 }}>
+      <div className="mono" style={{ fontSize: 22, lineHeight: 1.5, color: "var(--text-2)", minHeight: 84, paddingLeft: 4, marginTop: 8 }}>
         <Calc kind={kind} step={step} />
       </div>
     </div>
@@ -224,6 +213,7 @@ export default function ForwardVsViterbi({ step }: SlideProps) {
     <SlideFrame
       section={["U8 · Datos secuenciales", "H. HMM"]}
       num={60}
+      caso={step >= 1 ? "Clima" : null}
       title={
         <>
           Forward y Viterbi: <span className="accent">suma</span> contra <span className="accent">máximo</span>
@@ -239,10 +229,10 @@ export default function ForwardVsViterbi({ step }: SlideProps) {
             </span>
             {COLS.map((cx, t) => (
               <div key={t} style={{ position: "absolute", left: cx - NW / 2, width: NW, textAlign: "center" }}>
-                <div className="mono" style={{ fontSize: 15, color: "var(--text-3)" }}>
+                <div className="mono" style={{ fontSize: 20, color: "var(--text-3)" }}>
                   t = {t + 1}
                 </div>
-                <div style={{ fontSize: 22, color: step > t && step < 4 ? "var(--text)" : "var(--text-2)" }}>{model.symbols[obs[t]]}</div>
+                <div data-rotulo style={{ fontSize: 26, color: step > t && step < 4 ? "var(--text)" : "var(--text-2)" }}>{model.symbols[obs[t]]}</div>
               </div>
             ))}
           </div>
@@ -256,8 +246,8 @@ export default function ForwardVsViterbi({ step }: SlideProps) {
 
       <Reveal step={step} at={5} style={{ position: "absolute", left: 0, right: 0, bottom: 0, display: "flex", alignItems: "baseline", gap: 40 }}>
         <p className="takeaway" style={{ margin: 0, flex: 1 }}>
-          La misma tabla y el mismo costo, <em>O(N²T)</em> en vez de <em>O(Nᵀ)</em>. Lo único que cambia es <em>Σ</em> por <em>max</em>, y
-          Viterbi además guarda de dónde vino cada máximo.
+          Misma tabla, mismo costo: <em>O(N²T)</em> en vez de <em>O(T·Nᵀ)</em>. Solo cambia <em>Σ</em> por <em>max</em>; Viterbi además guarda de dónde
+          vino cada máximo.
         </p>
       </Reveal>
     </SlideFrame>

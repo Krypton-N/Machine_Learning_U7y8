@@ -8,7 +8,7 @@ export type Crudo = {
   filas: (string | number | null)[][];
 };
 
-const celda: CSSProperties = { padding: "4px 16px", whiteSpace: "nowrap", transition: "color 0.4s, opacity 0.4s, background 0.4s" };
+const celda: CSSProperties = { padding: "2px 14px", whiteSpace: "nowrap", transition: "color 0.4s, opacity 0.4s, background 0.4s" };
 
 export function TablaCruda({
   datos,
@@ -38,7 +38,7 @@ export function TablaCruda({
     return {};
   };
   return (
-    <table className="mono" style={{ borderCollapse: "collapse", fontSize: tamano, lineHeight: 1.4 }}>
+    <table className="mono" style={{ borderCollapse: "collapse", fontSize: tamano, lineHeight: 1.35 }}>
       <thead>
         <tr>
           <th style={{ ...celda, borderBottom: "1px solid var(--line-2)" }} />

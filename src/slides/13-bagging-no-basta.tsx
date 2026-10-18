@@ -21,7 +21,7 @@ function TresIguales() {
               ¿la variable fuerte?
             </text>
             <ArbolGlifo x={x} y={90} niveles={3} ancho={150} />
-            <text x={x} y={200} textAnchor="middle" className="mono" fontSize={16} fill="var(--text-3)">
+            <text x={x} y={200} textAnchor="middle" className="mono" fontSize={20} fill="var(--text-3)">
               árbol {i + 1}
             </text>
           </motion.g>
@@ -93,17 +93,17 @@ export default function BaggingNoBasta({ step }: SlideProps) {
                 </div>
                 <div style={{ display: "grid", gap: 16 }}>
                   <div>
-                    <div style={{ fontSize: 21, color: "var(--text-2)", marginBottom: 6 }}>sí · {S.izquierda.n.toLocaleString("es-MX")} personas</div>
+                    <div style={{ fontSize: 26, color: "var(--text-2)", marginBottom: 6 }}>sí · {S.izquierda.n.toLocaleString("es-MX")} personas</div>
                     <BarraClases positivos={S.izquierda.positivos} total={S.izquierda.n} ancho={520} />
                   </div>
                   <div>
-                    <div style={{ fontSize: 21, color: "var(--text-2)", marginBottom: 6 }}>no · {S.derecha.n.toLocaleString("es-MX")} personas</div>
+                    <div style={{ fontSize: 26, color: "var(--text-2)", marginBottom: 6 }}>no · {S.derecha.n.toLocaleString("es-MX")} personas</div>
                     <BarraClases positivos={S.derecha.positivos} total={S.derecha.n} ancho={520} />
                   </div>
                 </div>
               </Reveal>
               <Reveal step={step} at={3} style={{ marginTop: "auto" }}>
-                <p style={{ fontSize: 24, color: "var(--text-2)", lineHeight: 1.45, margin: 0 }}>
+                <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.45, margin: 0 }}>
                   Con la misma raíz, los árboles se parecen: su correlación es <b style={{ color: "var(--text)" }}>ρ = {varianzaEnsamble.bagging.rho.toFixed(3)}</b>.
                   Para bajarla hay que obligarlos a empezar distinto.
                 </p>

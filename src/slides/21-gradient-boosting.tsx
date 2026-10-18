@@ -47,7 +47,7 @@ function Juguete({ m }: { m: number }) {
     .join("");
   return (
     <svg width={W} height={490} style={{ display: "block" }}>
-      <text x={50} y={12} className="mono" fontSize={15} fill="var(--text-3)" letterSpacing="0.1em">
+      <text x={50} y={12} className="mono" fontSize={20} fill="var(--text-3)" letterSpacing="0.1em">
         LOS DATOS Y LA PREDICCIÓN
       </text>
       <line x1={50} x2={W - 16} y1={300} y2={300} stroke="var(--line-2)" />
@@ -58,7 +58,7 @@ function Juguete({ m }: { m: number }) {
           <circle cx={fx(i + 1)} cy={fy(y)} r={8} fill="var(--data)" />
         </g>
       ))}
-      <text x={50} y={332} className="mono" fontSize={15} fill="var(--text-3)" letterSpacing="0.1em">
+      <text x={50} y={332} className="mono" fontSize={20} fill="var(--text-3)" letterSpacing="0.1em">
         LO QUE FALTA (RESIDUOS)
       </text>
       <line x1={50} x2={W - 16} y1={fr(0)} y2={fr(0)} stroke="var(--line-2)" />
@@ -144,18 +144,21 @@ export default function GradientBoosting({ step, active }: SlideProps) {
             <div>
               <Juguete m={mj} />
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                <div style={{ fontSize: 24 }}>
+                <div style={{ fontSize: 26 }}>
                   Árboles sumados{" "}
                   <span className="mono" style={{ color: "var(--red)", fontSize: 30, marginLeft: 8 }}>
                     {mj}
                   </span>
                 </div>
-                <span className="label" style={{ fontSize: 14 }}>
+                <span className="label" style={{ fontSize: 20 }}>
                   Esquema · 10 puntos · ↑ ↓ agrega o quita un árbol
                 </span>
               </div>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 22, fontSize: 24, lineHeight: 1.45, paddingTop: 14 }}>
+            {/* Clic 0: la receta en cuatro pasos. Clic 1: la fórmula toma su lugar (juntas pasan de 60 palabras). */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 22, fontSize: 26, lineHeight: 1.45, paddingTop: 14 }}>
+              {step === 0 && (
+              <>
               <p style={{ margin: 0 }}>
                 <span className="mono" style={{ color: "var(--red)" }}>
                   0
@@ -180,15 +183,19 @@ export default function GradientBoosting({ step, active }: SlideProps) {
                 </span>{" "}
                 · Se suma <b>una fracción</b> de ese árbol a la predicción, y se repite.
               </p>
-              <Reveal step={step} at={1} style={{ borderTop: "1px solid var(--line)", paddingTop: 22, marginTop: 6 }}>
+              </>
+              )}
+              {step === 1 && (
+              <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
                 <div style={{ fontSize: 30 }}>
                   <TeX>{"F_m(x) = F_{m-1}(x) + {\\color{#e5383b}\\nu}\\, h_m(x)"}</TeX>
                 </div>
-                <p style={{ fontSize: 22, color: "var(--text-2)", margin: "14px 0 0" }}>
+                <p style={{ fontSize: 26, color: "var(--text-2)", margin: "14px 0 0" }}>
                   <TeX>{"h_m"}</TeX> aprende <TeX>{"-\\partial L/\\partial F"}</TeX>: con error cuadrático es el residuo <TeX>{"y - F"}</TeX>;
                   con log-loss es <TeX>{"y - p"}</TeX>. <TeX>{"\\nu"}</TeX> es la tasa de aprendizaje (aquí, {TASA_J}).
                 </p>
-              </Reveal>
+              </motion.div>
+              )}
             </div>
           </motion.div>
         ) : (
@@ -204,11 +211,11 @@ export default function GradientBoosting({ step, active }: SlideProps) {
                 <span className="label">punto grande = al modelo le falta mucho con esa persona</span>
                 <LeyendaAdult />
               </div>
-              <div style={{ height: 470, marginTop: 8 }}>
+              <div style={{ height: 410, marginTop: 8 }}>
                 <Adult3DScene estilo={(k) => ({ escala: falta ? 0.45 + 2.4 * Math.abs(falta[k]) : 1 })} />
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "280px 1fr", alignItems: "center", gap: 24 }}>
-                <div style={{ fontSize: 24 }}>
+                <div style={{ fontSize: 26 }}>
                   Árboles sumados{" "}
                   <span className="mono" style={{ color: "var(--red)", fontSize: 30, marginLeft: 8 }}>
                     {ronda}
@@ -216,7 +223,7 @@ export default function GradientBoosting({ step, active }: SlideProps) {
                 </div>
                 <input className="range" type="range" min={0} max={MAX} value={ronda} onChange={(e) => setRonda(Number(e.target.value))} onPointerUp={(e) => e.currentTarget.blur()} />
               </div>
-              <div className="label natural" style={{ fontSize: 15, marginTop: 4 }}>
+              <div className="label natural" style={{ fontSize: 20, marginTop: 4 }}>
                 ↑ ↓ agrega o quita un árbol · ν = {TASA} · árboles de {PROF} niveles · 10,000 personas
               </div>
             </div>
@@ -231,7 +238,7 @@ export default function GradientBoosting({ step, active }: SlideProps) {
               {modelo && (
                 <Lineas
                   ancho={700}
-                  alto={300}
+                  alto={260}
                   x={[0, MAX]}
                   y={[0.4, 0.56]}
                   ticksX={[0, 10, 20, 30, 40, 50]}
@@ -246,7 +253,7 @@ export default function GradientBoosting({ step, active }: SlideProps) {
                 />
               )}
               <Reveal step={step} at={3} style={{ marginTop: 14 }}>
-                <p className="takeaway" style={{ margin: 0, fontSize: 25 }}>
+                <p className="takeaway" style={{ margin: 0, fontSize: 26 }}>
                   Con log-loss, lo que falta es <em>y − p</em>. Cada árbol empuja la probabilidad hacia donde debía estar, un poco cada vez.
                 </p>
               </Reveal>

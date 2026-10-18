@@ -55,7 +55,7 @@ function HazDeHistorias({ haz, t, pares }: { haz: Haz; t: number; pares: boolean
         {[haz.y[0], 0, haz.y[1]].map((v) => (
           <g key={v}>
             <line x1={46} x2={fin} y1={fy(v)} y2={fy(v)} stroke="var(--line)" />
-            <text x={38} y={fy(v) + 5} textAnchor="end" className="mono" fontSize={15} fill="var(--text-3)">
+            <text x={38} y={fy(v) + 5} textAnchor="end" className="mono" fontSize={20} fill="var(--text-3)">
               {v}
             </text>
           </g>
@@ -65,7 +65,7 @@ function HazDeHistorias({ haz, t, pares }: { haz: Haz; t: number; pares: boolean
         ))}
         <motion.line y1={6} y2={H - 30} stroke="var(--red)" strokeWidth={2.5} initial={false} animate={{ x1: fx(t), x2: fx(t) }} transition={{ duration: 0.35 }} />
         {pares && <motion.line y1={6} y2={H - 30} stroke="var(--red-2)" strokeWidth={2} strokeDasharray="5 5" initial={false} animate={{ x1: fx(t + K), x2: fx(t + K) }} transition={{ duration: 0.35 }} />}
-        <text x={fx(t)} y={H - 8} textAnchor="middle" className="mono" fontSize={16} fill="var(--red-2)">
+        <text x={fx(t)} y={H - 8} textAnchor="middle" className="mono" fontSize={20} fill="var(--red-2)">
           t = {t}
         </text>
         {!pares &&
@@ -89,9 +89,9 @@ function PanelHaz({ nombre, t, pares }: { nombre: keyof typeof HACES; t: number;
   );
   return (
     <div>
-      <div style={{ fontSize: 22, marginBottom: 4 }}>{haz.titulo}</div>
+      <div style={{ fontSize: 26, marginBottom: 4 }}>{haz.titulo}</div>
       <HazDeHistorias haz={haz} t={t} pares={pares} />
-      <div className="mono" style={{ fontSize: 19, marginTop: 6, color: "var(--text-2)" }}>
+      <div className="mono" style={{ fontSize: 20, marginTop: 6, color: "var(--text-2)" }}>
         {pares ? (
           <>
             correlación entre los dos cortes: <span style={{ color: "var(--red-2)" }}>{r.toFixed(2)}</span> (teórica {haz.corrTeorica(t).toFixed(2)})
@@ -167,7 +167,7 @@ export default function Estacionariedad({ step, active }: SlideProps) {
                   {i + 1}
                 </span>
                 <span style={{ fontSize: 26, lineHeight: 1.35 }}>{c.texto}</span>
-                <span style={{ fontSize: 25 }}>
+                <span style={{ fontSize: 26 }}>
                   <TeX>{c.tex}</TeX>
                 </span>
               </Reveal>
@@ -190,7 +190,7 @@ export default function Estacionariedad({ step, active }: SlideProps) {
             <PanelHaz nombre="estacionaria" t={t} pares={step === 2} />
             <PanelHaz nombre="paseo" t={t} pares={step === 2} />
           </div>
-          <p style={{ fontSize: 25, lineHeight: 1.4, margin: "20px 0 0" }}>
+          <p style={{ fontSize: 26, lineHeight: 1.4, margin: "20px 0 0" }}>
             {step === 1
               ? "La media y la dispersión se miden a través de las historias, en un mismo instante. En la estacionaria el histograma no cambia al mover el corte; en el paseo se abre cada vez más."
               : `Dos cortes separados ${K} pasos: cada punto es una historia. En la estacionaria el parecido es el mismo en cualquier lugar; en el paseo depende de dónde se corte.`}
@@ -201,7 +201,7 @@ export default function Estacionariedad({ step, active }: SlideProps) {
       {step >= 3 && (
         <motion.div key="caso" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-            <span style={{ fontSize: 25 }}>Solo tenemos una historia: se comparan ventanas de 12 meses. Es un diagnóstico, no una prueba.</span>
+            <span style={{ fontSize: 26 }}>Solo tenemos una historia: se comparan ventanas de 12 meses. Es un diagnóstico, no una prueba.</span>
             <Chips opciones={ESCALAS} valor={escala} onChange={setEscala} />
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 70 }}>

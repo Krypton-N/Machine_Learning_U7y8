@@ -29,6 +29,12 @@ export function pearson(a: number[], b: number[]) {
 /** Error absoluto medio. */
 export const mae = (real: number[], pred: number[]) => real.reduce((s, v, i) => s + Math.abs(v - pred[i]), 0) / real.length;
 
+/** Raíz del error cuadrático medio: pesa más los errores grandes. */
+export const rmse = (real: number[], pred: number[]) => Math.sqrt(real.reduce((s, v, i) => s + (v - pred[i]) ** 2, 0) / real.length);
+
+/** Error porcentual absoluto medio, ya en porcentaje. No sirve si algún valor real se acerca a 0. */
+export const mape = (real: number[], pred: number[]) => (100 * real.reduce((s, v, i) => s + Math.abs((v - pred[i]) / v), 0)) / real.length;
+
 /** Densidad de la normal estándar. */
 export const densidadNormal = (z: number) => Math.exp(-(z * z) / 2) / Math.sqrt(2 * Math.PI);
 
@@ -36,6 +42,12 @@ export const densidadNormal = (z: number) => Math.exp(-(z * z) / 2) / Math.sqrt(
 
 /** x_t − x_{t−k}. El resultado tiene k valores menos; su posición 0 corresponde a la posición k de x. */
 export const diferencia = (x: number[], k = 1) => x.slice(k).map((v, i) => v - x[i]);
+
+/** Lo contrario de diferenciar: a partir de `inicio`, se van sumando los cambios. Devuelve un valor por cambio. */
+export function acumular(cambios: number[], inicio = 0): number[] {
+  let s = inicio;
+  return cambios.map((d) => (s += d));
+}
 
 /** La serie en renglones de m valores (año × mes si m = 12). */
 export const porPeriodo = <T>(x: T[], m = 12): T[][] => Array.from({ length: Math.ceil(x.length / m) }, (_, a) => x.slice(a * m, (a + 1) * m));
@@ -123,6 +135,164 @@ export function pacf(r: number[]): number[] {
 
 /** Banda del 95 % para una autocorrelación cuando no hay ninguna relación entre los valores. */
 export const banda95 = (n: number) => 1.96 / Math.sqrt(n);
+
+/**
+ * Banda de Bartlett: el ancho para la barra k cuando ya se acepta que las k − 1 anteriores no son cero. Se ensancha
+ * con el rezago. Es la que dibuja `plot_acf` de statsmodels; por eso usa el cuantil exacto y no 1.96. La posición 0 vale 0.
+ */
+export function bandaBartlett(r: number[], n: number): number[] {
+  const Z = 1.959963984540054;
+  let suma = 0;
+  return r.map((_, k) => {
+    if (k === 0) return 0;
+    if (k > 1) suma += r[k - 1] ** 2;
+    return Z * Math.sqrt((1 + 2 * suma) / n);
+  });
+}
+
+// ---------- Modelos ARMA: lo que dice la teoría ----------
+
+/**
+ * Eco de un choque: cuánto queda de él k pasos después (ψ₀ = 1) en el modelo
+ * x_t = φ₁x_{t−1} + … + ε_t + θ₁ε_{t−1} + …
+ */
+export function pesosPsi(phis: number[], thetas: number[], K: number): number[] {
+  const psi = [1];
+  for (let k = 1; k <= K; k++) {
+    let v = thetas[k - 1] ?? 0;
+    for (let j = 1; j <= Math.min(k, phis.length); j++) v += phis[j - 1] * psi[k - j];
+    psi.push(v);
+  }
+  return psi;
+}
+
+/**
+ * El mismo modelo escrito como un AR puro: x_t = π₁x_{t−1} + π₂x_{t−2} + … + ε_t. Devuelve [π₁, …, π_K].
+ * Con parte MA la lista no termina nunca; solo se va haciendo chica.
+ */
+export function pesosPi(phis: number[], thetas: number[], K: number): number[] {
+  // a(B) = φ(B) / θ(B), con a₀ = 1; los pesos son −a_k.
+  const a = [1];
+  for (let k = 1; k <= K; k++) {
+    let v = -(phis[k - 1] ?? 0);
+    for (let j = 1; j <= Math.min(k, thetas.length); j++) v -= thetas[j - 1] * a[k - j];
+    a.push(v);
+  }
+  return a.slice(1).map((v) => -v);
+}
+
+/** ACF teórica de 0 a K, a partir del eco: ρ_k = Σψ_jψ_{j+k} / Σψ_j². Exige un modelo estacionario. */
+export function acfTeorica(phis: number[], thetas: number[], K: number): number[] {
+  // Con AR el eco no termina: se suma hasta que ya no aporta (3 000 términos sobran para raíces de hasta 0.99).
+  const N = phis.length ? 3000 : thetas.length;
+  const psi = pesosPsi(phis, thetas, N + K);
+  const gamma = Array.from({ length: K + 1 }, (_, k) => {
+    let s = 0;
+    for (let j = 0; j <= N; j++) s += psi[j] * psi[j + k];
+    return s;
+  });
+  return gamma.map((g) => g / gamma[0]);
+}
+
+// ---------- Modelos ajustados ----------
+
+export type AjusteAR = { c: number; phis: number[]; residuos: number[] };
+
+/** AR(p) por mínimos cuadrados: x_t contra sus p valores anteriores, con constante (lo mismo que `AutoReg`). */
+export function ajustarAR(x: number[], p: number): AjusteAR {
+  const filas = x.slice(p).map((_, i) => Array.from({ length: p }, (_, j) => x[i + p - 1 - j]));
+  const { beta, residuos } = minimosCuadrados(filas, x.slice(p));
+  return { c: beta[0], phis: beta.slice(1), residuos };
+}
+
+/** Los h valores siguientes de un AR: cada uno se calcula con los anteriores, ya sean datos o pronósticos. */
+export function pronosticarAR({ c, phis }: { c: number; phis: number[] }, x: number[], h: number): number[] {
+  const s = [...x];
+  for (let i = 0; i < h; i++) s.push(c + phis.reduce((a, f, j) => a + f * s[s.length - 1 - j], 0));
+  return s.slice(x.length);
+}
+
+/**
+ * MA(1) hacia atrás: como el choque no se ve, se reconstruye. Lo esperado para hoy es θ por el error de ayer, y el
+ * error de hoy es lo observado menos lo esperado. Arranca suponiendo que el error anterior al primero fue 0.
+ */
+export function filtroMA1(w: number[], theta: number) {
+  const prediccion: number[] = [];
+  const choques: number[] = [];
+  w.forEach((v, t) => {
+    prediccion.push(t ? theta * choques[t - 1] : 0);
+    choques.push(v - prediccion[t]);
+  });
+  return { prediccion, choques };
+}
+
+/** Pronóstico ingenuo estacional: cada valor futuro copia al de m pasos antes (el mismo mes del último año). */
+export const ingenuoEstacional = (x: number[], h: number, m = 12) => Array.from({ length: h }, (_, j) => x[x.length - m + (j % m)]);
+
+// ---------- Ljung-Box ----------
+
+/** ln Γ(x) por la aproximación de Lanczos. */
+function lnGamma(x: number): number {
+  const g = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+  if (x < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * x)) - lnGamma(1 - x);
+  const z = x - 1;
+  let a = g[0];
+  for (let i = 1; i < 9; i++) a += g[i] / (z + i);
+  const t = z + 7.5;
+  return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(a);
+}
+
+/** Probabilidad de que una χ² con k grados de libertad pase de x (como `scipy.stats.chi2.sf`). */
+export function colaChi2(x: number, k: number): number {
+  if (x <= 0) return 1;
+  const a = k / 2;
+  const z = x / 2;
+  const factor = Math.exp(-z + a * Math.log(z) - lnGamma(a));
+  if (z < a + 1) {
+    // Serie de la gamma incompleta inferior.
+    let termino = 1 / a;
+    let suma = termino;
+    for (let n = 1; n < 500 && Math.abs(termino) > Math.abs(suma) * 1e-16; n++) {
+      termino *= z / (a + n);
+      suma += termino;
+    }
+    return 1 - factor * suma;
+  }
+  // Fracción continua de la gamma incompleta superior (Lentz).
+  const MIN = 1e-300;
+  let b = z + 1 - a;
+  let c = 1 / MIN;
+  let d = 1 / b;
+  let h = d;
+  for (let i = 1; i < 500; i++) {
+    const an = -i * (i - a);
+    b += 2;
+    d = an * d + b;
+    if (Math.abs(d) < MIN) d = MIN;
+    c = b + an / c;
+    if (Math.abs(c) < MIN) c = MIN;
+    d = 1 / d;
+    const delta = d * c;
+    h *= delta;
+    if (Math.abs(delta - 1) < 1e-16) break;
+  }
+  return factor * h;
+}
+
+/**
+ * Ljung-Box: junta las primeras h autocorrelaciones de los residuos en un solo número, Q. Si los residuos no
+ * tuvieran ningún parecido entre sí, Q sería una χ² con h − `coeficientes` grados de libertad (se restan los
+ * coeficientes que el modelo ya estimó). Lo mismo que `acorr_ljungbox(model_df=coeficientes)`.
+ */
+export function ljungBox(e: number[], h: number, coeficientes = 0) {
+  const n = e.length;
+  const r = acf(e, h);
+  let Q = 0;
+  for (let k = 1; k <= h; k++) Q += r[k] ** 2 / (n - k);
+  Q *= n * (n + 2);
+  const gl = h - coeficientes;
+  return { Q, gl, p: colaChi2(Q, gl) };
+}
 
 // ---------- Mínimos cuadrados ----------
 
@@ -220,6 +390,24 @@ export function simularAR(phi: number, n: number, rand: () => number, sigma = 1)
     x[t] = phi * x[t - 1] + choques[t];
   }
   return { x, choques };
+}
+
+/** n choques normales e independientes: ruido blanco gaussiano. */
+export const choques = (n: number, rand: () => number, sigma = 1) => Array.from({ length: n }, () => sigma * gaussian(rand));
+
+/**
+ * ARMA con choques dados: x_t = φ₁x_{t−1} + … + ε_t + θ₁ε_{t−1} + … Lo que haría falta de antes del primer valor
+ * se toma como 0, así que x₀ = ε₀. Con `calentamiento` se tiran los primeros valores, donde todavía se nota ese arranque.
+ */
+export function simularARMA(phis: number[], thetas: number[], eps: number[], calentamiento = 0): number[] {
+  const x: number[] = [];
+  eps.forEach((e, t) => {
+    let v = e;
+    phis.forEach((f, j) => (v += t - 1 - j >= 0 ? f * x[t - 1 - j] : 0));
+    thetas.forEach((th, j) => (v += t - 1 - j >= 0 ? th * eps[t - 1 - j] : 0));
+    x.push(v);
+  });
+  return x.slice(calentamiento);
 }
 
 /** Paseo aleatorio que sale de 0: la posición i guarda la suma de los primeros i + 1 choques. */

@@ -23,6 +23,11 @@
 
   --sans: "IBM Plex Sans", system-ui, sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Tamaños mínimos de la regla 9 (se proyecta en un cañón). Los mismos números están en deck/tipografia.ts. */
+  --fs-lectura: 26px;
+  --fs-rotulo: 20px;
+  --fs-ayuda: 18px;
 }
 
 * {
@@ -53,6 +58,8 @@ body.idle {
   display: grid;
   place-items: center;
   background: #000;
+  /* En el celular: sin la espera del doble toque (los toques avanzan); acercar con dos dedos sigue funcionando. */
+  touch-action: manipulation;
 }
 
 .stage {
@@ -81,8 +88,8 @@ body.idle {
   justify-content: space-between;
   align-items: baseline;
   font-family: var(--mono);
-  font-size: 17px;
-  letter-spacing: 0.14em;
+  font-size: var(--fs-rotulo);
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--text-3);
   padding-bottom: 16px;
@@ -161,8 +168,8 @@ body.idle {
 
 .label {
   font-family: var(--mono);
-  font-size: 16px;
-  letter-spacing: 0.14em;
+  font-size: var(--fs-rotulo);
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--text-3);
 }
@@ -186,7 +193,7 @@ body.idle {
 
 .recap p {
   margin: 0;
-  font-size: 24px;
+  font-size: var(--fs-lectura);
   line-height: 1.45;
   color: var(--text);
 }
@@ -205,7 +212,7 @@ body.idle {
 
 .chip {
   font-family: var(--mono);
-  font-size: 18px;
+  font-size: var(--fs-rotulo);
   padding: 10px 18px;
   border: 1px solid var(--line-2);
   background: transparent;
@@ -267,8 +274,9 @@ input[type="range"].range::-moz-range-thumb {
   background: var(--red);
 }
 
+/* Junto a texto de 26 px, una fórmula queda en ≈ 29 px (regla 9: fórmulas ≥ 28). */
 .katex {
-  font-size: 1.08em;
+  font-size: 1.1em;
 }
 
 /* ---------- Barra de progreso del deck ---------- */
@@ -312,7 +320,7 @@ input[type="range"].range::-moz-range-thumb {
   left: 112px;
   bottom: 28px;
   font-family: var(--mono);
-  font-size: 15px;
+  font-size: var(--fs-ayuda);
   letter-spacing: 0.08em;
   color: var(--text-3);
   opacity: 0;
@@ -326,7 +334,7 @@ body:not(.idle) .help {
 /* Etiquetas de ejes dentro de escenas 3D */
 .axis3d {
   font-family: var(--mono);
-  font-size: 15px;
+  font-size: var(--fs-rotulo);
   color: var(--text-3);
   white-space: nowrap;
   letter-spacing: 0.04em;
@@ -336,6 +344,20 @@ body:not(.idle) .help {
 .axis3d b {
   color: var(--text-2);
   font-weight: 500;
+}
+
+/* Ayuda para quien expone dentro de una escena 3D: solo se ve mientras se mueve el cursor, como la de las flechas. */
+.pista3d {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  font-size: var(--fs-ayuda);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+body:not(.idle) .pista3d {
+  opacity: 0.75;
 }
 
 /* Etiqueta sin pasar a mayúsculas: obligatorio cuando lleva letras griegas (λ en mayúscula es Λ, otra letra). */

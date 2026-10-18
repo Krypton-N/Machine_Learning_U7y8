@@ -54,7 +54,7 @@ export default function AdaboostPesos({ step, active }: SlideProps) {
               <div style={{ marginTop: 12 }}>
                 <JugueteAdaBoost m={0} />
               </div>
-              <div style={{ fontSize: 21, color: "var(--text-2)", marginTop: 8, lineHeight: 1.4 }}>
+              <div style={{ fontSize: 26, color: "var(--text-2)", marginTop: 8, lineHeight: 1.4 }}>
                 Todos pesan igual. El stump falla {malRonda1} (borde punteado).
               </div>
             </div>
@@ -63,7 +63,7 @@ export default function AdaboostPesos({ step, active }: SlideProps) {
               <div style={{ marginTop: 12 }}>
                 <JugueteAdaBoost m={1} />
               </div>
-              <div style={{ fontSize: 21, color: "var(--text-2)", marginTop: 8, lineHeight: 1.4 }}>
+              <div style={{ fontSize: 26, color: "var(--text-2)", marginTop: 8, lineHeight: 1.4 }}>
                 Los que falló ahora son más grandes. El nuevo corte los atiende.
               </div>
             </Reveal>
@@ -97,7 +97,7 @@ export default function AdaboostPesos({ step, active }: SlideProps) {
                 </Adult3DScene>
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "200px 1fr", alignItems: "center", gap: 24 }}>
-                <div style={{ fontSize: 24 }}>
+                <div style={{ fontSize: 26 }}>
                   Ronda{" "}
                   <span className="mono" style={{ color: "var(--red)", fontSize: 30, marginLeft: 8 }}>
                     {ronda}
@@ -105,7 +105,7 @@ export default function AdaboostPesos({ step, active }: SlideProps) {
                 </div>
                 <input className="range" type="range" min={1} max={MAX} value={ronda} onChange={(e) => setRonda(Number(e.target.value))} onPointerUp={(e) => e.currentTarget.blur()} />
               </div>
-              <div className="label" style={{ fontSize: 14, marginTop: 4 }}>
+              <div className="label" style={{ fontSize: 20, marginTop: 4 }}>
                 ↑ ↓ cambian de ronda
               </div>
             </div>
@@ -130,7 +130,7 @@ export default function AdaboostPesos({ step, active }: SlideProps) {
                   ]}
                 />
               </div>
-              <div className="mono" style={{ fontSize: 19, color: "var(--text-2)", lineHeight: 1.6, marginTop: 6 }}>
+              <div className="mono" style={{ fontSize: 20, color: "var(--text-2)", lineHeight: 1.6, marginTop: 6 }}>
                 <div>
                   error ponderado de este stump: <span style={{ color: "var(--text)" }}>{pct(r.eps)}</span>
                 </div>
@@ -140,7 +140,7 @@ export default function AdaboostPesos({ step, active }: SlideProps) {
                 </div>
               </div>
               <Reveal step={step} at={3} style={{ marginTop: 18 }}>
-                <p className="takeaway" style={{ margin: 0, fontSize: 25 }}>
+                <p className="takeaway" style={{ margin: 0, fontSize: 26 }}>
                   Cada stump es débil, pero <em>se especializa en lo que el comité todavía falla</em>. La región se va armando corte por
                   corte.
                 </p>

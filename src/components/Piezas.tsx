@@ -7,7 +7,7 @@ export function Def({ termino, children, style }: { termino: ReactNode; children
   return (
     <div style={{ borderLeft: "1px solid var(--line-2)", paddingLeft: 26, ...style }}>
       <div style={{ fontSize: 30, fontWeight: 600, letterSpacing: "-0.01em" }}>{termino}</div>
-      <div style={{ fontSize: 24, color: "var(--text-2)", lineHeight: 1.45, marginTop: 8 }}>{children}</div>
+      <div style={{ fontSize: "var(--fs-lectura)", color: "var(--text-2)", lineHeight: 1.45, marginTop: 8 }}>{children}</div>
     </div>
   );
 }
@@ -34,7 +34,7 @@ export function BarraClases({
         <div style={{ width: `${p * 100}%`, background: "var(--red)" }} />
       </div>
       {rotulos && (
-        <div className="mono" style={{ display: "flex", justifyContent: "space-between", fontSize: 16, marginTop: 6, color: "var(--text-3)" }}>
+        <div className="mono" style={{ display: "flex", justifyContent: "space-between", fontSize: "var(--fs-rotulo)", marginTop: 6, color: "var(--text-3)" }}>
           <span>no · {((1 - p) * 100).toFixed(1)} %</span>
           <span style={{ color: "var(--red-2)" }}>gana &gt; 50K · {(p * 100).toFixed(1)} %</span>
         </div>
@@ -80,7 +80,7 @@ export function Dato({ valor, rotulo, rojo }: { valor: ReactNode; rotulo: ReactN
       <div className="mono" style={{ fontSize: 40, lineHeight: 1.1, color: rojo ? "var(--red-2)" : "var(--text)" }}>
         {valor}
       </div>
-      <div style={{ fontSize: 20, color: "var(--text-3)", marginTop: 4 }}>{rotulo}</div>
+      <div data-rotulo style={{ fontSize: 20, color: "var(--text-3)", marginTop: 4 }}>{rotulo}</div>
     </div>
   );
 }

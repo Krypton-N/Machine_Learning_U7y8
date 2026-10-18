@@ -1,6 +1,16 @@
 import { motion } from "motion/react";
 import type { CSSProperties, ReactNode } from "react";
 
+// Aparece con un fundido al montarse. Para los bloques que solo existen en un clic (`{step === 3 && <Entra>…}`):
+// a diferencia de `Reveal`, no ocupa lugar cuando no se ve.
+export function Entra({ children, style }: { children: ReactNode; style?: CSSProperties }) {
+  return (
+    <motion.div style={style} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
+      {children}
+    </motion.div>
+  );
+}
+
 // Aparece cuando la diapositiva llega al paso `at`.
 export function Reveal({
   step,

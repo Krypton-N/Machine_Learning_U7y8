@@ -35,7 +35,7 @@ export default function BoostingIntuicion({ step }: SlideProps) {
               <div style={{ marginTop: 20 }}>
                 <FlujoSecuencial />
               </div>
-              <p style={{ fontSize: 24, color: "var(--text-2)", lineHeight: 1.45, margin: "20px 0 0" }}>
+              <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.45, margin: "20px 0 0" }}>
                 En bagging los árboles no saben nada unos de otros. Aquí cada uno <b style={{ color: "var(--text)" }}>depende de los anteriores</b>.
               </p>
             </div>
@@ -47,15 +47,15 @@ export default function BoostingIntuicion({ step }: SlideProps) {
                 </p>
                 <svg width={260} height={100} style={{ marginTop: 14 }}>
                   <ArbolGlifo x={130} y={14} niveles={1} ancho={180} color="var(--text)" />
-                  <text x={40} y={66} textAnchor="middle" fontSize={19} fill="var(--text-2)">
+                  <text x={40} y={66} textAnchor="middle" fontSize={20} fill="var(--text-2)">
                     sí
                   </text>
-                  <text x={220} y={66} textAnchor="middle" fontSize={19} fill="var(--text-2)">
+                  <text x={220} y={66} textAnchor="middle" fontSize={20} fill="var(--text-2)">
                     no
                   </text>
                 </svg>
               </Recap>
-              <p style={{ fontSize: 24, color: "var(--text-2)", lineHeight: 1.45, margin: "26px 0 0" }}>
+              <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.45, margin: "26px 0 0" }}>
                 Boosting no usa árboles profundos: usa muchos modelos débiles y los va sumando.
               </p>
             </Reveal>
@@ -72,17 +72,17 @@ export default function BoostingIntuicion({ step }: SlideProps) {
               <span className="label">La pregunta que mejor separa</span>
               <div style={{ fontSize: 46, fontWeight: 600, letterSpacing: "-0.02em", margin: "14px 0 30px" }}>
                 ¿{S.nombre_es}: {S.categorias?.izquierda.join(", ")}?
-                <span style={{ fontSize: 24, fontWeight: 400, color: "var(--text-3)", marginLeft: 16 }}>(¿es esposo?)</span>
+                <span style={{ fontSize: 26, fontWeight: 400, color: "var(--text-3)", marginLeft: 16 }}>(¿es esposo?)</span>
               </div>
               <div style={{ display: "grid", gap: 26 }}>
                 <div>
-                  <div style={{ fontSize: 24, marginBottom: 8 }}>
+                  <div style={{ fontSize: 26, marginBottom: 8 }}>
                     Sí <span style={{ color: "var(--text-3)" }}>· {S.izquierda.n.toLocaleString("es-MX")} personas</span>
                   </div>
                   <BarraClases positivos={S.izquierda.positivos} total={S.izquierda.n} ancho={760} alto={26} />
                 </div>
                 <div>
-                  <div style={{ fontSize: 24, marginBottom: 8 }}>
+                  <div style={{ fontSize: 26, marginBottom: 8 }}>
                     No <span style={{ color: "var(--text-3)" }}>· {S.derecha.n.toLocaleString("es-MX")} personas</span>
                   </div>
                   <BarraClases positivos={S.derecha.positivos} total={S.derecha.n} ancho={760} alto={26} />
@@ -108,13 +108,16 @@ export default function BoostingIntuicion({ step }: SlideProps) {
                     <div className="mono" style={{ fontSize: 44, color: "var(--red-2)" }}>
                       {pct(S.accuracy_cv)}
                     </div>
-                    <div style={{ fontSize: 20, color: "var(--text-3)" }}>aciertos del stump</div>
+                    <div data-rotulo style={{ fontSize: 20, color: "var(--text-3)" }}>aciertos del stump</div>
                   </div>
                   <div>
                     <div className="mono" style={{ fontSize: 44 }}>{pct(S.accuracy_mayoritaria)}</div>
-                    <div style={{ fontSize: 20, color: "var(--text-3)" }}>aciertos de decir siempre "no"</div>
+                    <div data-rotulo style={{ fontSize: 20, color: "var(--text-3)" }}>aciertos de decir siempre "no"</div>
                   </div>
                 </div>
+              </Reveal>
+              {/* La conclusión va en su propio clic: con los dos números ya son más de 40 palabras. */}
+              <Reveal step={step} at={4}>
                 <p className="takeaway" style={{ margin: 0, fontSize: 27 }}>
                   Un stump solo casi no sirve. La pregunta es <em>cómo sumar muchos</em> para que sí sirvan.
                 </p>

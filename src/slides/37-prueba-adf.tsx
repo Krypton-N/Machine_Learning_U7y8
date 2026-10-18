@@ -42,7 +42,7 @@ type Marca = { id: string; nombre: string; tau: number; p: number };
 function HistogramaNulo({ marcas, activa }: { marcas: Marca[]; activa?: string }) {
   const W = 1000;
   const H = 400;
-  const m = { l: 20, r: 20, t: 92, b: 44 };
+  const m = { l: 20, r: 20, t: 92, b: 66 };
   const fx = linear(DOMINIO, [m.l, W - m.r]);
   const paso = NULO.bordes[1] - NULO.bordes[0];
   const densidad = NULO.conteos.map((c) => c / (NULO.R * paso));
@@ -64,20 +64,20 @@ function HistogramaNulo({ marcas, activa }: { marcas: Marca[]; activa?: string }
         );
       })}
       <path d={normal} fill="none" stroke="var(--text-3)" strokeWidth={2} strokeDasharray="5 6" />
-      <text x={fx(1.15)} y={fy(densidadNormal(1.15)) - 10} className="mono" fontSize={15} fill="var(--text-3)">
+      <text x={fx(1.15)} y={fy(densidadNormal(1.15)) - 10} className="mono" fontSize={20} fill="var(--text-3)">
         una normal, para comparar
       </text>
       <line x1={m.l} x2={W - m.r} y1={fy(0)} y2={fy(0)} stroke="var(--line-2)" />
       {Array.from({ length: DOMINIO[1] - DOMINIO[0] + 1 }, (_, i) => DOMINIO[0] + i).map((v) => (
-        <text key={v} x={fx(v)} y={H - m.b + 26} textAnchor="middle" className="mono" fontSize={15} fill="var(--text-3)">
+        <text key={v} x={fx(v)} y={H - m.b + 26} textAnchor="middle" className="mono" fontSize={20} fill="var(--text-3)">
           {v}
         </text>
       ))}
-      <text x={W - m.r} y={H - 2} textAnchor="end" className="mono" fontSize={15} fill="var(--text-2)">
+      <text x={W - m.r} y={H - 2} textAnchor="end" className="mono" fontSize={20} fill="var(--text-2)">
         τ
       </text>
       <line x1={fx(CRITICO)} x2={fx(CRITICO)} y1={m.t - 6} y2={fy(0)} stroke="var(--text)" strokeDasharray="3 5" />
-      <text x={fx(CRITICO) - 8} y={fy(0) - 150} textAnchor="end" className="mono" fontSize={16} fill="var(--text)">
+      <text x={fx(CRITICO) + 10} y={fy(0) - 150} textAnchor="start" className="mono" fontSize={20} fill="var(--text)">
         5 % queda a la izquierda de {CRITICO.toFixed(2)}
       </text>
       {marcas.map((k, i) => {
@@ -90,7 +90,7 @@ function HistogramaNulo({ marcas, activa }: { marcas: Marca[]; activa?: string }
           <motion.g key={k.id} initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
             <line x1={x} x2={x} y1={yTexto + 6} y2={fy(0)} stroke={on ? "var(--red-2)" : "var(--text-2)"} strokeWidth={on ? 2.5 : 1.5} />
             <circle cx={x} cy={fy(0)} r={on ? 7 : 5} fill={on ? "var(--red)" : "var(--text-2)"} />
-            <text x={x + (fuera ? 0 : 6)} y={yTexto} textAnchor={fuera || k.tau < 1.5 ? "start" : "end"} className="mono" fontSize={16} fill={on ? "var(--red-2)" : "var(--text-2)"}>
+            <text x={x + (fuera ? 0 : 6)} y={yTexto} textAnchor={fuera || k.tau < 1.5 ? "start" : "end"} className="mono" fontSize={20} fill={on ? "var(--red-2)" : "var(--text-2)"}>
               {fuera ? "← " : ""}
               {k.nombre}: τ = {k.tau.toFixed(2)}
             </text>
@@ -108,7 +108,7 @@ const SENSIBLES = adf.sensibilidad.bic.filter((b) => {
   // Filas cuyo veredicto al 5 % cambia si los rezagos se eligen con otro criterio.
   return base.p < 0.05 !== b.p < 0.05;
 });
-const VISIBLES: Record<number, number> = { 3: 2, 4: 4, 5: 5, 6: 5 };
+const VISIBLES: Record<number, number> = { 3: 2, 4: 4, 5: 5, 6: 5, 7: 5 };
 const MAX_REZAGOS = Math.max(...FILAS.map((f) => f.rezagos));
 
 function Mini({ id }: { id: Transformacion }) {
@@ -149,7 +149,7 @@ export default function PruebaADF({ step }: SlideProps) {
             <span className="label">Esquema · simulado con los mismos {N_ESQ} choques</span>
             {ESQUEMAS.map((s) => (
               <div key={s.id} style={{ marginTop: 12 }}>
-                <div style={{ fontSize: 22, color: "var(--text-2)" }}>{s.titulo}</div>
+                <div style={{ fontSize: 26, color: "var(--text-2)" }}>{s.titulo}</div>
                 <SeriesChart ancho={1000} alto={200} series={[{ id: s.id, valores: s.x, color: s.color, grosor: 2 }]} sinMarcasX lineasH={[{ y: 0 }]} margen={{ l: 50, r: 10, t: 10, b: 12 }} />
               </div>
             ))}
@@ -158,7 +158,7 @@ export default function PruebaADF({ step }: SlideProps) {
             <div style={{ fontSize: 32 }}>
               <TeX>{"x_t = \\phi\\, x_{t-1} + \\varepsilon_t"}</TeX>
             </div>
-            <p style={{ fontSize: 22, color: "var(--text-2)", lineHeight: 1.4, margin: "8px 0 22px" }}>
+            <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.4, margin: "8px 0 22px" }}>
               ε es el choque de cada paso: al azar, de media 0. φ dice cuánto del valor anterior se conserva.
             </p>
             <span className="label">efecto de un choque de +1, después de k pasos</span>
@@ -179,7 +179,7 @@ export default function PruebaADF({ step }: SlideProps) {
                 />
               ))}
             </div>
-            <p style={{ fontSize: 23, lineHeight: 1.4, margin: "12px 0 0" }}>
+            <p style={{ fontSize: 26, lineHeight: 1.4, margin: "12px 0 0" }}>
               Con φ menor que 1 el choque se desvanece. Con <span style={{ color: "var(--red-2)" }}>φ = 1 se queda para siempre:</span> nada jala a la serie de
               regreso.
             </p>
@@ -192,7 +192,7 @@ export default function PruebaADF({ step }: SlideProps) {
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 30 }}>
             {ESQUEMAS.map((s) => (
               <div key={s.id}>
-                <div style={{ fontSize: 21, color: "var(--text-2)", minHeight: 58 }}>{s.id === "ar1" ? "La que regresa a su media" : "La de raíz unitaria"}</div>
+                <div style={{ fontSize: 26, color: "var(--text-2)", minHeight: 58 }}>{s.id === "ar1" ? "La que regresa a su media" : "La de raíz unitaria"}</div>
                 <Dispersion
                   x={s.ayer}
                   y={s.cambio}
@@ -207,11 +207,11 @@ export default function PruebaADF({ step }: SlideProps) {
                 <div className="mono" style={{ fontSize: 20, marginTop: 6 }}>
                   pendiente <span style={{ color: "var(--red-2)" }}>{s.pendiente.toFixed(2)}</span> · τ = {s.tau.toFixed(2)}
                 </div>
-                <div style={{ fontSize: 20, color: "var(--text-2)" }}>{s.id === "ar1" ? "Si ayer estuvo arriba, hoy baja." : "El nivel de ayer no dice a dónde va."}</div>
+                <div style={{ fontSize: 26, color: "var(--text-2)" }}>{s.id === "ar1" ? "Si ayer estuvo arriba, hoy baja." : "El nivel de ayer no dice a dónde va."}</div>
               </div>
             ))}
           </div>
-          <div style={{ fontSize: 24, lineHeight: 1.42 }}>
+          <div style={{ fontSize: 26, lineHeight: 1.42 }}>
             <p style={{ margin: 0 }}>ADF hace esta regresión y pregunta: ¿la pendiente es negativa?</p>
             <div style={{ fontSize: 28, margin: "16px 0" }}>
               <TeX>{"\\Delta x_t = \\alpha + \\gamma\\, x_{t-1} + \\varepsilon_t,\\quad \\gamma = \\phi - 1"}</TeX>
@@ -241,7 +241,7 @@ export default function PruebaADF({ step }: SlideProps) {
             {step === 2 ? (
               <div>
                 <Recap title="p-valor">
-                  <p style={{ fontSize: 22 }}>
+                  <p style={{ fontSize: 26 }}>
                     Supón que H₀ es cierta. El p-valor es qué tan raro sería un resultado como el que salió: aquí, el área a la izquierda de τ. Si p &lt; 0.05,
                     sería muy raro y se rechaza H₀. Si no, no se rechaza, que no es lo mismo que probarla.
                   </p>
@@ -253,15 +253,15 @@ export default function PruebaADF({ step }: SlideProps) {
                     </div>
                   ))}
                 </div>
-                <p style={{ fontSize: 21, color: "var(--text-2)", lineHeight: 1.4, marginTop: 14 }}>
+                <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.4, marginTop: 14 }}>
                   τ no sigue una normal: su 5 % está en {CRITICO.toFixed(2)}, no en −1.64.
                 </p>
               </div>
-            ) : (
+            ) : step <= 6 ? (
               <div>
-                <table style={{ borderCollapse: "collapse", width: "100%" }}>
+                <table data-rotulo style={{ borderCollapse: "collapse", width: "100%" }}>
                   <thead>
-                    <tr className="mono" style={{ fontSize: 14, color: "var(--text-3)", textAlign: "right" }}>
+                    <tr className="mono" style={{ fontSize: 20, color: "var(--text-3)", textAlign: "right" }}>
                       <th style={{ ...celda, textAlign: "left" }}>serie</th>
                       <th style={celda} />
                       <th style={celda}>τ</th>
@@ -275,7 +275,7 @@ export default function PruebaADF({ step }: SlideProps) {
                       const rechaza = f.p < 0.05;
                       return (
                         <motion.tr key={f.id} initial={{ opacity: 0, x: 12 }} animate={{ opacity: 1, x: 0 }} onClick={() => setElegida(f.id)} style={{ cursor: "pointer", background: on ? "var(--red-dim)" : "transparent" }}>
-                          <td style={{ ...celda, fontSize: 22 }}>{TRANSFORMACIONES[f.id].nombre}</td>
+                          <td style={{ ...celda, fontSize: 26 }}>{TRANSFORMACIONES[f.id].nombre}</td>
                           <td style={celda}>
                             <Mini id={f.id} />
                           </td>
@@ -291,23 +291,24 @@ export default function PruebaADF({ step }: SlideProps) {
                     })}
                   </tbody>
                 </table>
-                <p style={{ fontSize: 18, color: "var(--text-3)", lineHeight: 1.4, margin: "10px 0 0" }}>
+                {step < 6 && (
+                <p style={{ fontSize: 26, color: "var(--text-3)", lineHeight: 1.4, margin: "10px 0 0" }}>
                   statsmodels, con sus valores por omisión. La «A» es de aumentada: agrega a la regresión cambios pasados (aquí, hasta {MAX_REZAGOS}).
                 </p>
-                <Reveal step={step} at={6} style={{ marginTop: 12, fontSize: 21, lineHeight: 1.4 }}>
+                )}
+                <Reveal step={step} at={6} style={{ marginTop: 12, fontSize: 26, lineHeight: 1.4 }}>
                   <span style={{ color: "var(--red-2)" }}>Ojo:</span> {SENSIBLES.map((b) => TRANSFORMACIONES[b.id as Transformacion].nombre).join(" y ")} están en la frontera.
                   Con otro criterio para elegir los cambios pasados dan p = {SENSIBLES.map((b) => fmtP(b.p)).join(" y ")}. Y no rechazar no prueba que haya raíz
                   unitaria.
                 </Reveal>
               </div>
-            )}
-          </div>
-          <Reveal step={step} at={6} style={{ marginTop: 6 }}>
-            <p className="takeaway" style={{ margin: 0, fontSize: 25 }}>
+            ) : (
+            <motion.p className="takeaway" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ margin: 0, paddingTop: 40, fontSize: 28 }}>
               Con logaritmo y las dos diferencias, <em>ADF descarta la raíz unitaria.</em> Que haga falta la diferencia estacional no lo dice ADF: lo dicen el patrón
               por mes de la 36 y los picos cada 12 de la 39. Para pasajeros: d = 1 y D = 1.
-            </p>
-          </Reveal>
+            </motion.p>
+            )}
+          </div>
         </motion.div>
       )}
     </SlideFrame>

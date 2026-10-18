@@ -90,7 +90,7 @@ export default function Diferenciar({ step }: SlideProps) {
     >
       {step <= 2 && (
         <motion.div key="concepto" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: "grid", gridTemplateColumns: "650px 1fr", gap: 60 }}>
-          <div style={{ fontSize: 25, lineHeight: 1.42 }}>
+          <div style={{ fontSize: 26, lineHeight: 1.42 }}>
             {step === 0 && (
               <div style={{ display: "grid", gap: 22 }}>
                 {[
@@ -160,7 +160,7 @@ export default function Diferenciar({ step }: SlideProps) {
             <div style={{ fontSize: 30, margin: "16px 0 8px" }}>
               <TeX>{T.tex}</TeX>
             </div>
-            <p style={{ fontSize: 22, lineHeight: 1.4, margin: 0, minHeight: 124 }}>{LECTURA[tr]}</p>
+            <p style={{ fontSize: 26, lineHeight: 1.4, margin: 0, minHeight: 124 }}>{LECTURA[tr]}</p>
             <SeriesChart
               ancho={686}
               alto={200}
@@ -176,11 +176,11 @@ export default function Diferenciar({ step }: SlideProps) {
               ]}
               margen={{ l: 58, r: 14, t: 26, b: 34 }}
             />
-            <div className="label" style={{ fontSize: 14 }}>
+            <div className="label" style={{ fontSize: 20 }}>
               en rojo: la media de los primeros y de los últimos {VENTANA_MEDIA} meses
             </div>
             <Reveal step={step} at={6} style={{ marginTop: 12 }}>
-              <p className="takeaway" style={{ margin: 0, fontSize: 24 }}>
+              <p className="takeaway" style={{ margin: 0, fontSize: 26 }}>
                 Logaritmo, una diferencia y una diferencia estacional. <em>¿Ya es estacionaria?</em> Eso se pone a prueba en la 37.
               </p>
             </Reveal>

@@ -1,3 +1,4 @@
+import { R, margenIzq } from "../deck/tipografia";
 import { motion } from "motion/react";
 import { ejeQueCubre, linear } from "../lib/scale";
 import { pasoRedondo } from "./SeriesChart";
@@ -40,9 +41,10 @@ export function Dispersion({
   transicion?: number;
   fmt?: (v: number) => string;
 }) {
-  const m = { l: 62, r: 16, t: 14, b: 50 };
   const ex = dominioX ? ejeQueCubre(dominioX, pasoRedondo(dominioX[1] - dominioX[0], 4)) : ejeQueCubre(x, pasoRedondo(Math.max(...x) - Math.min(...x) || 1, 4));
   const ey = dominioY ? ejeQueCubre(dominioY, pasoRedondo(dominioY[1] - dominioY[0], 4)) : ejeQueCubre(y, pasoRedondo(Math.max(...y) - Math.min(...y) || 1, 4));
+  // Márgenes con lugar para los números de los ejes y sus rótulos a tamaño de rótulo.
+  const m = { l: margenIzq(62, ey.ticks.map(fmt), 10), r: 16, t: rotuloY ? R + 10 : 14, b: rotuloX ? 2 * R + 18 : R + 18 };
   const fx = linear(ex.dominio, [m.l, ancho - m.r]);
   const fy = linear(ey.dominio, [alto - m.b, m.t]);
   const linea = recta === "diagonal" ? { a: 0, b: 1, color: undefined } : recta;
@@ -55,7 +57,7 @@ export function Dispersion({
       {ey.ticks.map((t) => (
         <g key={`y${t}`}>
           <line x1={m.l} x2={ancho - m.r} y1={fy(t)} y2={fy(t)} stroke="var(--line)" />
-          <text x={m.l - 10} y={fy(t) + 5} textAnchor="end" className="mono" fontSize={15} fill="var(--text-3)">
+          <text x={m.l - 10} y={fy(t) + 7} textAnchor="end" className="mono" fontSize={R} fill="var(--text-3)">
             {fmt(t)}
           </text>
         </g>
@@ -63,18 +65,18 @@ export function Dispersion({
       {ex.ticks.map((t) => (
         <g key={`x${t}`}>
           <line x1={fx(t)} x2={fx(t)} y1={m.t} y2={alto - m.b} stroke="var(--line)" />
-          <text x={fx(t)} y={alto - m.b + 24} textAnchor="middle" className="mono" fontSize={15} fill="var(--text-3)">
+          <text x={fx(t)} y={alto - m.b + R + 6} textAnchor="middle" className="mono" fontSize={R} fill="var(--text-3)">
             {fmt(t)}
           </text>
         </g>
       ))}
       {rotuloX && (
-        <text x={ancho - m.r} y={alto - 4} textAnchor="end" className="mono" fontSize={15} fill="var(--text-2)">
+        <text x={ancho - m.r} y={alto - 4} textAnchor="end" className="mono" fontSize={R} fill="var(--text-2)">
           {rotuloX}
         </text>
       )}
       {rotuloY && (
-        <text x={m.l} y={m.t - 2} className="mono" fontSize={15} fill="var(--text-2)">
+        <text x={m.l} y={m.t - 2} className="mono" fontSize={R} fill="var(--text-2)">
           {rotuloY}
         </text>
       )}

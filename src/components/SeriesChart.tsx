@@ -1,5 +1,9 @@
+import { anchoMono } from "../deck/tipografia";
 import { ejeQueCubre } from "../lib/scale";
 import { Lineas, type Banda, type Marca, type Segmento } from "./Lineas";
+
+/** Franja entre dos curvas, como la banda de un pronóstico: un límite inferior y uno superior por posición. */
+export type Franja = { id: string; desde: number; abajo: number[]; arriba: number[]; color?: string; opacidad?: number };
 
 // Una serie de tiempo dibujada con `Lineas`: aquí solo se arma el eje del tiempo y la escala vertical.
 // La posición 0 es el primer dato; con el eje de años, la posición 0 es enero de `anioInicial`.
@@ -43,6 +47,7 @@ export function SeriesChart({
   rotuloX,
   rotuloY,
   bandas,
+  franjas,
   segmentos,
   marcas,
   cursor,
@@ -71,6 +76,8 @@ export function SeriesChart({
   rotuloX?: string;
   rotuloY?: string;
   bandas?: Banda[];
+  /** No cuentan para calcular el eje vertical: si se salen, se recortan. */
+  franjas?: Franja[];
   segmentos?: Segmento[];
   marcas?: Marca[];
   /** Posición del cursor vertical. */
@@ -92,13 +99,19 @@ export function SeriesChart({
   const dominio = y ?? auto.dominio;
   const marcasY = ticksY ?? (y ? ejeQueCubre(y, pasoY ?? pasoRedondo(y[1] - y[0])).ticks : auto.ticks);
 
+  // Las marcas del tiempo se espacian para que sus números, a tamaño de rótulo, no se encimen.
+  const pxPorPosicion = (ancho - 100) / Math.max(1, x[1] - x[0]);
+  const cadaA = Math.max(cadaAnios, Math.ceil((anchoMono("1949") + 16) / (12 * pxPorPosicion)));
+  const cadaI = Math.max(1, Math.ceil((anchoMono(String(Math.floor(x[1]) + 1)) + 16) / pxPorPosicion));
   const ticksX = sinMarcasX
     ? []
     : eje === "años"
       ? Array.from({ length: Math.floor(x[1] / 12) + 1 }, (_, a) => a)
-          .filter((a) => a * 12 >= x[0] && a % cadaAnios === 0)
+          .filter((a) => a * 12 >= x[0] && a % cadaA === 0)
           .map((a) => ({ v: a * 12, texto: String(anioInicial + a) }))
-      : Array.from({ length: Math.floor(x[1]) - Math.ceil(x[0]) + 1 }, (_, j) => Math.ceil(x[0]) + j).map((i) => ({ v: i, texto: String(i + 1) }));
+      : Array.from({ length: Math.floor(x[1]) - Math.ceil(x[0]) + 1 }, (_, j) => Math.ceil(x[0]) + j)
+          .filter((i) => (i + 1) % cadaI === 0 || i === Math.ceil(x[0]))
+          .map((i) => ({ v: i, texto: String(i + 1) }));
 
   return (
     <Lineas
@@ -113,6 +126,7 @@ export function SeriesChart({
       rotuloX={rotuloX}
       rotuloY={rotuloY}
       bandas={bandas}
+      areas={franjas?.map((f) => ({ id: f.id, color: f.color, opacidad: f.opacidad, pts: f.abajo.map((v, j): [number, number, number] => [f.desde + j, v, f.arriba[j]]) }))}
       segmentos={segmentos}
       marcas={marcas}
       lineaV={cursor}

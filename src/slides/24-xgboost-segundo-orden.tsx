@@ -25,7 +25,7 @@ function TablaHoja() {
   return (
     <table className="mono" style={{ borderCollapse: "collapse", fontSize: 22, textAlign: "right" }}>
       <thead>
-        <tr style={{ color: "var(--text-3)", fontSize: 15 }}>
+        <tr style={{ color: "var(--text-3)", fontSize: 20 }}>
           <th style={th}>persona</th>
           <th style={th}>y</th>
           <th style={th}>p</th>
@@ -44,7 +44,7 @@ function TablaHoja() {
           </tr>
         ))}
         <tr style={{ color: "var(--text)" }}>
-          <td style={{ ...td, textAlign: "left", fontFamily: "var(--sans)", color: "var(--text-2)" }} colSpan={3}>
+          <td data-rotulo style={{ ...td, textAlign: "left", fontFamily: "var(--sans)", color: "var(--text-2)" }} colSpan={3}>
             suma en la hoja
           </td>
           <td style={td}>G = {G.toFixed(2).replace("-", "−")}</td>
@@ -66,13 +66,13 @@ function PreguntaConFaltante() {
       <line x1={250} y1={66} x2={110} y2={170} stroke="var(--line-2)" strokeWidth={1.5} />
       <line x1={370} y1={66} x2={510} y2={170} stroke="var(--line-2)" strokeWidth={1.5} />
       <motion.path d="M310,66 C310,130 200,120 130,170" fill="none" stroke="var(--red)" strokeWidth={2.5} strokeDasharray="6 5" initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ duration: 0.9, delay: 0.3 }} />
-      <text x={150} y={110} textAnchor="end" className="mono" fontSize={17} fill="var(--text-3)">
+      <text x={150} y={110} textAnchor="end" className="mono" fontSize={20} fill="var(--text-3)">
         sí
       </text>
-      <text x={470} y={110} className="mono" fontSize={17} fill="var(--text-3)">
+      <text x={470} y={110} className="mono" fontSize={20} fill="var(--text-3)">
         no
       </text>
-      <text x={310} y={150} textAnchor="middle" className="mono" fontSize={17} fill="var(--red-2)">
+      <text x={310} y={150} textAnchor="middle" className="mono" fontSize={20} fill="var(--red-2)">
         falta el dato
       </text>
       <rect x={30} y={172} width={180} height={54} fill="var(--panel)" stroke="var(--line-2)" />
@@ -97,6 +97,8 @@ const BARRAS = [
 ];
 
 export default function XgboostSegundoOrden({ step }: SlideProps) {
+  // 0–1: curvatura · 2–4: faltantes (el esquema; la tabla de Adult; a dónde manda a quien le falta) · 5–6: velocidad.
+  const faltantes = step >= 2 && step <= 4;
   return (
     <SlideFrame
       section={["U7 · Ensambles", "D. Boosting"]}
@@ -106,7 +108,7 @@ export default function XgboostSegundoOrden({ step }: SlideProps) {
       lede={
         step <= 1
           ? "Gradient Boosting solo mira la pendiente de la pérdida. XGBoost mira también la curvatura, y con eso calcula directo cuánto debe valer cada hoja."
-          : step === 2
+          : faltantes
             ? `En Adult, a ${faltan("workclass")} personas les falta el tipo de empleo y a ${faltan("occupation")} la ocupación. XGBoost no necesita que se rellenen.`
             : `Los mismos 300 árboles de 6 niveles sobre las ${adultMuestra.n.toLocaleString("es-MX")} personas, cronometrados en una misma computadora.`
       }
@@ -121,7 +123,7 @@ export default function XgboostSegundoOrden({ step }: SlideProps) {
                   paso: donde la curva es muy cerrada hay que dar pasos cortos.
                 </p>
               </Recap>
-              <div style={{ fontSize: 24, color: "var(--text-2)", lineHeight: 1.5 }}>
+              <div style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.5 }}>
                 Con log-loss, para cada persona:
                 <div style={{ fontSize: 28, color: "var(--text)", margin: "10px 0" }}>
                   <TeX>{"g = p - y \\quad\\text{(pendiente)} \\qquad h = p\\,(1-p) \\quad\\text{(curvatura)}"}</TeX>
@@ -145,13 +147,13 @@ export default function XgboostSegundoOrden({ step }: SlideProps) {
                   con λ = 1: w* = {(-G).toFixed(2)} / {(H + 1).toFixed(2)} = <span style={{ color: "var(--red-2)" }}>{w(1).toFixed(3)}</span>
                 </div>
               </div>
-              <p style={{ fontSize: 21, color: "var(--text-2)", lineHeight: 1.45, margin: "14px 0 0" }}>
+              <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.45, margin: "14px 0 0" }}>
                 Tres de las cuatro ganan más de 50K y el modelo les da menos probabilidad de la debida: la hoja suma un valor positivo. λ lo encoge.
               </p>
             </Reveal>
           </motion.div>
         )}
-        {step === 2 && (
+        {faltantes && (
           <motion.div
             key="faltantes"
             style={{ display: "grid", gridTemplateColumns: "640px 1fr", gap: 80 }}
@@ -164,16 +166,18 @@ export default function XgboostSegundoOrden({ step }: SlideProps) {
               <div style={{ marginTop: 20 }}>
                 <PreguntaConFaltante />
               </div>
-              <p style={{ fontSize: 22, color: "var(--text-2)", lineHeight: 1.45, margin: "10px 0 0" }}>
+              <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.45, margin: "10px 0 0" }}>
                 Al buscar el corte se prueban las dos opciones (faltantes a la izquierda o a la derecha) y se queda la que más reduce la
                 pérdida.
               </p>
             </div>
             <div>
+              {step === 3 && (
+              <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
               <span className="label">XGBoost en Adult · validación cruzada de 5 pliegues</span>
-              <table style={{ borderCollapse: "collapse", width: "100%", fontSize: 23, marginTop: 14 }}>
+              <table style={{ borderCollapse: "collapse", width: "100%", fontSize: 26, marginTop: 14 }}>
                 <thead>
-                  <tr className="mono" style={{ color: "var(--text-3)", fontSize: 15, textAlign: "right" }}>
+                  <tr className="mono" style={{ color: "var(--text-3)", fontSize: 20, textAlign: "right" }}>
                     <th style={{ textAlign: "left", fontWeight: 400, paddingBottom: 10 }} />
                     <th style={{ fontWeight: 400, paddingBottom: 10 }}>ACIERTOS</th>
                     <th style={{ fontWeight: 400, paddingBottom: 10 }}>F1-MACRO</th>
@@ -202,29 +206,35 @@ export default function XgboostSegundoOrden({ step }: SlideProps) {
                   ))}
                 </tbody>
               </table>
-              <p style={{ fontSize: 21, color: "var(--text-3)", lineHeight: 1.45, margin: "12px 0 24px" }}>
+              <p style={{ fontSize: 26, color: "var(--text-3)", lineHeight: 1.45, margin: "12px 0 24px" }}>
                 La diferencia ({((F.comparacion.nativo.acc - F.comparacion.como_categoria.acc) * 100).toFixed(2)} puntos) es menor que la
                 variación entre pliegues (±{(F.comparacion.nativo.acc_desv * 100).toFixed(2)}): aquí da igual. La ventaja es no tener que
                 decidir cómo rellenar.
               </p>
+              </motion.div>
+              )}
+              {step === 4 && (
+              <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
               <span className="label">A dónde manda a quien le falta el dato</span>
-              <div style={{ display: "grid", gap: 8, marginTop: 12, fontSize: 21 }}>
+              <div style={{ display: "grid", gap: 8, marginTop: 12, fontSize: 26 }}>
                 {F.direccion.map((d) => (
                   <div key={d.variable} style={{ display: "grid", gridTemplateColumns: "190px 1fr 250px", alignItems: "center", gap: 16 }}>
                     <span style={{ color: "var(--text-2)" }}>{d.nombre_es}</span>
                     <div style={{ display: "flex", height: 14, background: "var(--data-dim)" }}>
                       <div style={{ width: `${(d.faltante_a_la_izquierda / d.cortes) * 100}%`, background: "var(--red)" }} />
                     </div>
-                    <span className="mono" style={{ fontSize: 16, color: "var(--text-3)" }}>
+                    <span className="mono" style={{ fontSize: 20, color: "var(--text-3)" }}>
                       izquierda en {d.faltante_a_la_izquierda} de {d.cortes} preguntas
                     </span>
                   </div>
                 ))}
               </div>
+              </motion.div>
+              )}
             </div>
           </motion.div>
         )}
-        {step >= 3 && (
+        {step >= 5 && (
           <motion.div
             key="tiempos"
             style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 90 }}
@@ -237,7 +247,7 @@ export default function XgboostSegundoOrden({ step }: SlideProps) {
               <div style={{ display: "grid", gap: 24, marginTop: 22 }}>
                 {BARRAS.map((b) => (
                   <div key={b.nombre}>
-                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 24, marginBottom: 8 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", fontSize: 26, marginBottom: 8 }}>
                       <span>{b.nombre}</span>
                       <span className="mono" style={{ color: b.rojo ? "var(--red-2)" : "var(--text)" }}>
                         {b.s.toFixed(2)} s
@@ -255,7 +265,7 @@ export default function XgboostSegundoOrden({ step }: SlideProps) {
                 ))}
               </div>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 22, fontSize: 24, color: "var(--text-2)", lineHeight: 1.45, paddingTop: 30 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 22, fontSize: 26, color: "var(--text-2)", lineHeight: 1.45, paddingTop: 30 }}>
               <p style={{ margin: 0 }}>
                 <b style={{ color: "var(--text)" }}>Con un solo núcleo ya es {Math.round(T.gradient_boosting_sklearn / T.xgboost_un_nucleo)} veces más rápido.</b>{" "}
                 Antes de buscar cortes, agrupa los valores de cada variable en unos cuantos intervalos y prueba solo esos.
@@ -264,7 +274,7 @@ export default function XgboostSegundoOrden({ step }: SlideProps) {
                 Con {T.nucleos} núcleos gana otras {(T.xgboost_un_nucleo / T.xgboost_todos).toFixed(1)} veces: la búsqueda del mejor corte se
                 reparte entre núcleos. Los árboles siguen construyéndose <b style={{ color: "var(--text)" }}>uno después de otro</b>.
               </p>
-              <Reveal step={step} at={4} style={{ marginTop: "auto" }}>
+              <Reveal step={step} at={6} style={{ marginTop: "auto" }}>
                 <p className="takeaway" style={{ margin: 0, fontSize: 26 }}>
                   XGBoost es Gradient Boosting <em>con freno, con curvatura y hecho para ir rápido</em>.
                 </p>

@@ -43,9 +43,9 @@ function Plegable({ titulo, serie, pico, doblada }: { titulo: string; serie: num
   const columnas = new Set(pico.map((t) => t % PERIODO)).size;
   return (
     <div>
-      <div style={{ fontSize: 23 }}>{titulo}</div>
+      <div style={{ fontSize: 26 }}>{titulo}</div>
       <CalendarGrid matriz={porPeriodo(serie, PERIODO)} ancho={810} alto={320} modo="puntos" fase={doblada ? "tabla" : "serie"} resaltar={aCelda(pico)} etiquetasCols={COLUMNAS} formato={(v) => v.toFixed(0)} />
-      <div className="mono" style={{ fontSize: 19, color: "var(--text-2)", marginTop: 6 }}>
+      <div className="mono" style={{ fontSize: 20, color: "var(--text-2)", marginTop: 6 }}>
         {doblada ? (
           <>
             los picos caen en <span style={{ color: "var(--red-2)" }}>{columnas === 1 ? "una sola columna" : `${columnas} columnas distintas`}</span>
@@ -115,20 +115,20 @@ export default function CicloYRuido({ step }: SlideProps) {
                 etiquetasFilas={ANIOS.map(String)}
                 etiquetasCols={MESES}
                 formato={(v) => `${v > 0 ? "+" : ""}${v.toFixed(0)}`}
-                tamano={19}
+                tamano={20}
               />
             </div>
           </div>
           <div style={{ paddingTop: 34 }}>
-            <p style={{ fontSize: 25, lineHeight: 1.42, margin: 0 }}>
+            <p style={{ fontSize: 26, lineHeight: 1.42, margin: 0 }}>
               Los picos (con contorno) forman una franja vertical en {MESES_PICO.map((i) => MESES[i]).join(" y ")}. Y {SIEMPRE_ARRIBA.join(", ")} quedan por arriba de
               la media de su año los {ANIOS.length} años: <span style={{ color: "var(--red-2)" }}>eso es estacionalidad.</span>
             </p>
-            <p style={{ fontSize: 23, lineHeight: 1.42, color: "var(--text-2)", marginTop: 26 }}>
+            <p style={{ fontSize: 26, lineHeight: 1.42, color: "var(--text-2)", marginTop: 26 }}>
               ¿Y un ciclo? Con {ANIOS.length} años no se puede distinguir de la tendencia. Por eso los métodos clásicos los estiman juntos, como una sola
               «tendencia-ciclo».
             </p>
-            <p style={{ fontSize: 19, color: "var(--text-3)", marginTop: 26 }}>Esta tabla solo describe: todavía no separa nada.</p>
+            <p style={{ fontSize: 26, color: "var(--text-3)", marginTop: 26 }}>Esta tabla solo describe: todavía no separa nada.</p>
           </div>
         </motion.div>
       )}
@@ -140,7 +140,7 @@ export default function CicloYRuido({ step }: SlideProps) {
               <div style={{ fontSize: 44 }}>
                 <TeX>{"y_t = T_t + S_t + R_t"}</TeX>
               </div>
-              <div style={{ fontSize: 23, color: "var(--text-2)", lineHeight: 1.5, marginTop: 20 }}>
+              <div style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.5, marginTop: 20 }}>
                 T: tendencia (incluye al ciclo) · S: estacionalidad · R: ruido.
                 <br />O un producto en lugar de una suma: se decide en la 34.
               </div>
@@ -148,7 +148,7 @@ export default function CicloYRuido({ step }: SlideProps) {
             <div>
               <span className="label">Esquema · ruido simulado</span>
               <SeriesChart ancho={900} alto={210} series={[{ id: "ruido", valores: RUIDO, color: "var(--data)", grosor: 2 }]} y={[-3, 3]} ticksY={[-3, 0, 3]} sinMarcasX lineasH={[{ y: 0 }]} />
-              <p style={{ fontSize: 22, color: "var(--text-2)", lineHeight: 1.4, margin: "8px 0 0" }}>
+              <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.4, margin: "8px 0 0" }}>
                 Si el ruido de verdad no tiene patrón, lo mejor que se puede pronosticar de él es su promedio. La 41 lo define con cuidado.
               </p>
             </div>

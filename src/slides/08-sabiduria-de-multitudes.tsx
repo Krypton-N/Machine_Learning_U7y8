@@ -119,7 +119,7 @@ export default function SabiduriaDeMultitudes({ step }: SlideProps) {
                   <Boton onClick={() => setSemilla((s) => s + 1)}>otra votación</Boton>
                 </div>
               </div>
-              <p style={{ fontSize: 24, color: "var(--text-2)", lineHeight: 1.5, margin: 0, borderTop: "1px solid var(--line)", paddingTop: 24 }}>
+              <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.5, margin: 0, borderTop: "1px solid var(--line)", paddingTop: 24 }}>
                 Cada uno falla 4 de cada 10 veces, pero rara vez fallan <b style={{ color: "var(--text)" }}>todos a la vez</b>. Eso
                 solo vale si se equivocan por su cuenta.
               </p>
@@ -161,7 +161,7 @@ export default function SabiduriaDeMultitudes({ step }: SlideProps) {
               <div style={{ fontSize: 28 }}>
                 <TeX block>{"\\mathrm{Var}(\\text{promedio}) = {\\color{#e5383b}\\rho\\,\\sigma^2} + \\frac{(1-\\rho)\\,\\sigma^2}{B}"}</TeX>
               </div>
-              <p style={{ fontSize: 23, color: "var(--text-2)", lineHeight: 1.5, margin: 0 }}>
+              <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.5, margin: 0 }}>
                 <TeX>{"\\sigma^2"}</TeX> es la varianza de un modelo y <TeX>{"\\rho"}</TeX>, qué tanto se parecen dos de ellos. Agregar
                 modelos achica el segundo término, pero el primero <b style={{ color: "var(--text)" }}>no baja nunca</b>.
               </p>
@@ -204,7 +204,7 @@ export default function SabiduriaDeMultitudes({ step }: SlideProps) {
                 <Dato valor={V.var_promedio[V.var_promedio.length - 1].toFixed(3)} rotulo={`varianza con ${varianzaEnsamble.B} árboles`} />
                 <Dato valor={`${(V.accuracy[0] * 100).toFixed(1)} → ${pct(V.accuracy[V.accuracy.length - 1])}`} rotulo="aciertos: 1 árbol → 50" />
               </div>
-              <p style={{ fontSize: 20, color: "var(--text-3)", margin: 0, lineHeight: 1.45 }}>
+              <p style={{ fontSize: 26, color: "var(--text-3)", margin: 0, lineHeight: 1.45 }}>
                 ρ = covarianza media entre dos árboles ÷ varianza media de un árbol. Los árboles se parecen porque crecen de los mismos datos.
               </p>
               <Reveal step={step} at={3} style={{ marginTop: "auto" }}>

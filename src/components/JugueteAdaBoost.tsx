@@ -65,7 +65,7 @@ export function JugueteAdaBoost({ m, lado = 440, mostrarNuevos = false }: { m: n
               strokeWidth={3}
               strokeDasharray="5 4"
             />
-            <text x={fx(x[0])} y={fy(x[1]) + 5} textAnchor="middle" className="mono" fontSize={14} fill="#0c0c0d">
+            <text x={fx(x[0])} y={fy(x[1]) + 7} textAnchor="middle" className="mono" fontSize={20} fill="#0c0c0d">
               {i + 1}
             </text>
           </g>

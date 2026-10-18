@@ -4,7 +4,6 @@ import { Adult3DScene, LeyendaAdult } from "../components/Adult3DScene";
 import { ArbolGlifo } from "../components/FlujoEnsamble";
 import { Lineas } from "../components/Lineas";
 import { Chips, Def, pct } from "../components/Piezas";
-import { Reveal } from "../components/Reveal";
 import { REJILLA, VoteVolume3D } from "../components/VoteVolume3D";
 import { SlideFrame } from "../deck/SlideFrame";
 import type { SlideProps } from "../deck/types";
@@ -33,8 +32,8 @@ type Estado = {
 
 function Corte({ suma, b }: { suma: Float32Array | undefined; b: number }) {
   const W = 660;
-  const H = 200;
-  const m = { l: 56, b: 30 };
+  const H = 340;
+  const m = { l: 56, b: 34 };
   const cw = (W - m.l) / EDADES.length;
   const ch = (H - m.b) / EDUS.length;
   return (
@@ -48,12 +47,12 @@ function Corte({ suma, b }: { suma: Float32Array | undefined; b: number }) {
         )}
       <rect x={m.l} y={0} width={W - m.l} height={H - m.b} fill="none" stroke="var(--line-2)" />
       {[20, 30, 40, 50, 60, 70, 80, 90].map((e) => (
-        <text key={e} x={m.l + (e - bounds3d.min[0] + 0.5) * cw} y={H - 10} textAnchor="middle" className="mono" fontSize={14} fill="var(--text-3)">
+        <text key={e} x={m.l + (e - bounds3d.min[0] + 0.5) * cw} y={H - 6} textAnchor={e === 90 ? "end" : "middle"} className="mono" fontSize={20} fill="var(--text-3)">
           {e}
         </text>
       ))}
       {[4, 8, 12, 16].map((e) => (
-        <text key={e} x={m.l - 10} y={H - m.b - (e - 0.5) * ch + 5} textAnchor="end" className="mono" fontSize={14} fill="var(--text-3)">
+        <text key={e} x={m.l - 10} y={H - m.b - (e - 0.5) * ch + 5} textAnchor="end" className="mono" fontSize={20} fill="var(--text-3)">
           {e}
         </text>
       ))}
@@ -70,7 +69,7 @@ function Votacion() {
       <text x={85} y={156} textAnchor="middle" fontSize={20} fill="var(--text)">
         una persona
       </text>
-      <text x={85} y={180} textAnchor="middle" className="mono" fontSize={14} fill="var(--text-3)">
+      <text x={85} y={180} textAnchor="middle" className="mono" fontSize={20} fill="var(--text-3)">
         nueva
       </text>
       {votos.map((v, i) => {
@@ -89,7 +88,7 @@ function Votacion() {
       })}
       <motion.g initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}>
         <rect x={570} y={122} width={180} height={78} fill="var(--red-dim)" stroke="var(--red)" />
-        <text x={660} y={154} textAnchor="middle" className="mono" fontSize={16} fill="var(--text-2)">
+        <text x={660} y={154} textAnchor="middle" className="mono" fontSize={20} fill="var(--text-2)">
           2 de 3
         </text>
         <text x={660} y={184} textAnchor="middle" fontSize={26} fontWeight={600} fill="var(--text)">
@@ -140,7 +139,7 @@ export default function Agregacion({ step, active }: SlideProps) {
     return () => clearTimeout(id);
   }, [active, caso]);
 
-  // Cada clic sube el tamaño del bosque: 1 → 10 → 100. Los botones permiten regresar.
+  // Cada clic sube el tamaño del bosque: 1 → 10 → 100 (y se queda en 100). Los botones permiten regresar.
   useEffect(() => setElegido(null), [step]);
   const pedido = elegido ?? (step <= 1 ? 1 : step === 2 ? 10 : 100);
   const b = Math.min(pedido, estado.n);
@@ -212,39 +211,56 @@ export default function Agregacion({ step, active }: SlideProps) {
                 <LeyendaAdult />
               </div>
             </div>
+            {/* Derecha, un clic por idea: el corte 2D (1, 10 y 100 árboles), luego la curva de error y al final la conclusión. */}
             <div>
-              <span className="label">Corte a {HORAS} h · más rojo = más árboles dicen sí</span>
-              <div style={{ marginTop: 10 }}>
-                <Corte suma={b ? estado.sumaCorte[b - 1] : undefined} b={b} />
-              </div>
-              <div className="label" style={{ display: "flex", justifyContent: "space-between", marginTop: 4 }}>
-                <span>↑ años de educación · edad →</span>
-                <span style={{ color: "var(--red-2)" }}>error de prueba: {b ? pct(estado.errores[b - 1]) : "…"}</span>
-              </div>
-              <div style={{ marginTop: 10 }}>
-                <Lineas
-                  ancho={700}
-                  alto={170}
-                  x={[1, B_MAX]}
-                  y={[0.21, 0.26]}
-                  ticksX={[1, 10, 25, 50, 75, 100]}
-                  ticksY={[0.22, 0.24, 0.26]}
-                  fmtY={(v) => `${Math.round(v * 100)}%`}
-                  rotuloX="árboles en el bosque"
-                  margen={{ l: 56, r: 22, t: 10, b: 44 }}
-                  series={[{ id: "err", pts: estado.errores.map((e, i): [number, number] => [i + 1, e]), color: "var(--red)", grosor: 2.5 }]}
-                  marcas={b ? [{ x: b, y: estado.errores[b - 1] }] : []}
-                />
-              </div>
-              <Reveal step={step} at={4} style={{ marginTop: 6 }}>
-                <p className="takeaway" style={{ margin: 0, fontSize: 22 }}>
-                  Mismo tipo de árbol, <em>menos varianza</em>: los escalones de un solo árbol se difuminan en una frontera gradual.
-                </p>
-                <p style={{ fontSize: 18, color: "var(--text-3)", margin: "6px 0 0", lineHeight: 1.35 }}>
-                  Con solo 3 variables, un árbol de profundidad 3 falla menos ({pct(prof3)}): bagging no arregla la falta de información. Con
-                  las {adultMuestra.columnas.length} variables sí gana: {pct(acc("Árbol de decisión"))} → {pct(acc("Bagging"))} de aciertos.
-                </p>
-              </Reveal>
+              {step <= 3 && (
+                <motion.div key="corte" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                  <span className="label">Corte a {HORAS} h · más rojo = más árboles dicen sí</span>
+                  <div style={{ marginTop: 10 }}>
+                    <Corte suma={b ? estado.sumaCorte[b - 1] : undefined} b={b} />
+                  </div>
+                  <div className="label" style={{ marginTop: 8 }}>
+                    ↑ años de educación · edad →
+                  </div>
+                  <div className="mono" style={{ fontSize: 26, color: "var(--red-2)", marginTop: 26 }}>
+                    error de prueba: {b ? pct(estado.errores[b - 1]) : "…"}
+                  </div>
+                </motion.div>
+              )}
+              {step === 4 && (
+                <motion.div key="curva" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                  <span className="label">Error de prueba contra árboles en el bosque</span>
+                  <div style={{ marginTop: 14 }}>
+                    <Lineas
+                      ancho={700}
+                      alto={360}
+                      x={[1, B_MAX]}
+                      y={[0.21, 0.26]}
+                      ticksX={[1, 10, 25, 50, 75, 100]}
+                      ticksY={[0.22, 0.24, 0.26]}
+                      fmtY={(v) => `${Math.round(v * 100)}%`}
+                      rotuloX="árboles en el bosque"
+                      margen={{ l: 56, r: 22, t: 10, b: 44 }}
+                      series={[{ id: "err", pts: estado.errores.map((e, i): [number, number] => [i + 1, e]), color: "var(--red)", grosor: 2.5 }]}
+                      marcas={b ? [{ x: b, y: estado.errores[b - 1] }] : []}
+                    />
+                  </div>
+                  <div className="mono" style={{ fontSize: 26, color: "var(--red-2)", marginTop: 18 }}>
+                    error de prueba con {b} {b === 1 ? "árbol" : "árboles"}: {b ? pct(estado.errores[b - 1]) : "…"}
+                  </div>
+                </motion.div>
+              )}
+              {step >= 5 && (
+                <motion.div key="cierre" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} style={{ paddingTop: 30 }}>
+                  <p className="takeaway" style={{ margin: 0 }}>
+                    Mismo tipo de árbol, <em>menos varianza</em>: los escalones de un solo árbol se difuminan en una frontera gradual.
+                  </p>
+                  <p style={{ fontSize: 26, color: "var(--text-3)", margin: "28px 0 0", lineHeight: 1.4 }}>
+                    Con solo 3 variables, un árbol de profundidad 3 falla menos ({pct(prof3)}): bagging no arregla la falta de información. Con
+                    las {adultMuestra.columnas.length} variables sí gana: {pct(acc("Árbol de decisión"))} → {pct(acc("Bagging"))} de aciertos.
+                  </p>
+                </motion.div>
+              )}
             </div>
           </motion.div>
         )}

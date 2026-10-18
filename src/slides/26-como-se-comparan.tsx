@@ -56,7 +56,7 @@ function MatrizEsquema({ dice, m, resaltar }: { dice: number[] | null; m: Matriz
       ))}
       {["sí gana > 50K", "no"].map((t, f) => (
         <g key={t}>
-          <text x={0} y={MY + f * CH + CH / 2 - 8} className="mono" fontSize={15} fill="var(--text-3)">
+          <text x={0} y={MY + f * CH + CH / 2 - 8} className="mono" fontSize={20} fill="var(--text-3)">
             en realidad
           </text>
           <text x={0} y={MY + f * CH + CH / 2 + 20} fontSize={21} fill={f ? "var(--text-2)" : "var(--red-2)"}>
@@ -79,7 +79,7 @@ function MatrizEsquema({ dice, m, resaltar }: { dice: number[] | null; m: Matriz
               animate={{ fill: on ? "rgba(229, 56, 59, 0.14)" : "rgba(23, 23, 26, 1)", stroke: on ? "#e5383b" : "#3a3a41" }}
               strokeWidth={on ? 2 : 1}
             />
-            <text x={x + 20} y={y + CH - 22} className="mono" fontSize={17} fill="var(--text-3)">
+            <text x={x + 20} y={y + CH - 22} className="mono" fontSize={20} fill="var(--text-3)">
               {k.sigla} · {k.texto}
             </text>
             <motion.text x={x + CW - 24} y={y + CH - 20} textAnchor="end" className="mono" fontSize={34} fill="var(--text)" initial={false} animate={{ opacity: dice ? 1 : 0 }}>
@@ -91,10 +91,10 @@ function MatrizEsquema({ dice, m, resaltar }: { dice: number[] | null; m: Matriz
       {REAL.map((r, i) => (
         <motion.g key={i} initial={false} animate={{ x: pos[i].x, y: pos[i].y }} transition={{ duration: 0.8, delay: i * 0.06, ease: [0.2, 0.7, 0.2, 1] }}>
           <circle r={21} fill={r ? "var(--red)" : "var(--data-dim)"} />
-          <text y={6} textAnchor="middle" className="mono" fontSize={16} fill="var(--text)">
+          <text y={6} textAnchor="middle" className="mono" fontSize={20} fill="var(--text)">
             {i + 1}
           </text>
-          <motion.text y={48} textAnchor="middle" className="mono" fontSize={16} fill={DICE[i] ? "var(--text)" : "var(--text-3)"} initial={false} animate={{ opacity: dice ? 0 : 1 }}>
+          <motion.text y={48} textAnchor="middle" className="mono" fontSize={20} fill={DICE[i] ? "var(--text)" : "var(--text-3)"} initial={false} animate={{ opacity: dice ? 0 : 1 }}>
             dice {DICE[i] ? "sí" : "no"}
           </motion.text>
         </motion.g>
@@ -108,7 +108,7 @@ function FilaMetrica({ nombre, pregunta, cuenta, valor }: { nombre: string; preg
     <div style={{ display: "grid", gridTemplateColumns: "1fr auto", alignItems: "center", gap: 24, borderTop: "1px solid var(--line)", padding: "13px 0" }}>
       <div>
         <div style={{ fontSize: 28, fontWeight: 600, letterSpacing: "-0.01em" }}>{nombre}</div>
-        <div style={{ fontSize: 22, color: "var(--text-2)", marginTop: 2 }}>{pregunta}</div>
+        <div style={{ fontSize: 26, color: "var(--text-2)", marginTop: 2 }}>{pregunta}</div>
       </div>
       <div className="mono" style={{ fontSize: 26, textAlign: "right", whiteSpace: "nowrap" }}>
         <span style={{ color: "var(--text-3)" }}>{cuenta} = </span>
@@ -131,9 +131,9 @@ const COMPARA: [string, (m: Matriz) => string][] = [
 function TablaDosModelos() {
   const td = { padding: "10px 0", borderTop: "1px solid var(--line)" } as const;
   return (
-    <table style={{ borderCollapse: "collapse", width: "100%", fontSize: 24 }}>
+    <table style={{ borderCollapse: "collapse", width: "100%", fontSize: 26 }}>
       <thead>
-        <tr className="mono" style={{ color: "var(--text-3)", fontSize: 15, textAlign: "right" }}>
+        <tr className="mono" style={{ color: "var(--text-3)", fontSize: 20, textAlign: "right" }}>
           <th />
           <th style={{ fontWeight: 400, paddingBottom: 10, width: 170 }}>EL DE ANTES</th>
           <th style={{ fontWeight: 400, paddingBottom: 10, width: 200, color: "var(--red-2)" }}>SIEMPRE DICE NO</th>
@@ -167,7 +167,7 @@ const RECETA_ADULT = [`${N} personas de Adult`, `${matrices.modelos.length} mode
 function MatrizReal({ m }: { m: Matriz }) {
   const n = total(m);
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "150px 1fr 1fr", gap: 8, alignItems: "stretch" }}>
+    <div data-rotulo style={{ display: "grid", gridTemplateColumns: "150px 1fr 1fr", gap: 8, alignItems: "stretch" }}>
       <span />
       {["el modelo dijo sí", "el modelo dijo no"].map((t) => (
         <div key={t} style={{ textAlign: "center", fontSize: 20, color: "var(--text-2)", paddingBottom: 4 }}>
@@ -177,10 +177,10 @@ function MatrizReal({ m }: { m: Matriz }) {
       {[0, 1].map((f) => (
         <Fragment key={f}>
           <div style={{ alignSelf: "center" }}>
-            <div className="mono" style={{ fontSize: 15, color: "var(--text-3)" }}>
+            <div className="mono" style={{ fontSize: 20, color: "var(--text-3)" }}>
               en realidad
             </div>
-            <div style={{ fontSize: 21, color: f ? "var(--text-2)" : "var(--red-2)" }}>{f ? "no" : "sí gana > 50K"}</div>
+            <div style={{ fontSize: 26, color: f ? "var(--text-2)" : "var(--red-2)" }}>{f ? "no" : "sí gana > 50K"}</div>
           </div>
           {CASILLAS.filter((k) => k.f === f).map((k) => (
             <div key={k.clave} style={{ background: "var(--panel)", border: "1px solid var(--line-2)", padding: "14px 20px 12px", height: 138, display: "flex", flexDirection: "column" }}>
@@ -188,7 +188,7 @@ function MatrizReal({ m }: { m: Matriz }) {
                 <span className="mono" style={{ fontSize: 40, lineHeight: 1 }}>
                   {m[k.clave].toLocaleString("es-MX")}
                 </span>
-                <span className="mono" style={{ fontSize: 18, color: "var(--text-3)" }}>
+                <span className="mono" style={{ fontSize: 20, color: "var(--text-3)" }}>
                   {pct(m[k.clave] / n)}
                 </span>
               </div>
@@ -196,7 +196,7 @@ function MatrizReal({ m }: { m: Matriz }) {
               <div style={{ height: 8, background: "var(--line)", marginTop: 14 }}>
                 <motion.div initial={false} animate={{ width: `${(m[k.clave] / n) * 100}%` }} transition={{ duration: 0.5 }} style={{ height: 8, background: f ? "var(--data-dim)" : "var(--red)" }} />
               </div>
-              <span className="mono" style={{ fontSize: 16, color: "var(--text-3)", marginTop: "auto" }}>
+              <span className="mono" style={{ fontSize: 20, color: "var(--text-3)", marginTop: "auto" }}>
                 {k.sigla} · {k.texto}
               </span>
             </div>
@@ -219,7 +219,7 @@ function TiraPliegues({ titulo, valores }: { titulo: string; valores: number[] }
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", width: ancho }}>
-        <span style={{ fontSize: 22, color: "var(--text-2)" }}>{titulo} en cada pliegue</span>
+        <span style={{ fontSize: 26, color: "var(--text-2)" }}>{titulo} en cada pliegue</span>
         <span className="mono" style={{ fontSize: 24 }}>
           {m.toFixed(3)} <span style={{ color: "var(--red-2)" }}>± {d.toFixed(3)}</span>
         </span>
@@ -229,7 +229,7 @@ function TiraPliegues({ titulo, valores }: { titulo: string; valores: number[] }
         {ticks.map((t) => (
           <g key={t.toFixed(3)}>
             <line x1={fx(t)} x2={fx(t)} y1={24} y2={36} stroke="var(--line-2)" />
-            <text x={fx(t)} y={64} textAnchor="middle" className="mono" fontSize={14} fill="var(--text-3)">
+            <text x={fx(t)} y={64} textAnchor="middle" className="mono" fontSize={20} fill="var(--text-3)">
               {t.toFixed(3)}
             </text>
           </g>
@@ -248,8 +248,10 @@ const RESALTAR: Record<number, readonly Clave[]> = { 2: ["vp", "vn"], 3: ["vp", 
 
 export default function ComoSeComparan({ step }: SlideProps) {
   const [modelo, setModelo] = useState(MODELOS[0].valor);
-  const caso = step >= 7;
-  const siempreNo = step === 6;
+  // 0–5: la matriz y las métricas · 6–7: el modelo que siempre dice "no" (definición y tabla; luego la lectura) ·
+  // 8: la matriz real · 9: los pliegues · 10: la conclusión.
+  const caso = step >= 8;
+  const siempreNo = step === 6 || step === 7;
   const real = matrices.modelos.find((m) => m.modelo === modelo)!;
   const M = real.todas;
 
@@ -299,17 +301,21 @@ export default function ComoSeComparan({ step }: SlideProps) {
                 </motion.div>
               ) : (
                 <motion.div key="dos" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.2 } }} style={{ paddingTop: 34 }}>
+                  {step === 6 && (
                   <Def termino="F1-macro">
                     Se calcula el F1 dos veces: buscando a quienes sí ganan más de 50K y buscando a quienes no. Luego se promedian, y las
                     dos clases pesan igual aunque una sea minoría.
                   </Def>
+                  )}
                   <div style={{ marginTop: 26 }}>
                     <TablaDosModelos />
                   </div>
-                  <p style={{ fontSize: 23, color: "var(--text-2)", lineHeight: 1.45, margin: "18px 0 0" }}>
+                  {step === 7 && (
+                  <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.45, margin: "18px 0 0" }}>
                     Los dos aciertan en {MA.vp + MA.vn} de {total(MA)}. El segundo no encontró a nadie:{" "}
                     <b style={{ color: "var(--text)" }}>accuracy no los distingue, F1-macro sí.</b>
-                  </p>
+                  </motion.p>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -329,21 +335,23 @@ export default function ComoSeComparan({ step }: SlideProps) {
                   <Dato valor={recall(M).toFixed(3)} rotulo="recall" />
                   <Dato rojo valor={f1Macro(M).toFixed(3)} rotulo="F1-macro" />
                 </div>
-                <Reveal step={step} at={8} style={{ marginTop: 24, display: "grid", gap: 8 }}>
+                {step === 9 && (
+                <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} style={{ marginTop: 24, display: "grid", gap: 8 }}>
                   <TiraPliegues titulo="Accuracy" valores={real.pliegues.map(exactitud)} />
                   <TiraPliegues titulo="F1-macro" valores={real.pliegues.map(f1Macro)} />
-                  <p style={{ fontSize: 21, color: "var(--text-2)", lineHeight: 1.4, margin: 0 }}>
+                  <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.4, margin: 0 }}>
                     Cada punto es un pliegue: el mismo modelo, examinado con otra quinta parte de las personas. El{" "}
                     <b style={{ color: "var(--red-2)" }}>±</b> dice cuánto cambia el resultado al cambiar a quiénes les toca ser el examen.
                   </p>
-                </Reveal>
+                </motion.div>
+                )}
+                {step >= 10 && (
+                  <motion.p className="takeaway" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} style={{ margin: "30px 0 0", fontSize: 28 }}>
+                    Con clases desbalanceadas, <em>accuracy sola engaña</em>. Por eso lo que sigue se compara con F1-macro, y cada número lleva su ±.
+                  </motion.p>
+                )}
               </div>
             </div>
-            <Reveal step={step} at={9} style={{ marginTop: 16 }}>
-              <p className="takeaway" style={{ margin: 0, fontSize: 26 }}>
-                Con clases desbalanceadas, <em>accuracy sola engaña</em>. Por eso lo que sigue se compara con F1-macro, y cada número lleva su ±.
-              </p>
-            </Reveal>
           </motion.div>
         )}
       </AnimatePresence>

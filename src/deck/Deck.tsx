@@ -78,6 +78,50 @@ export function Deck({ slides }: { slides: SlideDef[] }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [next, prev, slides]);
 
+  // En el celular: un toque en la mitad izquierda regresa y en la derecha avanza; deslizar el dedo hace lo mismo
+  // (hacia la izquierda avanza, como pasar una hoja). Se ignoran los toques sobre botones y otros controles, los
+  // gestos que empiezan en una escena 3D (ahí arrastrar gira la cámara), los de dos dedos y los que se hacen con la
+  // pantalla acercada (ahí deslizar sirve para recorrerla).
+  useEffect(() => {
+    const INTERACTIVO = "button, a, input, select, textarea, label, canvas, [role='button'], .chip";
+    let inicio: { x: number; y: number; t: number; valido: boolean } | null = null;
+    const acercada = () => (window.visualViewport?.scale ?? 1) > 1.01;
+    const onStart = (e: TouchEvent) => {
+      const objetivo = e.target instanceof Element ? e.target : null;
+      inicio =
+        e.touches.length === 1
+          ? { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now(), valido: !objetivo?.closest(INTERACTIVO) && !acercada() }
+          : null;
+    };
+    const onEnd = (e: TouchEvent) => {
+      const i = inicio;
+      inicio = null;
+      if (!i || !i.valido || e.touches.length > 0) return;
+      const fin = e.changedTouches[0];
+      const dx = fin.clientX - i.x;
+      const dy = fin.clientY - i.y;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > 1.5 * Math.abs(dy)) {
+        if (dx < 0) next();
+        else prev();
+      } else if (Math.abs(dx) < 12 && Math.abs(dy) < 12 && Date.now() - i.t < 500) {
+        if (fin.clientX < window.innerWidth / 2) prev();
+        else next();
+      }
+    };
+    const onCancel = () => (inicio = null);
+    window.addEventListener("touchstart", onStart, { passive: true });
+    window.addEventListener("touchend", onEnd);
+    window.addEventListener("touchcancel", onCancel);
+    return () => {
+      window.removeEventListener("touchstart", onStart);
+      window.removeEventListener("touchend", onEnd);
+      window.removeEventListener("touchcancel", onCancel);
+    };
+  }, [next, prev]);
+
+  // En pantallas táctiles la ayuda habla de toques, no de flechas.
+  const [tactil] = useState(() => window.matchMedia?.("(pointer: coarse)").matches ?? false);
+
   // El cursor se esconde tras 2 s sin moverse para no estorbar en la proyección.
   useEffect(() => {
     let t = 0;
@@ -118,7 +162,7 @@ export function Deck({ slides }: { slides: SlideDef[] }) {
           ))}
         </div>
       )}
-      <div className="help">← → avanzar · F pantalla completa</div>
+      <div className="help">{tactil ? "toca a la izquierda o a la derecha · o desliza" : "← → avanzar · F pantalla completa"}</div>
       <div className="progress">
         <div style={{ width: `${(slide.num / TOTAL_PLANNED) * 100}%` }} />
       </div>

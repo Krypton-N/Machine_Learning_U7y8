@@ -165,7 +165,7 @@ export function Adult3DScene({
 /** Leyenda de colores de las personas, para poner sobre la escena. */
 export function LeyendaAdult() {
   return (
-    <span className="label" style={{ display: "flex", gap: 20 }}>
+    <span className="label" style={{ display: "flex", gap: 20, whiteSpace: "nowrap", flexShrink: 0 }}>
       <span style={{ color: "var(--red-2)" }}>● gana &gt; 50K</span>
       <span>● no</span>
     </span>

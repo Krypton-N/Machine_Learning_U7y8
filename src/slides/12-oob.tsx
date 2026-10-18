@@ -34,7 +34,7 @@ function MatrizOOB({ resaltar }: { resaltar: boolean }) {
   return (
     <svg width={x0 + NA * cw + 10} height={y0 + NP * ch + 70} style={{ display: "block" }}>
       {ESQ.vio.map((_, a) => (
-        <text key={a} x={x0 + a * cw + cw / 2} y={28} textAnchor="middle" className="mono" fontSize={16} fill="var(--text-3)">
+        <text key={a} x={x0 + a * cw + cw / 2} y={28} textAnchor="middle" className="mono" fontSize={20} fill="var(--text-3)">
           árbol {a + 1}
         </text>
       ))}
@@ -59,7 +59,7 @@ function MatrizOOB({ resaltar }: { resaltar: boolean }) {
                     stroke={vio ? "var(--line-2)" : "var(--red)"}
                     strokeWidth={juez ? 2.5 : 1}
                   />
-                  <text x={x0 + a * cw + cw / 2} y={y0 + p * ch + 31} textAnchor="middle" className="mono" fontSize={15} fill={vio ? "var(--text-3)" : "var(--red-2)"}>
+                  <text x={x0 + a * cw + cw / 2} y={y0 + p * ch + 31} textAnchor="middle" className="mono" fontSize={20} fill={vio ? "var(--text-3)" : "var(--red-2)"}>
                     {juez ? (ESQ.voto[a][p] ? "vota sí" : "vota no") : vio ? "la vio" : "no la vio"}
                   </text>
                 </g>
@@ -164,11 +164,14 @@ export default function Oob({ step }: SlideProps) {
                 <Dato rojo valor={`${d.segundos_un_ajuste} s`} rotulo="lo que tardó el OOB" />
                 <Dato valor={`${d.segundos_cv} s`} rotulo="lo que tardó la validación cruzada" />
               </div>
-              <p style={{ fontSize: 21, color: "var(--text-3)", margin: 0, lineHeight: 1.45 }}>
+              {/* La advertencia y la conclusión van en clics distintos: una idea por clic. */}
+              <Reveal step={step} at={3}>
+              <p style={{ fontSize: 26, color: "var(--text-3)", margin: 0, lineHeight: 1.45 }}>
                 Con pocos árboles el OOB sale más bajo: a cada persona la califican muy pocos árboles ({pct(d.oob[0])} contra{" "}
                 {pct(d.cv_media[0])} con {B[0]}).
               </p>
-              <Reveal step={step} at={3} style={{ marginTop: "auto" }}>
+              </Reveal>
+              <Reveal step={step} at={4} style={{ marginTop: "auto" }}>
                 <p className="takeaway" style={{ margin: 0, fontSize: 26 }}>
                   Con suficientes árboles, el OOB dice <em>lo mismo que la validación cruzada</em> sin apartar datos ni entrenar de nuevo.
                   Solo existe en bagging y Random Forest.

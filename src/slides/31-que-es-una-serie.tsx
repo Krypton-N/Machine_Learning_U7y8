@@ -28,13 +28,13 @@ function EsquemaSerie() {
       {ESQUEMA.map((v, i) => (
         <g key={i}>
           <motion.circle cx={fx(i + 1)} cy={fy(v)} r={7} fill="var(--data)" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.12 }} />
-          <text x={fx(i + 1)} y={H - 28} textAnchor="middle" className="mono" fontSize={17} fill="var(--text-3)">
+          <text x={fx(i + 1)} y={H - 28} textAnchor="middle" className="mono" fontSize={20} fill="var(--text-3)">
             {i + 1}
           </text>
         </g>
       ))}
       <line x1={fx(T) + 26} x2={fx(T) + 26} y1={10} y2={H - 56} stroke="var(--red)" strokeDasharray="5 6" />
-      <text x={fx(T) + 20} y={22} textAnchor="end" className="mono" fontSize={17} fill="var(--red-2)">
+      <text x={fx(T) + 20} y={22} textAnchor="end" className="mono" fontSize={20} fill="var(--red-2)">
         hoy · T = {T}
       </text>
       {Array.from({ length: HORIZONTE }, (_, h) => (
@@ -43,12 +43,12 @@ function EsquemaSerie() {
           <text x={fx(T + h + 1)} y={fy(6.3)} textAnchor="middle" fontSize={30} fill="var(--red-2)">
             ?
           </text>
-          <text x={fx(T + h + 1)} y={H - 28} textAnchor="middle" className="mono" fontSize={17} fill="var(--red-2)">
+          <text x={fx(T + h + 1)} y={H - 28} textAnchor="middle" className="mono" fontSize={20} fill="var(--red-2)">
             {T + h + 1}
           </text>
         </motion.g>
       ))}
-      <text x={W - 20} y={H - 4} textAnchor="end" className="mono" fontSize={15} fill="var(--text-3)">
+      <text x={W - 20} y={H - 4} textAnchor="end" className="mono" fontSize={20} fill="var(--text-3)">
         t (el lugar de cada medición) · h = {HORIZONTE} pasos adelante
       </text>
     </svg>
@@ -92,7 +92,7 @@ export default function QueEsUnaSerie({ step, active }: SlideProps) {
           <div>
             <span className="label">Esquema</span>
             <EsquemaSerie />
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 30, marginTop: 20, fontSize: 22, lineHeight: 1.4 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 30, marginTop: 20, fontSize: 26, lineHeight: 1.4 }}>
               <div style={{ borderTop: "1px solid var(--line-2)", paddingTop: 10, color: "var(--text-2)" }}>
                 <b style={{ color: "var(--text)" }}>Tabla (Adult):</b> cada fila es una persona. Se pueden barajar.
               </div>
@@ -143,7 +143,7 @@ export default function QueEsUnaSerie({ step, active }: SlideProps) {
                 <span className="mono" style={{ fontSize: 30, color: "var(--red-2)" }}>
                   t = {cursor + 1} · {etiqueta(cursor)} · {Y[cursor]} mil
                 </span>
-                <span className="mono" style={{ fontSize: 19, color: "var(--text-3)" }}>
+                <span className="mono" style={{ fontSize: 20, color: "var(--text-3)" }}>
                   T = {Y.length} · 12 mediciones por año · mínimo {Y[I_MIN]} ({etiqueta(I_MIN)}) · máximo {Y[I_MAX]} ({etiqueta(I_MAX)}) · ↑ ↓ mueven el cursor
                 </span>
               </div>

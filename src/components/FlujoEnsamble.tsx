@@ -24,8 +24,8 @@ export function ArbolGlifo({ x, y, niveles, ancho = 70, color = "var(--text-2)" 
 }
 
 const caja = { fill: "var(--panel)", stroke: "var(--line-2)" };
-const texto = { fontSize: 19, fill: "var(--text)", textAnchor: "middle" as const };
-const nota = { fontSize: 15, fill: "var(--text-3)", textAnchor: "middle" as const, className: "mono" };
+const texto = { fontSize: 22, fill: "var(--text)", textAnchor: "middle" as const };
+const nota = { fontSize: 20, fill: "var(--text-3)", textAnchor: "middle" as const, className: "mono" };
 
 const aparecer = (i: number) => ({ initial: { opacity: 0, y: 8 }, animate: { opacity: 1, y: 0 }, transition: { delay: 0.15 * i, duration: 0.4 } });
 
@@ -57,10 +57,10 @@ export function FlujoParalelo({ ancho = 760 }: { ancho?: number }) {
           ⋮
         </text>
         <rect x={600} y={96} width={150} height={64} fill="var(--red-dim)" stroke="var(--red)" />
-        <text x={675} y={124} {...texto}>
+        <text x={675} y={123} {...texto}>
           promedio
         </text>
-        <text x={675} y={147} {...texto} fontSize={17} fill="var(--text-2)">
+        <text x={675} y={147} {...texto} fontSize={20} fill="var(--text-2)">
           o voto
         </text>
       </motion.g>

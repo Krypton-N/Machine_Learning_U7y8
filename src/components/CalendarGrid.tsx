@@ -1,3 +1,4 @@
+import { R, anchoMono, margenIzq } from "../deck/tipografia";
 import { motion } from "motion/react";
 import { ejeQueCubre, linear } from "../lib/scale";
 import { pasoRedondo } from "./SeriesChart";
@@ -57,8 +58,8 @@ export function CalendarGrid({
   const marcado = new Set(resaltar.map(([f, c]) => f * cols + c));
 
   // Fase "tabla": rejilla con una columna de rótulos a la izquierda y un renglón arriba.
-  const izq = etiquetasFilas.length ? 86 : 0;
-  const arriba = etiquetasCols.length ? 34 : 0;
+  const izq = etiquetasFilas.length ? Math.max(86, ...etiquetasFilas.map((t) => anchoMono(t) + 30)) : 0;
+  const arriba = etiquetasCols.length ? R + 16 : 0;
   const wTabla = anchoTabla ?? ancho;
   const cw = (wTabla - izq) / cols;
   const ch = (alto - arriba) / filas;
@@ -66,7 +67,7 @@ export function CalendarGrid({
   // Fase "serie": los mismos valores en fila.
   const todos = matriz.flat();
   const eje = ejeQueCubre(todos, pasoRedondo(Math.max(...todos) - Math.min(...todos) || 1, 6));
-  const ms = { l: 64, r: 20, t: 16, b: 44 };
+  const ms = { l: margenIzq(64, eje.ticks.map(formato)), r: 20, t: 16, b: R + 28 };
   const fx = linear([0, n - 1 + futuro], [ms.l, ancho - ms.r]);
   const fy = linear(eje.dominio, [alto - ms.b, ms.t]);
   const enSerie = fase === "serie";
@@ -78,12 +79,12 @@ export function CalendarGrid({
       {/* Rótulos de la tabla */}
       <motion.g initial={false} animate={{ opacity: enSerie ? 0 : 1 }} transition={{ duration: 0.4 }}>
         {etiquetasCols.map((t, c) => (
-          <text key={t + c} x={izq + c * cw + cw / 2} y={20} textAnchor="middle" className="mono" fontSize={16} fill="var(--text-3)">
+          <text key={t + c} x={izq + c * cw + cw / 2} y={R + 4} textAnchor="middle" className="mono" fontSize={R} fill="var(--text-3)">
             {t}
           </text>
         ))}
         {etiquetasFilas.map((t, f) => (
-          <text key={t} x={izq - 18} y={arriba + f * ch + ch / 2 + 6} textAnchor="end" className="mono" fontSize={16} fill="var(--text-3)">
+          <text key={t} x={izq - 18} y={arriba + f * ch + ch / 2 + 7} textAnchor="end" className="mono" fontSize={R} fill="var(--text-3)">
             {t}
           </text>
         ))}
@@ -97,14 +98,14 @@ export function CalendarGrid({
         {eje.ticks.map((t) => (
           <g key={t}>
             <line x1={ms.l} x2={ancho - ms.r} y1={fy(t)} y2={fy(t)} stroke="var(--line)" />
-            <text x={ms.l - 12} y={fy(t) + 5} textAnchor="end" className="mono" fontSize={15} fill="var(--text-3)">
+            <text x={ms.l - 12} y={fy(t) + 7} textAnchor="end" className="mono" fontSize={R} fill="var(--text-3)">
               {formato(t)}
             </text>
           </g>
         ))}
         {etiquetasFilas.map((t, f) =>
           f % cadaFilas === 0 ? (
-            <text key={t} x={fx(f * cols)} y={alto - ms.b + 28} textAnchor="middle" className="mono" fontSize={15} fill="var(--text-3)">
+            <text key={t} x={fx(f * cols)} y={alto - ms.b + R + 8} textAnchor="middle" className="mono" fontSize={R} fill="var(--text-3)">
               {t}
             </text>
           ) : null,
@@ -114,7 +115,7 @@ export function CalendarGrid({
           <rect key={j} x={fx(n + j) - 5} y={fy(eje.dominio[1]) + 20} width={10} height={fy(eje.dominio[0]) - fy(eje.dominio[1]) - 20} fill="none" stroke="var(--red-line)" strokeDasharray="3 4" />
         ))}
         {futuro > 0 && rotuloFuturo && (
-          <text x={fx(n + (futuro - 1) / 2)} y={fy(eje.dominio[1]) + 12} textAnchor="middle" className="mono" fontSize={16} fill="var(--red-2)">
+          <text x={fx(n + (futuro - 1) / 2)} y={fy(eje.dominio[1]) + 14} textAnchor="middle" className="mono" fontSize={R} fill="var(--red-2)">
             {rotuloFuturo}
           </text>
         )}

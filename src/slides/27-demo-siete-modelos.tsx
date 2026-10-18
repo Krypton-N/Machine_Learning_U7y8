@@ -47,13 +47,13 @@ function Diferencias() {
     <svg width={ancho} height={56} style={{ display: "block" }}>
       <line x1={0} x2={ancho} y1={22} y2={22} stroke="var(--line-2)" />
       <line x1={fx(0)} x2={fx(0)} y1={6} y2={38} stroke="var(--text-3)" />
-      <text x={fx(0)} y={54} textAnchor="middle" className="mono" fontSize={14} fill="var(--text-3)">
+      <text x={fx(0)} y={54} textAnchor="middle" className="mono" fontSize={20} fill="var(--text-3)">
         0 · empate
       </text>
-      <text x={ancho} y={54} textAnchor="end" className="mono" fontSize={14} fill="var(--text-3)">
+      <text x={ancho} y={54} textAnchor="end" className="mono" fontSize={20} fill="var(--text-3)">
         gana XGBoost →
       </text>
-      <text x={0} y={54} className="mono" fontSize={14} fill="var(--text-3)">
+      <text x={0} y={54} className="mono" fontSize={20} fill="var(--text-3)">
         ← gana GB
       </text>
       {DIF.map((d, k) => (
@@ -69,7 +69,7 @@ function Aviso({ titulo, children }: { titulo: string; children: ReactNode }) {
       <div className="label" style={{ color: "var(--red-2)", marginBottom: 8 }}>
         {titulo}
       </div>
-      <div style={{ fontSize: 21, color: "var(--text-2)", lineHeight: 1.4 }}>{children}</div>
+      <div style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.4 }}>{children}</div>
     </div>
   );
 }
@@ -101,7 +101,8 @@ const LECTURA: Record<string, (c: CurvaModelo) => string> = {
 
 export default function DemoSieteModelos({ step }: SlideProps) {
   const [ensamble, setEnsamble] = useState("Random Forest");
-  const curvas = step >= 6;
+  // Los tres avisos van uno por clic (5, 6 y 7): juntos eran casi 100 palabras. Las curvas, desde el 8.
+  const curvas = step >= PASO_AVISOS + 3;
   const escala = step >= 2 ? CERCA : AMPLIO;
 
   const filas: FilaPuntos[] = [
@@ -190,7 +191,7 @@ export default function DemoSieteModelos({ step }: SlideProps) {
                     className="mono"
                     initial={false}
                     animate={{ opacity: f.visible ? 1 : 0 }}
-                    style={{ display: "grid", gridTemplateColumns: "1fr 1fr", textAlign: "right", height: ALTO_FILA, alignItems: "center", fontSize: 19 }}
+                    style={{ display: "grid", gridTemplateColumns: "1fr 1fr", textAlign: "right", height: ALTO_FILA, alignItems: "center", fontSize: 20 }}
                   >
                     <span>{pct(f.acc)}</span>
                     {/* En rojo cuando acierta mucho más con lo que estudió que con lo que no: está memorizando. */}
@@ -212,24 +213,26 @@ export default function DemoSieteModelos({ step }: SlideProps) {
                     {comentario[step]}
                   </motion.p>
                 ) : (
-                  <motion.div key="avisos" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ display: "grid", gridTemplateColumns: "1fr 1.15fr 1fr", gap: 50 }}>
-                    <Aviso titulo="Sin ajustar">
+                  <motion.div key={`aviso-${step}`} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.15 } }} style={{ maxWidth: 1500, fontSize: 26 }}>
+                    {[
+                    <Aviso key="ajuste" titulo="Sin ajustar">
                       Nadie buscó los mejores valores: cada modelo va casi como viene, con {USADOS} árboles. Con otros, el orden cambia: Random
                       Forest con hojas de al menos {mejorHoja.valor} personas pasa de {pct(hoja1.acc)} a {pct(mejorHoja.acc)}.
-                    </Aviso>
-                    <Aviso titulo="GB contra XGBoost, pliegue a pliegue">
+                    </Aviso>,
+                    <Aviso key="gb-xgb" titulo="GB contra XGBoost, pliegue a pliegue">
                       <Diferencias />
                       XGBoost gana en {GANA_XGB} de {DIF.length} pliegues, por {media(DIF).toFixed(3)} en promedio (± {desviacion(DIF).toFixed(3)}).{" "}
                       {GANA_XGB === DIF.length
                         ? "Es una ventaja chica pero constante: comparando pliegue a pliegue se ve, aunque el ± de cada modelo se encime con el del otro."
                         : "No alcanza para decir cuál es mejor."}
-                    </Aviso>
-                    <Aviso titulo="Un solo árbol, bien podado">
+                    </Aviso>,
+                    <Aviso key="podado" titulo="Un solo árbol, bien podado">
                       Con {P.profundidad} preguntas en cadena (la mejor profundidad de la diapositiva 5) acierta {pct(accPodado)},{" "}
                       {accPodado > rf.accuracy.media ? "más que" : "casi como"} Random Forest ({pct(rf.accuracy.media)}). En F1-macro queda abajo:
                       encuentra a {pct(recall(P.todas), 0)} de quienes ganan más de 50K; Random Forest, a{" "}
                       {pct(recall(matrices.modelos.find((m) => m.modelo === "Random Forest")!.todas), 0)}.
-                    </Aviso>
+                    </Aviso>,
+                    ][step - PASO_AVISOS]}
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -259,7 +262,7 @@ export default function DemoSieteModelos({ step }: SlideProps) {
                   lineaV={lx(USADOS)}
                 />
               </div>
-              <div className="label" style={{ fontSize: 14 }}>
+              <div className="label" style={{ fontSize: 20 }}>
                 <span style={{ color: "var(--red-2)" }}>— validación</span> · — entrenamiento · tenues = los otros tres · línea vertical = {USADOS} árboles
               </div>
             </div>
@@ -270,9 +273,9 @@ export default function DemoSieteModelos({ step }: SlideProps) {
                 <Dato valor={pct(alFinal(c.validacion), 2)} rotulo={`error de validación con ${MIL}`} />
                 <Dato valor={pct(c.entrenamiento[I_USADOS], 2)} rotulo={`error de entrenamiento con ${USADOS}`} />
               </div>
-              <p style={{ fontSize: 22, color: "var(--text-2)", margin: 0, lineHeight: 1.45 }}>{LECTURA[ensamble](c)}</p>
-              <Reveal step={step} at={7} style={{ marginTop: "auto" }}>
-                <p className="takeaway" style={{ margin: 0, fontSize: 25 }}>
+              <p style={{ fontSize: 26, color: "var(--text-2)", margin: 0, lineHeight: 1.45 }}>{LECTURA[ensamble](c)}</p>
+              <Reveal step={step} at={PASO_AVISOS + 4} style={{ marginTop: "auto" }}>
+                <p className="takeaway" style={{ margin: 0, fontSize: 26 }}>
                   Cuántos árboles <em>también se decide</em>: a un bosque le pueden sobrar sin daño; en boosting se busca con validación.
                 </p>
               </Reveal>

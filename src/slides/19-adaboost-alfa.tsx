@@ -3,7 +3,6 @@ import { Fragment, useMemo } from "react";
 import { vistaX, vistaY } from "../components/Adult3DScene";
 import { JUGUETE, JugueteAdaBoost, RONDAS_JUGUETE } from "../components/JugueteAdaBoost";
 import { Lineas } from "../components/Lineas";
-import { Reveal } from "../components/Reveal";
 import { TeX } from "../components/TeX";
 import { SlideFrame } from "../deck/SlideFrame";
 import type { SlideProps } from "../deck/types";
@@ -19,25 +18,27 @@ const R = RONDAS_JUGUETE;
 const f3 = (v: number) => v.toFixed(3);
 
 // La tabla de las dos primeras rondas, punto por punto.
-function TablaRondas() {
+// `rondas` = cuántas rondas se ven (1 o 2): se llena una ronda por clic.
+function TablaRondas({ rondas }: { rondas: 1 | 2 }) {
+  const ms = rondas === 1 ? [0] : [0, 1];
   const th = { padding: "8px 14px", fontWeight: 400, borderBottom: "1px solid var(--line-2)" } as const;
   const td = { padding: "7px 14px", borderBottom: "1px solid var(--line)" } as const;
   return (
-    <table className="mono" style={{ borderCollapse: "collapse", fontSize: 20, textAlign: "right" }}>
+    <table className="mono" style={{ borderCollapse: "collapse", fontSize: 22, textAlign: "right" }}>
       <thead>
-        <tr style={{ color: "var(--text-3)", fontSize: 15 }}>
+        <tr style={{ color: "var(--text-3)", fontSize: 20 }}>
           <th style={th}>punto</th>
           <th style={th}>clase</th>
-          {[0, 1].map((m) => (
+          {ms.map((m) => (
             <th key={m} colSpan={3} style={{ ...th, textAlign: "center", color: "var(--red-2)", borderLeft: "1px solid var(--line-2)" }}>
               RONDA {m + 1}
             </th>
           ))}
         </tr>
-        <tr style={{ color: "var(--text-3)", fontSize: 15 }}>
+        <tr style={{ color: "var(--text-3)", fontSize: 20 }}>
           <th style={th} />
           <th style={th} />
-          {[0, 1].map((m) => (
+          {ms.map((m) => (
             <Fragment key={m}>
               <th style={{ ...th, borderLeft: "1px solid var(--line-2)" }}>peso</th>
               <th style={th}>¿acierta?</th>
@@ -51,7 +52,7 @@ function TablaRondas() {
           <tr key={i}>
             <td style={td}>{i + 1}</td>
             <td style={{ ...td, color: JUGUETE.y[i] ? "var(--red-2)" : "var(--text-2)" }}>{JUGUETE.y[i] ? "sí" : "no"}</td>
-            {[0, 1].map((m) => {
+            {ms.map((m) => {
               const bien = votoStump(R[m].stump, x) === (JUGUETE.y[i] ? 1 : -1);
               return (
                 <Fragment key={m}>
@@ -63,21 +64,21 @@ function TablaRondas() {
             })}
           </tr>
         ))}
-        <tr style={{ fontSize: 21 }}>
+        <tr style={{ fontSize: 26 }}>
           <td style={{ ...td, textAlign: "left", fontFamily: "var(--sans)", color: "var(--text-2)" }} colSpan={2}>
             error ponderado ε
           </td>
-          {[0, 1].map((m) => (
+          {ms.map((m) => (
             <td key={m} colSpan={3} style={{ ...td, textAlign: "center", borderLeft: "1px solid var(--line-2)" }}>
               {f3(R[m].eps)}
             </td>
           ))}
         </tr>
-        <tr style={{ fontSize: 21 }}>
+        <tr style={{ fontSize: 26 }}>
           <td style={{ ...td, textAlign: "left", fontFamily: "var(--sans)", color: "var(--text-2)" }} colSpan={2}>
             peso del voto α
           </td>
-          {[0, 1].map((m) => (
+          {ms.map((m) => (
             <td key={m} colSpan={3} style={{ ...td, textAlign: "center", color: "var(--red-2)", borderLeft: "1px solid var(--line-2)" }}>
               {f3(R[m].alpha)}
             </td>
@@ -92,7 +93,8 @@ export default function AdaboostAlfa({ step }: SlideProps) {
   const rondas = useMemo(() => adaboost(vistaX, vistaY, 50), []);
   // Tras actualizar, los puntos mal clasificados suman la mitad del peso: se calcula para la ronda 1 del ejemplo.
   const mitad = R[0].pesos.reduce((s, w, i) => (w > R[0].pesosAntes[i] ? s + w : s), 0);
-  const caso = step >= 3;
+  // 0: fórmulas 1 y 2 · 1: fórmulas 3 y 4 · 2 y 3: la tabla, una ronda por clic · 4: el caso · 5: nota y conclusión.
+  const caso = step >= 4;
 
   return (
     <SlideFrame
@@ -109,7 +111,9 @@ export default function AdaboostAlfa({ step }: SlideProps) {
       <AnimatePresence mode="wait">
         {step <= 1 && (
           <motion.div key="formulas" style={{ display: "grid", gridTemplateColumns: "1fr 760px", gap: 80 }} exit={{ opacity: 0, transition: { duration: 0.2 } }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: 26, fontSize: 27, paddingTop: 10 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 40, fontSize: 30, paddingTop: 10 }}>
+              {step === 0 && (
+              <>
               <div>
                 <div className="label" style={{ marginBottom: 10 }}>
                   1 · Error ponderado del stump
@@ -120,15 +124,23 @@ export default function AdaboostAlfa({ step }: SlideProps) {
                 <div className="label" style={{ marginBottom: 10 }}>
                   2 · Peso de su voto
                 </div>
-                <TeX>{"{\\color{#e5383b}\\alpha_m} = \\tfrac12 \\ln\\!\\left(\\frac{1-\\varepsilon_m}{\\varepsilon_m}\\right)"}</TeX>
+                <TeX>{"{\\color{#e5383b}\\alpha_m} = \\tfrac12 \\ln\\!\\left(\\dfrac{1-\\varepsilon_m}{\\varepsilon_m}\\right)"}</TeX>
               </div>
-              <Reveal step={step} at={1}>
-                <div style={{ display: "grid", gap: 26 }}>
+              </>
+              )}
+              {step === 1 && (
+                <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} style={{ display: "grid", gap: 40 }}>
                   <div>
                     <div className="label" style={{ marginBottom: 10 }}>
                       3 · Nuevos pesos (y se normalizan para que sumen 1)
                     </div>
-                    <TeX>{"w_i \\leftarrow w_i\\, e^{+\\alpha_m}\\ \\text{si falló} \\qquad w_i \\leftarrow w_i\\, e^{-\\alpha_m}\\ \\text{si acertó}"}</TeX>
+                    {/* Un renglón por caso: juntos no caben a tamaño de fórmula. */}
+                    <div>
+                      <TeX>{"w_i \\leftarrow w_i\\, \\exp(+\\alpha_m)\\quad \\text{si falló}"}</TeX>
+                    </div>
+                    <div style={{ marginTop: 8 }}>
+                      <TeX>{"w_i \\leftarrow w_i\\, \\exp(-\\alpha_m)\\quad \\text{si acertó}"}</TeX>
+                    </div>
                   </div>
                   <div>
                     <div className="label" style={{ marginBottom: 10 }}>
@@ -136,8 +148,8 @@ export default function AdaboostAlfa({ step }: SlideProps) {
                     </div>
                     <TeX>{"H(x) = \\operatorname{signo}\\Big(\\sum_m \\alpha_m\\, h_m(x)\\Big)"}</TeX>
                   </div>
-                </div>
-              </Reveal>
+                </motion.div>
+              )}
             </div>
             <div>
               <span className="label">El peso del voto según el error del stump</span>
@@ -152,16 +164,16 @@ export default function AdaboostAlfa({ step }: SlideProps) {
                   rotuloX="error ponderado ε"
                   rotuloY="α"
                   series={[{ id: "a", pts: curvaAlfa, color: "var(--red)", grosor: 3 }]}
-                  marcas={[{ x: 0.5, y: 0, texto: "como adivinar: no vota", abajo: false }]}
+                  marcas={[{ x: 0.5, y: 0, texto: "como adivinar: no vota", abajo: false, ancla: "end" }]}
                 />
               </div>
-              <p style={{ fontSize: 22, color: "var(--text-2)", lineHeight: 1.45, margin: "4px 0 0" }}>
+              <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.45, margin: "4px 0 0" }}>
                 Con ε = 0.5 el stump no sabe más que una moneda y su voto vale 0. Mientras menos se equivoca, más vale.
               </p>
             </div>
           </motion.div>
         )}
-        {step === 2 && (
+        {(step === 2 || step === 3) && (
           <motion.div
             key="tabla"
             style={{ display: "grid", gridTemplateColumns: "1fr 380px", gap: 60 }}
@@ -172,22 +184,22 @@ export default function AdaboostAlfa({ step }: SlideProps) {
             <div>
               <span className="label">Esquema · los 8 puntos de la diapositiva anterior, dos rondas a mano</span>
               <div style={{ marginTop: 12 }}>
-                <TablaRondas />
+                <TablaRondas rondas={step === 2 ? 1 : 2} />
               </div>
             </div>
             <div>
-              <span className="label">Ronda 2</span>
+              <span className="label">Ronda {step === 2 ? 1 : 2}</span>
               <div style={{ marginTop: 12 }}>
-                <JugueteAdaBoost m={1} lado={360} />
+                <JugueteAdaBoost m={step === 2 ? 0 : 1} lado={300} />
               </div>
-              <p style={{ fontSize: 21, color: "var(--text-2)", lineHeight: 1.45, margin: "12px 0 0" }}>
+              <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.45, margin: "12px 0 0" }}>
                 Después de actualizar, los puntos que falló el stump suman <b style={{ color: "var(--red-2)" }}>{mitad.toFixed(3)}</b> del
                 peso: justo la mitad. Para el siguiente stump, repetir la misma respuesta ya no sirve.
               </p>
             </div>
           </motion.div>
         )}
-        {caso && (
+        {step === 4 && (
           <motion.div
             key="caso"
             style={{ display: "grid", gridTemplateColumns: "800px 800px", justifyContent: "space-between" }}
@@ -208,7 +220,7 @@ export default function AdaboostAlfa({ step }: SlideProps) {
                 series={[{ id: "e", pts: rondas.map((r, i): [number, number] => [i + 1, r.eps]), puntos: true }]}
                 lineasH={[{ y: 0.5, texto: "adivinar", abajo: true }]}
               />
-              <p style={{ fontSize: 22, color: "var(--text-2)", lineHeight: 1.45, margin: 0 }}>
+              <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.45, margin: 0 }}>
                 Cada ronda es más difícil: con los pesos cargados hacia los casos duros, el stump se acerca a 0.5.
               </p>
             </div>
@@ -226,20 +238,22 @@ export default function AdaboostAlfa({ step }: SlideProps) {
                 rotuloX="ronda"
                 series={[{ id: "a", pts: rondas.map((r, i): [number, number] => [i + 1, r.alpha]), color: "var(--red)", puntos: true }]}
               />
-              <p style={{ fontSize: 22, color: "var(--text-2)", lineHeight: 1.45, margin: 0 }}>
+              <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.45, margin: 0 }}>
                 Por eso los últimos stumps votan cada vez más bajito: afinan, ya no deciden.
               </p>
             </div>
-            <div style={{ gridColumn: "1 / -1", marginTop: 20 }}>
-              <p style={{ fontSize: 19, color: "var(--text-3)", margin: 0, lineHeight: 1.4 }}>
+          </motion.div>
+        )}
+        {step === 5 && (
+          <motion.div key="cierre" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }} style={{ maxWidth: 1300, paddingTop: 40 }}>
+            <div>
+              <p style={{ fontSize: 26, color: "var(--text-3)", margin: 0, lineHeight: 1.4 }}>
                 Nota: sklearn usa la variante SAMME, α = ln((1 − ε)/ε) + ln(K − 1). Con dos clases es el doble de esta α y clasifica
                 exactamente igual.
               </p>
-              <Reveal step={step} at={4} style={{ marginTop: 16 }}>
-                <p className="takeaway" style={{ margin: 0 }}>
-                  AdaBoost corrige cambiando pesos. Hay otra forma de corregir: <em>seguir el gradiente</em>.
-                </p>
-              </Reveal>
+              <p className="takeaway" style={{ margin: "40px 0 0" }}>
+                AdaBoost corrige cambiando pesos. Hay otra forma de corregir: <em>seguir el gradiente</em>.
+              </p>
             </div>
           </motion.div>
         )}

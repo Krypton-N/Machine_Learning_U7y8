@@ -1,3 +1,4 @@
+import { R } from "../deck/tipografia";
 import { motion } from "motion/react";
 
 // Diagrama de particiones para validar: cada fila es una ronda y cada celda, un momento en orden.
@@ -39,8 +40,8 @@ export function SplitDiagram({
   hueco?: number;
 }) {
   const w = (ancho - anchoEtiqueta) / n;
-  const yDe = (f: number) => 30 + f * (altoCelda + separacion);
-  const alto = yDe(filas.length) + (marcas.length ? 30 : 6);
+  const yDe = (f: number) => R + 14 + f * (altoCelda + separacion);
+  const alto = yDe(filas.length) + (marcas.length ? R + 14 : 6);
   const xDe = (i: number) => anchoEtiqueta + i * w;
   return (
     <svg width={ancho} height={alto} style={{ display: "block", overflow: "visible" }}>
@@ -53,7 +54,7 @@ export function SplitDiagram({
           <path d="M0,0L10,5L0,10z" fill="var(--red-2)" />
         </marker>
       </defs>
-      <text x={ancho} y={14} textAnchor="end" className="mono" fontSize={15} fill="var(--text-3)">
+      <text x={ancho} y={R - 2} textAnchor="end" className="mono" fontSize={R} fill="var(--text-3)">
         tiempo →
       </text>
       {filas.map((f, r) => {
@@ -62,7 +63,7 @@ export function SplitDiagram({
         const pru = new Set(f.prueba);
         return (
           <g key={r}>
-            <text x={0} y={yDe(r) + altoCelda / 2 + 6} className="mono" fontSize={16} fill="var(--text-3)">
+            <text x={0} y={yDe(r) + altoCelda / 2 + 7} className="mono" fontSize={R} fill="var(--text-3)">
               {f.etiqueta}
             </text>
             {Array.from({ length: n }, (_, i) => {
@@ -99,7 +100,7 @@ export function SplitDiagram({
         />
       )}
       {marcas.map((k) => (
-        <text key={k.i} x={xDe(k.i)} y={alto - 6} className="mono" fontSize={15} fill="var(--text-3)">
+        <text key={k.i} x={xDe(k.i)} y={alto - 6} className="mono" fontSize={R} fill="var(--text-3)">
           {k.texto}
         </text>
       ))}

@@ -1,6 +1,6 @@
 # Plan de las diapositivas — Ensambles y datos secuenciales (U7 y U8)
 
-Estado al 2026-10-12: **40 de 64 construidas** (1, 3–40 y 60). Hitos 0 a 3 terminados: toda la parte 1 (ensambles) está completa, salvo el mapa de la 2. El hito 4 (29–40) está construido y le falta su cierre (ver `docs/hitos/HITO-4.md`). Después del hito 3 hubo una ronda de correcciones que quitó `fnlwgt` y regeneró todos los datos de Adult (ver "Lo que cambió en la ronda de correcciones"). Este documento fija qué lleva cada diapositiva **antes** de construirla; al construir, cada sección anota aquí lo que cambió.
+Estado al 2026-10-13: **40 de 64 construidas** (1, 3–40 y 60). Hitos 0 a 3 terminados: toda la parte 1 (ensambles) está completa, salvo el mapa de la 2. El hito 4 (29–40) se cerró el 2026-10-13 (ver `docs/hitos/HITO-4.md`). Sigue el hito 5 (41–50). Después del hito 3 hubo una ronda de correcciones que quitó `fnlwgt` y regeneró todos los datos de Adult (ver "Lo que cambió en la ronda de correcciones"). Este documento fija qué lleva cada diapositiva **antes** de construirla; al construir, cada sección anota aquí lo que cambió.
 
 ## Cómo leer este plan
 
@@ -20,7 +20,7 @@ Estado al 2026-10-12: **40 de 64 construidas** (1, 3–40 y 60). Hitos 0 a 3 ter
 5. **Color con significado fijo:** rojo = clase positiva (gana > 50K), datos de prueba o lo que se quiere resaltar; gris claro = lo que se compara contra el rojo.
 6. **Legibilidad:** texto de lectura de 22 px o más en el lienzo de 1920×1080; etiquetas de 14 px o más.
 7. **3D solo cuando ayuda** a entender: regiones de un árbol, superficies de pérdida, año × mes, nube de rezagos. Toda escena 3D permite girar y acercar.
-8. **El dataset se enseña crudo antes de usarlo** (pedido del usuario, 2026-10-11): sus primeras 5 filas tal como llegan, la explicación de ese dataset y qué se le cambia; después, el método. Hecho en la 3 y la 4 para Adult. **Pendiente para pasajeros aéreos:** la 29 o la 31 debe abrir con la tabla cruda (mes, pasajeros) antes de cualquier gráfica; y lo mismo si el HMM usa datos (61, R4).
+8. **El dataset se enseña crudo antes de usarlo** (pedido del usuario, 2026-10-11): sus primeras 5 filas tal como llegan, la explicación de ese dataset y qué se le cambia; después, el método. Hecho en la 3 y la 4 para Adult y en la 29 para pasajeros aéreos (llega con `time` en decimal y `value`). **Pendiente:** lo mismo si el HMM usa datos (61, R4).
 
 ## Casos de estudio
 
@@ -70,6 +70,7 @@ Las duraciones anotadas en cada diapositiva suman ≈ 82 minutos de explicación
 - **Gráficos:** `Receta`, `Particiones`, `FichaPersona`, `BarraClases`.
 - **Datos:** alumnos y 20 cuadros (esquema); filas y conteos de Adult (JSON).
 - **Corrección de la revisión:** solo se animan las 4 filas nuevas; la parte del K-fold no depende de clics con mouse.
+- **Clics tras la regla 9 (2026-10-14): 10.** Memorión, receta, K-Fold, Adult crudo con sus tres notas, los cuatro cambios en dos clics de dos, la ficha, la receta con Adult y la conclusión.
 
 ---
 
@@ -118,6 +119,7 @@ Las duraciones anotadas en cada diapositiva suman ≈ 82 minutos de explicación
 - **Caso:** un adelanto con los números reales de Adult: árbol 0.743 → bagging 0.788 y RF 0.795 (paralelos); AdaBoost 0.789, GB 0.815 y XGBoost 0.817 (secuenciales), en F1-macro.
 - **Gráficos:** `FlujoEnsamble` (nuevo; se reutiliza como miniatura en la 25), `PuntosIntervalo`.
 - **Datos:** `comparacion_adult.json`.
+- **Regla 9 (2026-10-14):** siguen 3 clics; en el del adelanto los dos diagramas se pliegan y los puntos de F1-macro se ven grandes.
 
 ## B. Bagging (10–12)
 
@@ -135,6 +137,7 @@ Las duraciones anotadas en cada diapositiva suman ≈ 82 minutos de explicación
 - **Cierre:** "es el promedio de la 7 hecho realidad: mismo sesgo, menos varianza".
 - **Gráficos:** `VoteVolume3D` (nuevo), `Corte2D` (nuevo, mapa de calor), `Lineas`.
 - **Datos:** `lib/bagging.ts` (vivo, entrena por tandas para no congelar la pantalla); su accuracy se compara con `BaggingClassifier`.
+- **Clics tras la regla 9 (2026-10-14): 6.** Concepto; 1, 10 y 100 árboles con el 3D y el corte 2D; la curva de error sola; la conclusión con la nota de las 3 variables.
 
 ### 12 · OOB: validación gratis (70 s)
 - **Concepto:** cada árbol no vio a ≈ 37 % de las personas. A cada persona la califican solo los árboles que no la vieron. Esquema: matriz de 8 personas × 6 árboles con celdas "la vio / no la vio"; se resalta una fila y solo votan los que no la vieron.
@@ -142,6 +145,7 @@ Las duraciones anotadas en cada diapositiva suman ≈ 82 minutos de explicación
 - **Cierre:** "una estimación del error de prueba sin apartar datos". Solo existe en bagging y Random Forest, y con pocos árboles es algo pesimista.
 - **Gráficos:** `MatrizOOB` (nuevo), `Lineas`.
 - **Datos:** `oob_vs_cv.json` (JSON).
+- **Clics tras la regla 9 (2026-10-14): 5.** La advertencia de pocos árboles y la conclusión van en clics distintos.
 
 ## C. Random Forest (13–16)
 
@@ -159,6 +163,7 @@ Las duraciones anotadas en cada diapositiva suman ≈ 82 minutos de explicación
 - **Cierre:** "cada árbol es un poco peor, pero juntos son mejores". En Adult la ganancia es modesta (F1 0.788 → 0.795) y así se dice.
 - **Gráficos:** `SorteoVariables` (nuevo), `RejillaRaices`, `Lineas`.
 - **Datos:** `raices.json`, `varianza_ensamble.json`, `rf_hiperparametros.json` (JSON).
+- **Clics tras la regla 9 (2026-10-14): 6.** El recordatorio de √p en su clic; la tabla contra bagging y la curva de variables sorteadas en clics distintos; la conclusión al final.
 
 ### 15 · ¿Qué variables importan? (80 s)
 - **Concepto:** dos formas de medirlo. **MDI:** cuánto baja la impureza cada vez que el bosque usa esa variable (se mide al entrenar). **Permutación:** se baraja una columna en datos no vistos y se mide cuánto empeora el modelo. Animación de una columna barajándose en una tabla pequeña.
@@ -173,6 +178,7 @@ Las duraciones anotadas en cada diapositiva suman ≈ 82 minutos de explicación
 - **Cierre:** "los valores por omisión ya son buenos; lo que más conviene ajustar es el tamaño de hoja y las variables por corte".
 - **Gráficos:** `Lineas` × 3.
 - **Datos:** `rf_hiperparametros.json` (JSON).
+- **Clics tras la regla 9 (2026-10-14): 5.** Las tres gráficas aparecen una por clic y se quedan juntas; la conclusión al final.
 
 ## D. Boosting (17–24)
 
@@ -183,6 +189,7 @@ Las duraciones anotadas en cada diapositiva suman ≈ 82 minutos de explicación
 - **Cierre:** "un stump solo casi no sirve. La pregunta es cómo sumar muchos."
 - **Gráficos:** `FlujoEnsamble` (secuencial), `BarraClases` × 2 (los dos lados del stump), `Adult3DScene` con un plano.
 - **Datos:** `stump_adult.json` (JSON); stump de 3 variables (vivo).
+- **Clics tras la regla 9 (2026-10-14): 5.** La conclusión va en su propio clic.
 
 ### 18 · AdaBoost (1): darle más peso a los errores (85 s)
 - **Concepto:** 8 puntos de esquema. Ronda 1: un stump los separa y se equivoca en algunos. Esos puntos crecen. Ronda 2: el nuevo stump se fija en los grandes.
@@ -199,9 +206,11 @@ Las duraciones anotadas en cada diapositiva suman ≈ 82 minutos de explicación
 - **Cierre:** "AdaBoost corrige cambiando pesos. Hay otra forma de corregir: seguir el gradiente." Eso lleva a la 20.
 - **Gráficos:** curva α(ε), `TablaAMano` (compartida con 58 y 59), barras.
 - **Datos:** vivo. Enlace a R2.
+- **Clics tras la regla 9 (2026-10-14): 6.** Fórmulas 1 y 2 con la curva; fórmulas 3 y 4; la tabla con la ronda 1 y luego con las dos; el caso (ε y α); la nota de SAMME y la conclusión.
 
 ### 20 · Descenso de gradiente (100 s) — hecha, fundamento
 - Concepto: montaña con niebla, superficie de juguete y botones de η. Caso: la log-loss real de σ(w·educación + b) en Adult, con el límite η < 2/λmax ≈ 9.5 cerca del mínimo. Cierre: en Gradient Boosting el paso agrega un árbol; con log-loss el árbol aprende y − p.
+- **Regla 9 (2026-10-14):** siguen 5 clics; la escena ocupa el alto del cuerpo, el recordatorio del gradiente solo en el primer clic y en el caso un bloque de texto por clic.
 
 ### 21 · Gradient Boosting (90 s)
 - **Concepto:** regresión de esquema con 10 puntos de una curva. Se empieza con el promedio. Se calculan los residuos (lo que falta). Un árbol pequeño aprende los residuos. Se suma una fracción de ese árbol. Arriba, la predicción acercándose a los puntos; abajo, los residuos encogiéndose. Con ↑ ↓ se avanza de ronda.
@@ -225,6 +234,7 @@ Las duraciones anotadas en cada diapositiva suman ≈ 82 minutos de explicación
 - **Cierre:** "XGBoost es Gradient Boosting con el freno incluido en la fórmula".
 - **Gráficos:** `TreeDiagram` con valores de hoja, rejilla λ × γ.
 - **Datos:** `xgb_regularizacion.json` (JSON).
+- **Clics tras la regla 9 (2026-10-14): 5.** En el caso, la rejilla se lee en tres clics: sin cobros, qué hace cada cobro y la conclusión.
 
 ### 24 · XGBoost (2): segundo orden, faltantes y velocidad (110 s)
 - **Recordatorio · curvatura:** la segunda derivada dice qué tan rápido cambia la pendiente. Se liga con la 20: allí la curvatura limitaba el tamaño del paso.
@@ -236,6 +246,7 @@ Las duraciones anotadas en cada diapositiva suman ≈ 82 minutos de explicación
 - **Gráficos:** parábola local (pendiente y curvatura), `TablaAMano`, `TreeDiagram` con la tercera flecha, barras de tiempo.
 - **Datos:** `xgb_faltantes_tiempos.json` (JSON).
 - **Riesgo:** es la más cargada de la parte 1. Si no cabe en 110 s, el paralelismo pasa a la 25.
+- **Clics tras la regla 9 (2026-10-14): 7.** Curvatura (2 clics); faltantes en tres (el esquema, la tabla de Adult, a dónde manda a quien le falta); velocidad y conclusión.
 
 ## E. Cierre de la parte 1 (25–28)
 
@@ -244,6 +255,7 @@ Las duraciones anotadas en cada diapositiva suman ≈ 82 minutos de explicación
 - **Caso:** el último renglón, con F1-macro y tiempo de cada uno en Adult.
 - **Gráficos:** tabla editorial con miniaturas de `FlujoEnsamble`.
 - **Datos:** `comparacion_adult.json`.
+- **Clics tras la regla 9 (2026-10-14): 9.** Cada renglón entra completo y los anteriores quedan resumidos en una o dos palabras; lo medido en Adult en un clic y el renglón de etiquetas equivocadas con su explicación en otro.
 
 ### 26 · Cómo se comparan los modelos (110 s) — fundamento
 - **Concepto 1:** 10 personas de esquema (3 ganan > 50K). El modelo predice y cada persona se mueve a su casilla de la **matriz de confusión**. De ahí salen, una a una: accuracy, precision ("de los que dije sí, cuántos eran"), recall ("de los que eran, cuántos encontré") y F1.
@@ -252,6 +264,7 @@ Las duraciones anotadas en cada diapositiva suman ≈ 82 minutos de explicación
 - **Cierre:** "con clases desbalanceadas, accuracy sola engaña".
 - **Gráficos:** `MatrizConfusion` (nuevo, animada), `PuntosIntervalo`, franja `Receta`.
 - **Datos:** 10 personas (esquema, calculado en vivo); `matrices_adult.json` (JSON, con el valor de cada pliegue).
+- **Clics tras la regla 9 (2026-10-14): 11.** El modelo que siempre dice "no" en dos clics (definición y tabla; la lectura); la matriz real, los pliegues y la conclusión, cada uno en su clic.
 
 ### 27 · Demo: los siete modelos en Adult (100 s)
 - **Caso (todo):** gráfica de F1-macro con los 5 pliegues de cada modelo, que se revela en orden:
@@ -264,6 +277,7 @@ Las duraciones anotadas en cada diapositiva suman ≈ 82 minutos de explicación
 - **Advertencias en pantalla:** sin ajustar hiperparámetros; las diferencias del tamaño de una desviación no son concluyentes (se muestra la diferencia pliegue a pliegue entre GB y XGBoost); un árbol podado a profundidad 8 llega a 0.856.
 - **Gráficos:** `PuntosIntervalo`, `Lineas`, tabla de métricas.
 - **Datos:** `comparacion_adult.json` (se vuelve a exportar con el valor por pliegue), `curvas_n_estimators.json`.
+- **Clics tras la regla 9 (2026-10-14): 10.** Los tres avisos (sin ajustar, GB contra XGBoost, el árbol podado) van uno por clic, a todo lo ancho.
 
 ### 28 · Cuándo usar cada uno (60 s)
 - **Caso:** una guía de 5 renglones, cada uno con su evidencia de Adult:
@@ -275,6 +289,7 @@ Las duraciones anotadas en cada diapositiva suman ≈ 82 minutos de explicación
 - **Gráfico:** dispersión de tiempo de entrenamiento (escala log) contra F1-macro, un punto por modelo.
 - **Cierre:** puente a la parte 2: "todo esto supuso que las filas se pueden barajar".
 - **Datos:** `comparacion_adult.json`.
+- **Regla 9 (2026-10-14):** siguen 6 clics; cada renglón entra con su evidencia y los anteriores quedan en una línea (situación → modelo).
 
 ---
 
@@ -364,69 +379,70 @@ Especificaciones detalladas: `docs/especificaciones/F1-…`, `F2-…`, `G-…` y
 
 ## G. Modelos de series (41–50)
 
-Regla de la sección: todo se ajusta con 1949–1959. 1960 aparece tapado con un bloque "PRUEBA · 1960" hasta que se evalúa.
+Regla de la sección: todo se ajusta con 1949–1959 (132 meses). 1960 aparece tapado con un bloque "PRUEBA · 1960" hasta que se evalúa. Los números cambian un poco respecto a 36–40 (144 meses) y la 41 lo dice. Plan y bitácora: `docs/hitos/HITO-5.md`.
 
 ### 41 · Ruido blanco (70 s)
-- **Concepto:** una serie simulada sin memoria: media cero, varianza constante, sin autocorrelación. Su ACF queda dentro de la banda; la dispersión "hoy contra ayer" es una nube redonda; su mejor pronóstico es una línea plana.
-- **Caso:** los pasajeros no son ruido blanco (ACF enorme). Tras transformar, casi lo son.
-- **Cierre:** "la meta de un modelo es que lo que sobre sea ruido blanco".
-- **Gráficos:** `SeriesChart`, `Correlogram`, `LagScatter`. **Datos:** 132 choques con semilla, que se reutilizan en 42–45 (esquema).
+- **Concepto:** una serie simulada sin memoria: media cero, varianza constante, sin autocorrelación. Su ACF queda dentro de la banda (sale 1 de 24, y se dice que no tienen que salir 0); la dispersión "hoy contra ayer" es una nube redonda; su mejor pronóstico es una línea plana. Botón "otra muestra".
+- **Caso:** los pasajeros no son ruido blanco (24 de 24 barras fuera). Desde aquí se ajusta con 132 meses. Tras transformar, casi lo son: quedan 1 y 12 (y salen 3 y 23).
+- **Cierre:** "un modelo sirve si lo que le sobra parece ruido blanco".
+- **Gráficos:** `SeriesChart`, `Correlogram` (con contador), `Dispersion`. **Datos:** 132 choques con semilla 170 (`src/slides/choquesG.ts`), que se reutilizan en 42–45.
 
 ### 42 · AR(p) (90 s)
 - **Concepto:** el valor de hoy = una fracción del de ayer + un choque nuevo. Botones de φ (0, 0.5, 0.9, −0.6, 1) sobre los mismos choques de la 41. "Eco de un choque": barras φᵏ que se apagan. Condición |φ| < 1.
-- **Caso (3D):** crecimiento anual de pasajeros. Nube de rezagos con la recta AR(1); al girar aparece el plano AR(2) con sus residuos.
-- **Cierre:** pronóstico AR(2) de 1960, que regresa hacia la media.
-- **Gráficos:** `SeriesChart`, `ImpulseResponse`, `LagCloud3D`. **Datos:** mínimos cuadrados (vivo).
+- **Caso (3D):** crecimiento anual de pasajeros. La nube de la 40 de canto con la recta AR(1); al girar aparece el plano AR(2) con sus residuos.
+- **Cierre:** pronóstico AR(2) del crecimiento de 1960, que regresa hacia la media (1960 sigue tapado).
+- **Gráficos:** `SeriesChart`, `Barras`, `LagCloud3D` (`centro`, `recta`, `residuos`). **Datos:** mínimos cuadrados (vivo, comparado con `AutoReg`).
 
 ### 43 · MA(q) (80 s)
-- **Concepto:** "cinta de choques": el valor de hoy = el choque de hoy + una fracción del de ayer. La memoria se corta exactamente después de q pasos. Ecos lado a lado: AR se apaga poco a poco; MA da dos barras y luego cero.
-- **Tabla "No confundir":** promedio móvil de la 38 contra MA(q).
-- **Caso:** un MA(1) ajustado a ∇∇₁₂ log; su ACF teórica coincide con la observada en el rezago 1.
-- **Gráficos:** `ShockTape` (local), `ImpulseResponse`, `Correlogram`. **Datos:** `series_modelos.json` (JSON).
+- **Concepto:** "cinta de choques": el valor de hoy = el choque de hoy + una fracción del de ayer (corchete con ↑ ↓). Ecos lado a lado: AR se apaga poco a poco; MA da dos barras y luego cero.
+- **Tabla "No confundir":** promedio móvil de la 38 contra MA(q). (La gráfica del 2×12 de la especificación no va: la 38 ya la enseñó.)
+- **Caso:** un MA(1) ajustado a ∇∇₁₂ log; su predicción a un paso explica el 10 % de la variación; su ρ₁ teórico (−0.31) coincide con el observado (−0.32). Su pronóstico de 1960: corrige un mes y después se queda en 0.
+- **Gráficos:** cinta (local), `Barras`, `SeriesChart`, `Correlogram` con `teorica`. **Datos:** `series_modelos.json` (θ̂ y pronóstico); la recursión, viva.
 
-### 44 · ARMA(p,q) (60 s) — recortable
-- **Concepto:** tres ecos lado a lado: AR(1), MA(1) y ARMA(1,1). Juntos imitan patrones que por separado pedirían más coeficientes.
-- **Caso:** ACF observada con las ACF teóricas de AR(1), MA(1) y ARMA(1,1) encima: la de ARMA es la que sigue a las barras.
-- **Gráficos:** `ImpulseResponse` × 3, `Correlogram`. **Datos:** JSON.
+### 44 · ARMA(p,q) (60 s)
+- **Concepto:** tres ecos lado a lado: AR(1), MA(1) y ARMA(1,1). Parsimonia exacta: para imitar ese ARMA(1,1) un AR puro necesita 5 coeficientes.
+- **Caso:** ACF del crecimiento anual con las ACF teóricas de MA(1), AR(1), ARMA(1,1) y AR(2) (botones). MA(1) y AR(1) no alcanzan; ARMA(1,1) y AR(2) empatan hasta el rezago 8; después ninguno: la barra del 12 sale de la banda (puente a la 47). **Cambió respecto a la especificación**, que decía que el ARMA "es el que sigue a las barras".
+- **Gráficos:** `Barras`, `Correlogram` con `teorica` (curvas en blanco y gris, continuas o punteadas). **Datos:** `series_modelos.json`; teóricas, vivas.
 
 ### 45 · ARIMA(p,d,q) (75 s)
-- **Concepto:** la "I" es integrar. Un paseo aleatorio es la suma acumulada de choques. Su pronóstico es plano y su incertidumbre crece como √h (abanico).
-- **Caso:** se modela el cambio mensual del logaritmo y el pronóstico se "vuelve a sumar" para regresar a pasajeros. Se revela 1960 real: este ARIMA sin estacionalidad se queda corto.
-- **Cierre:** "diferenciar, modelar y volver a sumar".
-- **Gráficos:** `CumsumStack` (local), `SeriesChart` con bandas. **Datos:** JSON.
+- **Concepto:** la "I" es integrar. Un paseo aleatorio es la suma acumulada de choques (↑ ↓). Su pronóstico es plano y su incertidumbre crece como √h (abanico).
+- **Caso:** ARIMA(0,1,1) con deriva sobre el logaritmo (la aerolínea sin su parte estacional): se pronostica el cambio mensual y se "vuelve a sumar". Se revela 1960 real: la curva pasa por en medio de la onda, corta de abril a septiembre y pasada el resto. **Cambió:** el de menor AIC, ARIMA(2,1,1), tiene la raíz MA en 1.002 y pronostica peor; queda como respuesta preparada.
+- **Cierre:** "diferenciar, modelar y volver a sumar; falta el rezago 12".
+- **Gráficos:** `SeriesChart` con `franjas`, `Barras`, `Correlogram`. **Datos:** `series_modelos.json`.
 
 ### 46 · Identificación con ACF y PACF (85 s)
-- **Concepto:** rejilla de 3 × 2 con las huellas teóricas: AR(2) (la PACF se corta en 2), MA(1) (la ACF se corta en 1) y ARMA(1,1) (las dos decaen). Luego las mismas con muestras simuladas, para ver que en datos reales es menos limpio.
-- **Caso:** ACF y PACF de pasajeros transformados. Rezagos cortos: pico en 1 → q = 1. Rezagos estacionales: pico en 12 y nada en 24 → Q = 1. Candidato: SARIMA(0,1,1)(0,1,1)₁₂.
-- **Gráficos:** `Correlogram` × 6, tabla de reglas. **Datos:** teóricas (vivo), muestras (esquema).
+- **Concepto:** rejilla de 3 × 2 con las huellas teóricas: AR(2) (la PACF se corta en 2), MA(1) (la ACF se corta en 1) y ARMA(1,1) (las dos decaen). Luego las mismas con muestras simuladas ("otra muestra"), para ver que en datos reales es menos limpio.
+- **Caso:** ACF y PACF de pasajeros transformados. Rezagos cortos: q = 1, o también p = 1 (el 3 sale en las dos). Rezagos estacionales: pico en 12 y nada en 24 ni 36 → Q = 1. Con la banda de Bartlett solo quedan fuera 1, 3 y 12. Candidatos: SARIMA(0,1,1)(0,1,1)₁₂ y SARIMA(1,1,0)(0,1,1)₁₂.
+- **Gráficos:** `Correlogram` × 6 y × 2 (`teorica`, `marcar`, `atenuar`, `banda="bartlett"`), tabla de reglas. **Datos:** teóricas y caso, vivos; muestras, esquema con semilla 3.
 
 ### 47 · SARIMA (90 s)
-- **Concepto:** rejilla de meses × años. Cada celda tiene dos flechas: al mes anterior (parte normal) y al mismo mes del año anterior (parte estacional).
-- **Caso (3D):** cintas año × mes del logaritmo, con las dos flechas sobre julio de 1955. Se aplican ∇₁₂ y luego ∇: las cintas quedan como ruido. Coeficientes estimados del "modelo de aerolínea".
-- **Cierre:** pronóstico de 1960 con su banda del 95 % y, después, los valores reales.
-- **Gráficos:** `LagGrid`, `AnioMes3D` (cintas), `SeriesChart`. **Datos:** JSON (SARIMAX).
+- **Concepto:** rejilla de meses × años con t, t−1 y t−12: al mes anterior (parte normal) y al mismo mes del año anterior (parte estacional).
+- **Caso (3D):** cintas año × mes del logaritmo, con las dos flechas sobre julio de 1955. Se aplican ∇₁₂ y luego ∇: las cintas quedan como ruido. Coeficientes estimados del "modelo de aerolínea" con su forma desarrollada (término de 13 meses).
+- **Cierre:** pronóstico de 1960 con su banda del 95 % y, en clic propio, los valores reales: sigue los picos (julio 622.2 contra 622), pero se pasa en 11 de 12 meses y marzo queda fuera de la banda.
+- **Gráficos:** rejilla (local), `AnioMes3D` (cintas y flechas), `SeriesChart` con `franjas`. **Datos:** `series_modelos.json` (SARIMAX).
 
-### 48 · Elegir y evaluar (110 s) — fundamento, no recortar
-- Tres columnas, cada una con su concepto arriba y su caso abajo:
-  1. **¿Qué órdenes?** AIC/BIC: menor es mejor; premian el ajuste y cobran por cada parámetro. Caso: rejilla de 16 SARIMA con su diferencia de AIC respecto al mejor.
+### 48 · Elegir y evaluar (110 s) — fundamento
+- Tres columnas, cada una con su concepto arriba (que se pliega cuando entra el caso) y su caso abajo; arriba, la franja `Receta`:
+  1. **¿Qué órdenes?** AIC/BIC: menor es mejor; premian el ajuste y cobran por cada parámetro. Caso: rejilla de 16 SARIMA con su diferencia al mejor (botones AIC y BIC); la aerolínea es el mínimo de los dos.
   2. **¿Pronostica bien?** MAE, RMSE y MAPE desde cero, con 4 meses de esquema. Caso: los 12 errores de 1960 y las tres métricas.
   3. **¿Dejó algo sin explicar?** Los residuos deben ser ruido blanco: Ljung-Box. Dos escalas de p-valor, una sobre otra: ADF "quieres p < 0.05"; Ljung-Box "quieres p > 0.05".
-- **Gráficos:** `AicGrid`, `ErrorStrip`, `PValueScale`, `Correlogram`. **Datos:** `series_modelos.json` (JSON); métricas (vivo).
+- **Cierre:** con la nota de que 6 de los otros 15 SARIMA tuvieron menor error en 1960, y que elegirlos mirando 1960 sería la fuga de la 30.
+- **Gráficos:** `Receta`, `AicGrid`, tira de errores (local), `PValueScale`, `Correlogram`. **Datos:** `series_modelos.json`; métricas y Ljung-Box, vivos.
 
 ### 49 · La línea base (60 s)
 - **Concepto:** el pronóstico ingenuo estacional: copiar el mismo mes del año pasado.
-- **Caso:** 1960 real, ingenuo (1959 copiado) y SARIMA, con la tabla de métricas y la mejora.
-- **Cierre:** "un modelo que no le gana al ingenuo no aporta".
-- **Gráficos:** `SeriesChart`, `MetricTable`. **Datos:** vivo.
+- **Caso:** 1960 real contra cinco pronósticos en una tabla (con su línea al escoger el renglón): ingenuo estacional, ingenuo con crecimiento (1959 × lo que creció de 1958 a 1959), Random Forest de la 30, ARIMA de la 45 y SARIMA. **Cambió:** el ingenuo con crecimiento empata con SARIMA en 1960.
+- **Cierre:** "un modelo que no le gana al ingenuo no aporta; y la vara debe ser la más alta que salga gratis".
+- **Gráficos:** `SeriesChart`, `MetricTable`. **Datos:** vivo; bosque, ARIMA y SARIMA del JSON.
 
 ### 50 · Demo: de la serie al pronóstico (100 s)
-- Una franja con 6 estaciones (transformar · ¿estacionaria? · identificar · elegir · pronosticar y comparar · diagnosticar), cada una con la diapositiva donde se vio. Se recorren sobre pasajeros.
-- **Validación de origen móvil:** se pronostican 1958, 1959 y 1960, cada año entrenando solo con lo anterior. Tabla ingenuo contra ARIMA contra SARIMA con media ± desviación en los tres años. Ljung-Box de cada ajuste.
-- **Gráficos:** `PipelineSteps`, `SplitDiagram`, `SeriesChart`, `MetricTable`, `PValueScale`. **Datos:** JSON.
+- Una franja con 6 estaciones (transformar · ¿estacionaria? · identificar · elegir · pronosticar y comparar · diagnosticar), cada una con la diapositiva donde se vio. Se recorren sobre pasajeros. ADF con 132 meses: las dos filas frágiles cambiaron de lado respecto a la 37.
+- **Validación de origen móvil:** se pronostican **1955 a 1960** (seis años; la especificación decía tres), cada año entrenando solo con lo anterior. Tabla ingenuo contra ARIMA contra SARIMA con media ± desviación: SARIMA gana 5 de 6 y pierde 1958. Ljung-Box de cada ajuste.
+- **Gráficos:** estaciones (local), `SeriesChart`, `MetricTable`, `Correlogram`, `AicGrid`, `SplitDiagram`, `PValueScale`. **Datos:** JSON.
 
 ## H. Modelos ocultos de Markov (51–61)
 
-Un solo λ en `src/lib/clima.ts` y un solo formato de números para toda la sección.
+Un solo λ en `src/lib/clima.ts` y un solo formato de números para toda la sección. **Construida en el hito 6 (2026-10-17)**: plan, decisiones, clics y bitácora en `docs/hitos/HITO-6.md`, que manda sobre lo de abajo (82 clics; nombres de las piezas en español: `RedTemporal`, `DiagramaClima`, `TiraDias`, `TablasLambda`, `ArbolCaminos`, `BarrasForward`, `TablaAMano`).
 
 ### 51 · Causas ocultas (60 s)
 - **Concepto:** en las series modelamos lo que medimos; a veces lo que medimos es solo el efecto de algo que no vemos. Dos diagramas: AR (lo observado depende de lo observado) contra modelo oculto (lo observado depende de un estado que no se ve). Tabla "se ve → oculto": audio → palabras; palabras → categoría gramatical; actividad → clima.
@@ -452,7 +468,7 @@ Un solo λ en `src/lib/clima.ts` y un solo formato de números para toda la secc
 ### 55 · Las tres preguntas (60 s)
 - Tres columnas: **Evaluación** (¿qué tan probable es lo que vi? → Forward), **Decodificación** (¿qué clima hubo? → Viterbi) y **Aprendizaje** (¿cuáles son π, A, B? → Baum-Welch). Cada una con su pregunta en palabras y dónde se resuelve.
 
-### 56 · Fuerza bruta (75 s) — recortable
+### 56 · Fuerza bruta (75 s)
 - **Caso:** el árbol de los 8 caminos posibles de 3 días. Cada hoja con su probabilidad y una barra. Las 8 barras se apilan: su suma es P(O) = 0.033612. La más alta, S-L-L, es el 40 % del total.
 - **Cierre:** gráfica de 2ᵀ contra N²T: con 100 días, la fuerza bruta es imposible.
 - **Gráficos:** `PathTree`, `GrowthChart`. **Datos:** vivo.
@@ -462,24 +478,24 @@ Un solo λ en `src/lib/clima.ts` y un solo formato de números para toda la secc
 - **Caso:** barras por día en dos movimientos animados. **Predecir:** cada barra de ayer se reparte según A. **Corregir:** se multiplica por lo que tan probable era la actividad de hoy. Día 3: 0.02904 + 0.004572 = 0.033612, igual que las 8 barras de la 56.
 - **Gráficos:** `ForwardBars`. **Datos:** vivo (`lib/hmm.ts`).
 
-### 58 · La tabla α a mano (60 s) — la tabla es recortable
+### 58 · La tabla α a mano (60 s)
 - La tabla de 2 × 3 se llena columna por columna con cada operación escrita. Al final: 14 multiplicaciones contra 40 de la fuerza bruta.
 - **Gráficos:** `TablaAMano`. **Datos:** vivo.
 
 ### 59 · Viterbi (90 s)
 - **Concepto:** δ es "la probabilidad del mejor camino que termina hoy en j". Igual que Forward, pero con máximo, y guardando de dónde vino.
 - **Caso:** la tabla con los dos candidatos de cada celda (el perdedor tachado) y su flecha hacia atrás. Al final un marcador recorre las flechas: S → L → L, P = 0.01344.
-- **Cierre:** "¿y si tomo el máximo de cada día?" Da S → S → L, que es un camino peor: por eso hay que ir hacia atrás.
+- **Cierre:** "¿y si sigo la casilla más alta de cada columna?" Da S → S → L, que es un camino peor: por eso hay que ir hacia atrás. (No se pregunta por "el clima más probable de cada día": con toda la secuencia también da S → L → L.)
 - **Gráficos:** `TablaAMano` con flechas. **Datos:** vivo.
 
 ### 60 · Forward y Viterbi: suma contra máximo (50 s) — hecha, con ajustes
 - **Ajustes:** etiqueta "Caso · Clima"; usar el λ compartido; corregir el texto del costo a "O(N²T) en vez de O(T·Nᵀ)".
 
 ### 61 · Del pizarrón a la práctica (90 s)
-- **Aprender λ:** curvas de Baum-Welch desde 10 arranques distintos en 10 000 días simulados; el λ aprendido junto al real.
+- **Dato crudo (regla 8):** las primeras 5 filas del diario simulado (`dia`, `actividad`, `clima`) y qué se le cambia (el clima se aparta). **Aprender λ:** curvas de Baum-Welch desde 10 arranques distintos en 10 000 días simulados; el λ aprendido junto al real.
 - **Decimales que desaparecen:** la probabilidad de 1 000 días baja hasta que la computadora la redondea a cero. Con logaritmos no pasa (R4).
 - **Comprobación:** tabla navegador contra hmmlearn.
-- **Evaluación:** log-verosimilitud por día en días nuevos y porcentaje de días en que Viterbi acierta el clima.
+- **Evaluación:** log-verosimilitud por día en días nuevos y porcentaje de días en que Viterbi acierta el clima, contra líneas base. Con el clima del libro el aprendido no le gana al modelo sin memoria; un clima persistente (simulado, a_ii = 0.95) muestra cuándo sí sirve.
 - **Aplicaciones:** voz, etiquetado gramatical, bioinformática y economía.
 - **Gráficos:** `EMCurves`, `UnderflowChart`, `LambdaTables` (comparar), `BarrasH`. **Datos:** `hmm_clima.json` (JSON, hmmlearn).
 
@@ -506,7 +522,7 @@ Un solo λ en `src/lib/clima.ts` y un solo formato de números para toda la secc
 - **R1 · ¿Por qué queda fuera el 36.8 %?** El tablero de 5 pelotas, los dos caminos al límite e⁻¹ y la curva de (1 − 1/n)ⁿ con n = 400 marcado.
 - **R2 · AdaBoost y la pérdida exponencial.** Gráfica de las pérdidas contra el margen; el álgebra de donde salen los pesos y α; las 400 personas sobre la curva e^(−m). Texto corregido: "si la pérdida exponencial llega cerca de 0, el error también; mientras tanto, el error puede quedarse igual o subir un poco".
 - **R3 · KPSS, la contraprueba de ADF.** Hipótesis nulas opuestas; la matriz de 2 × 2 "ADF rechaza / KPSS rechaza"; las cuatro transformaciones de pasajeros.
-- **R4 · Forward sin llegar a cero.** La probabilidad cayendo hasta desaparecer en el día ≈ 686; escalamiento y logaritmos; ambos dan el mismo resultado. Corrección: el valor intermedio se rotula α̃ (no α), porque se calcula desde la columna ya normalizada.
+- **R4 · Forward sin llegar a cero.** La probabilidad cayendo hasta desaparecer (día 681 con la secuencia de prueba de la 61: se calcula en vivo, no se escribe); escalamiento y logaritmos; ambos dan el mismo resultado. Corrección: el valor intermedio se rotula α̃ (no α), porque se calcula desde la columna ya normalizada.
 
 ---
 
@@ -526,6 +542,7 @@ Un solo λ en `src/lib/clima.ts` y un solo formato de números para toda la secc
 | `TablaAMano` | Tablas que se llenan con su operación | 19, 24, 58, 59 |
 | `Receta`, `Particiones`, `SplitDiagram` | Receta y diagramas de validación | 3, 26, 30, 50, 62 |
 | `Correlogram`, `Dispersion` | ACF/PACF; dispersión de rezagos o de una regresión (sustituye a `LagScatter` y `ScatterFit`) | 29, 35, 37, 39–48 |
+| `AicGrid`, `MetricTable`, `PValueScale` | Rejilla de AIC/BIC de los 16 SARIMA; tabla de métricas con el mejor en rojo; escala de p-valores con la zona que se quiere | 48–50, 62 |
 | `CalendarGrid`, `OperacionAnimada` | Rejilla año × mes que vuela a la línea de tiempo; diferencia o ventana paso a paso | 31, 33, 36, 38 |
 | `AnioMes3D` (barras, superficie, cintas) | Pasajeros como año × mes | 32, 36, 47 |
 | `LagCloud3D` | Nube de rezagos con plano de regresión | 40, 42 |
@@ -549,7 +566,7 @@ Un solo λ en `src/lib/clima.ts` y un solo formato de números para toda la secc
 - **Dependencias nuevas:** `statsmodels` y `hmmlearn` en `.venv`. Hay que confirmar que instalan en Python 3.14; si no, se crea el entorno con 3.12.
 - **U7:** `varianza_ensamble`, `oob_vs_cv`, `raices`, `rf_hiperparametros`, `importancias`, `stump_adult`, `gb_shrinkage`, `xgb_regularizacion`, `xgb_faltantes_tiempos`, `matrices_adult`, `curvas_n_estimators`, `ruido_etiquetas`, `adult_muestra`, y `comparacion_adult` exportado de nuevo con el valor por pliegue.
 - **U8:** `pasajeros`, `validacion_temporal`, `adf_pasajeros`, `series_modelos`, `hmm_clima`, y los de respaldo (KPSS, AdaBoost, HMM de 1 000 días).
-- **Protocolo fijo:** semilla 42; en Adult, 5 pliegues estratificados; en pasajeros, 1960 como prueba y origen móvil 1958–1960.
+- **Protocolo fijo:** semilla 42; en Adult, 5 pliegues estratificados; en pasajeros, 1960 como prueba y origen móvil 1955–1960 (desde 72 meses de entrenamiento; con menos, los ajustes no convergen).
 
 ## Orden de construcción
 
@@ -559,8 +576,8 @@ Un solo λ en `src/lib/clima.ts` y un solo formato de números para toda la secc
 | 1 · Bases y bagging ✅ | A y B | 3, 4, 6–12 |
 | 2 · Random Forest y boosting ✅ | C y D | 13–19, 21–24 |
 | 3 · Cierre de la parte 1 ✅ | E | 25–28 |
-| 4 · Puente y fundamentos (construido; falta el cierre) | Puente y F | 29–40 |
-| 5 · Modelos de series | G | 41–50 |
+| 4 · Puente y fundamentos ✅ | Puente y F | 29–40 |
+| 5 · Modelos de series (construido; falta la revisión del usuario) | G | 41–50 |
 | 6 · HMM | H | 51–59, 61 y ajustes de la 60 |
 | 7 · Apertura, cierre y respaldo | Incluye el mapa con la marca "vamos aquí" para abrir las clases 2 y 3 | 2, 62–64, R1–R4 y ajuste de la 1 |
 | 8 · Ensayo | Cronometrar cada clase (meta: 80 min con preguntas) y exportar a PDF | todas |

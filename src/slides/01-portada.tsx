@@ -67,7 +67,7 @@ export default function Portada(_: SlideProps) {
               </span>
               <span style={{ fontSize: 34, fontWeight: 600, letterSpacing: "-0.015em" }}>{p.name}</span>
             </div>
-            <div style={{ marginTop: 12, fontSize: 21, color: "var(--text-3)", lineHeight: 1.5 }}>{p.items}</div>
+            <div style={{ marginTop: 12, fontSize: 26, color: "var(--text-3)", lineHeight: 1.5 }}>{p.items}</div>
           </motion.div>
         ))}
       </div>

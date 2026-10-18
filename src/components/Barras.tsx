@@ -1,3 +1,4 @@
+import { R, margenIzq } from "../deck/tipografia";
 import { motion } from "motion/react";
 import { ejeQueCubre, linear } from "../lib/scale";
 import { pasoRedondo } from "./SeriesChart";
@@ -25,6 +26,9 @@ export function Barras({
   margen = { l: 58, r: 12, t: 22, b: 36 },
   transicion = 0.5,
   rotuloBanda,
+  curvas = [],
+  opacidad,
+  senalar = [],
 }: {
   /** Una barra por valor; `null` deja el hueco. */
   valores: (number | null)[];
@@ -39,8 +43,8 @@ export function Barras({
   /** Qué barras van en rojo. */
   rojo?: (i: number) => boolean;
   color?: string;
-  /** Franja de ±banda alrededor del 0 (lo que cabría esperar por azar). */
-  banda?: number;
+  /** Franja de ±banda alrededor del 0 (lo que cabría esperar por azar). Con una lista, un ancho por barra. */
+  banda?: number | (number | null)[];
   rotulo?: string;
   /** Texto sobre la barra i (por ejemplo su valor); `undefined` para no escribir nada. */
   encima?: (i: number) => string | undefined;
@@ -50,11 +54,25 @@ export function Barras({
   margen?: { l: number; r: number; t: number; b: number };
   transicion?: number;
   rotuloBanda?: string;
+  /** Valores contra los que se comparan las barras (por ejemplo, lo que diría la teoría): un guion por barra y, si se pide, una línea que los une. */
+  curvas?: { id: string; valores: (number | null)[]; color?: string; etiqueta?: string; opacidad?: number; linea?: boolean; guion?: string }[];
+  /** Opacidad de la barra i (para dejar unas en segundo plano). */
+  opacidad?: (i: number) => number;
+  /** Barras que se señalan con un triángulo bajo el eje (sin usar color). */
+  senalar?: number[];
 }) {
-  const m = margen;
   const datos = valores.filter((v): v is number => v !== null && !Number.isNaN(v));
-  const cubrir = [...datos, 0, ...(banda ? [banda, -banda] : [])];
+  const anchos = banda === undefined ? undefined : valores.map((_, i) => (typeof banda === "number" ? banda : (banda[i] ?? 0)));
+  const tope = anchos ? Math.max(...anchos) : 0;
+  const cubrir = [...datos, 0, ...(anchos ? [tope, -tope] : []), ...curvas.flatMap((c) => c.valores.filter((v): v is number => v !== null))];
   const eje = y ? ejeQueCubre(y, pasoY ?? pasoRedondo(y[1] - y[0], 4)) : ejeQueCubre(cubrir, pasoY ?? pasoRedondo(Math.max(...cubrir) - Math.min(...cubrir) || 1, 4));
+  // El margen crece lo necesario para que los números del eje, el título y las etiquetas quepan a tamaño de rótulo.
+  const m = {
+    l: margenIzq(margen.l, eje.ticks.map(fmtY), 10),
+    r: margen.r,
+    t: rotulo ? Math.max(margen.t, R + 12) : margen.t,
+    b: etiquetas ? Math.max(margen.b, R + 14) : margen.b,
+  };
   const fy = linear(eje.dominio, [alto - m.b, m.t]);
   const paso = (ancho - m.l - m.r) / valores.length;
   const cero = fy(0);
@@ -63,23 +81,37 @@ export function Barras({
       {eje.ticks.map((t) => (
         <g key={t}>
           <line x1={m.l} x2={ancho - m.r} y1={fy(t)} y2={fy(t)} stroke="var(--line)" />
-          <text x={m.l - 10} y={fy(t) + 5} textAnchor="end" className="mono" fontSize={15} fill="var(--text-3)">
+          <text x={m.l - 10} y={fy(t) + 7} textAnchor="end" className="mono" fontSize={R} fill="var(--text-3)">
             {fmtY(t)}
           </text>
         </g>
       ))}
-      {banda !== undefined && (
+      {anchos && (
         <g>
-          <motion.rect x={m.l} width={ancho - m.l - m.r} fill="var(--red-dim)" initial={false} animate={{ y: fy(banda), height: fy(-banda) - fy(banda) }} transition={{ duration: transicion }} />
+          {/* Un escalón por barra, también cuando la banda es pareja: así puede pasar de una forma a la otra. */}
+          <motion.path
+            fill="var(--red-dim)"
+            initial={false}
+            animate={{
+              d:
+                anchos.map((b, i) => `${i ? "L" : "M"}${m.l + i * paso},${fy(b)}L${m.l + (i + 1) * paso},${fy(b)}`).join("") +
+                anchos
+                  .map((b, i) => `L${m.l + (i + 1) * paso},${fy(-b)}L${m.l + i * paso},${fy(-b)}`)
+                  .reverse()
+                  .join("") +
+                "Z",
+            }}
+            transition={{ duration: transicion }}
+          />
           {rotuloBanda && (
-            <text x={ancho - m.r} y={fy(banda) - 8} textAnchor="end" className="mono" fontSize={14} fill="var(--red-2)">
+            <motion.text x={ancho - m.r} textAnchor="end" className="mono" fontSize={R} fill="var(--red-2)" initial={false} animate={{ y: fy(anchos[anchos.length - 1]) - 8 }} transition={{ duration: transicion }}>
               {rotuloBanda}
-            </text>
+            </motion.text>
           )}
         </g>
       )}
       {rotulo && (
-        <text x={m.l} y={m.t - 8} className="mono" fontSize={15} fill="var(--text-2)">
+        <text x={m.l} y={m.t - 8} className="mono" fontSize={R} fill="var(--text-2)">
           {rotulo}
         </text>
       )}
@@ -90,17 +122,17 @@ export function Barras({
         const h = Math.max(1, Math.abs(fy(v) - cero));
         const texto = encima?.(i);
         return (
-          <g key={i}>
+          <g key={i} opacity={opacidad?.(i) ?? 1}>
             <motion.rect x={x} width={paso * grosor} fill={rojo?.(i) ? "var(--red)" : color} initial={false} animate={{ y: arriba, height: h }} transition={{ duration: transicion, ease: SUAVE }} />
             {texto !== undefined && (
               <motion.text
                 x={x + (paso * grosor) / 2}
                 textAnchor="middle"
                 className="mono"
-                fontSize={15}
+                fontSize={R}
                 fill={rojo?.(i) ? "var(--red-2)" : "var(--text-2)"}
                 initial={false}
-                animate={{ y: v >= 0 ? arriba - 7 : arriba + h + 18 }}
+                animate={{ y: v >= 0 ? arriba - 7 : arriba + h + R + 2 }}
                 transition={{ duration: transicion, ease: SUAVE }}
               >
                 {texto}
@@ -110,9 +142,33 @@ export function Barras({
         );
       })}
       <line x1={m.l} x2={ancho - m.r} y1={cero} y2={cero} stroke="var(--line-2)" />
+      {curvas.map((c) => {
+        const tono = c.color ?? "var(--text)";
+        const pts = c.valores.flatMap((v, i) => (v === null ? [] : [{ i, x: m.l + i * paso + paso / 2, y: fy(v) }]));
+        const fin = pts[pts.length - 1];
+        const medio = (paso * grosor) / 2 + 3;
+        return (
+          <motion.g key={c.id} initial={{ opacity: 0 }} animate={{ opacity: c.opacidad ?? 1 }} transition={{ duration: 0.4 }}>
+            {c.linea && <motion.path fill="none" stroke={tono} strokeWidth={2.5} strokeDasharray={c.guion} initial={false} animate={{ d: pts.map((p, j) => `${j ? "L" : "M"}${p.x},${p.y}`).join("") }} transition={{ duration: transicion, ease: SUAVE }} />}
+            {pts.map((p) => (
+              <motion.line key={p.i} x1={p.x - medio} x2={p.x + medio} stroke={tono} strokeWidth={3} initial={false} animate={{ y1: p.y, y2: p.y }} transition={{ duration: transicion, ease: SUAVE }} />
+            ))}
+            {c.etiqueta && fin && (
+              <motion.text x={fin.x + medio + 8} fontSize={R} fill={tono} initial={false} animate={{ y: fin.y + 7 }} transition={{ duration: transicion, ease: SUAVE }}>
+                {c.etiqueta}
+              </motion.text>
+            )}
+          </motion.g>
+        );
+      })}
+      {senalar.map((i) => {
+        const cx = m.l + i * paso + paso / 2;
+        const yb = alto - m.b + 4;
+        return <path key={i} d={`M${cx},${yb}L${cx - 6},${yb + 9}L${cx + 6},${yb + 9}Z`} fill="var(--text-2)" />;
+      })}
       {etiquetas?.map((t, i) =>
         i % cada === 0 ? (
-          <text key={i} x={m.l + i * paso + paso / 2} y={alto - m.b + 24} textAnchor="middle" className="mono" fontSize={15} fill="var(--text-3)">
+          <text key={i} x={m.l + i * paso + paso / 2} y={alto - m.b + R + 6} textAnchor="middle" className="mono" fontSize={R} fill="var(--text-3)">
             {t}
           </text>
         ) : null,

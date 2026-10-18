@@ -69,7 +69,7 @@ export default function XgboostRegularizacion({ step }: SlideProps) {
                   <TeX>{"\\text{Obj} = \\sum_i L(y_i, \\hat y_i) + \\sum_{\\text{árboles}} \\Big[ {\\color{#e5383b}\\gamma\\,T} + {\\color{#e5383b}\\tfrac12 \\lambda \\textstyle\\sum_j w_j^2} \\Big]"}</TeX>
                 </div>
               </div>
-              <div style={{ fontSize: 23, color: "var(--text-2)", lineHeight: 1.5 }}>
+              <div style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.5 }}>
                 <p style={{ margin: "0 0 10px" }}>
                   <TeX>T</TeX> = cuántas hojas tiene el árbol. <TeX>{"\\gamma"}</TeX> cobra <b style={{ color: "var(--text)" }}>por cada hoja</b>.
                 </p>
@@ -104,16 +104,16 @@ export default function XgboostRegularizacion({ step }: SlideProps) {
             transition={{ duration: 0.45 }}
           >
             <div>
-              <div style={{ display: "grid", gridTemplateColumns: `150px repeat(${GAMMAS.length}, 1fr)`, gap: 8 }}>
+              <div data-rotulo style={{ display: "grid", gridTemplateColumns: `150px repeat(${GAMMAS.length}, 1fr)`, gap: 8 }}>
                 <span />
                 {GAMMAS.map((g) => (
-                  <span key={g} className="label natural" style={{ textAlign: "center", fontSize: 19 }}>
+                  <span key={g} className="label natural" style={{ textAlign: "center", fontSize: 20 }}>
                     γ = {g} {g === 0 ? "· hojas gratis" : ""}
                   </span>
                 ))}
                 {LAMBDAS.map((l) => (
                   <Fragment key={l}>
-                    <span className="label natural" style={{ alignSelf: "center", fontSize: 19 }}>
+                    <span className="label natural" style={{ alignSelf: "center", fontSize: 20 }}>
                       λ = {l}
                     </span>
                     {GAMMAS.map((g) => {
@@ -121,17 +121,17 @@ export default function XgboostRegularizacion({ step }: SlideProps) {
                       const brecha = d.logloss_validacion - d.logloss_entrenamiento;
                       const es = d === mejor;
                       return (
-                        <div key={`${l}-${g}`} style={{ border: `1px solid ${es ? "var(--red)" : "var(--line-2)"}`, background: es ? "var(--red-dim)" : "var(--panel)", padding: "12px 16px" }}>
+                        <div key={`${l}-${g}`} style={{ border: `1px solid ${es ? "var(--red)" : "var(--line-2)"}`, background: es ? "var(--red-dim)" : "var(--panel)", padding: "8px 14px" }}>
                           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
                             <span className="mono" style={{ fontSize: 24 }}>
                               {d.hojas.toLocaleString("es-MX")}
                             </span>
-                            <span style={{ fontSize: 16, color: "var(--text-3)" }}>hojas</span>
+                            <span style={{ fontSize: 20, color: "var(--text-3)" }}>hojas</span>
                           </div>
                           <div style={{ height: 6, background: "var(--line)", margin: "6px 0 10px" }}>
                             <div style={{ height: 6, width: `${(d.hojas / maxHojas) * 100}%`, background: "var(--data-dim)" }} />
                           </div>
-                          <div className="mono" style={{ fontSize: 17, color: "var(--text-2)" }}>
+                          <div className="mono" style={{ fontSize: 20, color: "var(--text-2)" }}>
                             brecha {brecha.toFixed(3)} · validación <span style={{ color: es ? "var(--red-2)" : "var(--text)" }}>{d.logloss_validacion.toFixed(4)}</span>
                           </div>
                         </div>
@@ -140,21 +140,28 @@ export default function XgboostRegularizacion({ step }: SlideProps) {
                   </Fragment>
                 ))}
               </div>
-              <div className="label" style={{ marginTop: 14, fontSize: 14 }}>
+              <div className="label" style={{ marginTop: 14, fontSize: 20 }}>
                 brecha = log-loss de validación − log-loss de entrenamiento · marco rojo = mejor validación
               </div>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 22, fontSize: 23, color: "var(--text-2)", lineHeight: 1.45 }}>
-              <p style={{ margin: 0 }}>
+            {/* Una lectura de la rejilla por clic: sin cobros (2), qué hace cada cobro (3) y la conclusión (4). */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 22, fontSize: 26, color: "var(--text-2)", lineHeight: 1.45 }}>
+              {step === 2 && (
+              <motion.p initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ margin: 0 }}>
                 Sin cobros: <b style={{ color: "var(--text)" }}>{libre.hojas.toLocaleString("es-MX")} hojas</b> y una brecha de{" "}
                 {(libre.logloss_validacion - libre.logloss_entrenamiento).toFixed(3)}: el modelo memoriza.
-              </p>
+              </motion.p>
+              )}
+              {step === 3 && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ display: "grid", gap: 22 }}>
               <p style={{ margin: 0 }}>Al subir γ desaparecen hojas. Al subir λ los valores se encogen. En los dos casos la brecha se cierra.</p>
               <p style={{ margin: 0 }}>
                 Pero cobrar de más también cuesta: con λ = 100 y γ = 5 la validación empeora.
               </p>
-              <Reveal step={step} at={3} style={{ marginTop: "auto" }}>
-                <p className="takeaway" style={{ margin: 0, fontSize: 25 }}>
+              </motion.div>
+              )}
+              <Reveal step={step} at={4}>
+                <p className="takeaway" style={{ margin: 0, fontSize: 26 }}>
                   El freno viene <em>dentro de la fórmula</em>. Un poco ayuda a generalizar; demasiado deja un modelo que ya no aprende.
                 </p>
               </Reveal>

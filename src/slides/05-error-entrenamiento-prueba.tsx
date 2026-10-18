@@ -17,7 +17,7 @@ type Punto = { x: number; etiqueta: string; train: number; test: number };
 
 const CW = 660;
 const CH = 400;
-const M = { l: 60, r: 18, t: 16, b: 48 };
+const M = { l: 60, r: 18, t: 16, b: 74 };
 
 function ErrorChart({
   puntos,
@@ -42,19 +42,19 @@ function ErrorChart({
       {[0, 0.05, 0.1, 0.15, 0.2, 0.25].filter((v) => v >= yMin).map((v) => (
         <g key={v}>
           <line x1={M.l} x2={CW - M.r} y1={fy(v)} y2={fy(v)} stroke="var(--line)" />
-          <text x={M.l - 12} y={fy(v) + 5} textAnchor="end" className="mono" fontSize={15} fill="var(--text-3)">
+          <text x={M.l - 12} y={fy(v) + 5} textAnchor="end" className="mono" fontSize={20} fill="var(--text-3)">
             {Math.round(v * 100)}%
           </text>
         </g>
       ))}
       {puntos.map((p, i) =>
         i % cada === 0 || i === puntos.length - 1 ? (
-          <text key={p.x} x={fx(p.x)} y={CH - M.b + 28} textAnchor="middle" className="mono" fontSize={15} fill="var(--text-3)">
+          <text key={p.x} x={fx(p.x)} y={CH - M.b + 28} textAnchor="middle" className="mono" fontSize={20} fill="var(--text-3)">
             {p.etiqueta}
           </text>
         ) : null,
       )}
-      <text x={CW - M.r} y={CH - 2} textAnchor="end" className="mono" fontSize={13} fill="var(--text-3)">
+      <text x={CW - M.r} y={CH - 4} textAnchor="end" className="mono" fontSize={20} fill="var(--text-3)">
         profundidad máxima
       </text>
       {actual !== undefined && <line x1={fx(actual)} x2={fx(actual)} y1={M.t} y2={CH - M.b} stroke="var(--line-2)" />}
@@ -67,14 +67,14 @@ function ErrorChart({
         </g>
       ))}
       <circle cx={fx(mejor.x)} cy={fy(mejor.test)} r={12} fill="none" stroke="var(--red-2)" strokeWidth={1.5} />
-      <text x={fx(mejor.x)} y={fy(mejor.test) + 32} textAnchor="middle" className="mono" fontSize={14} fill="var(--red-2)">
+      <text x={fx(mejor.x)} y={fy(mejor.test) + 32} textAnchor="middle" className="mono" fontSize={20} fill="var(--red-2)">
         mínimo · {mejor.etiqueta}
       </text>
-      <g className="mono" fontSize={14}>
-        <text x={CW - M.r} y={M.t + 16} textAnchor="end" fill="var(--red-2)">
+      <g className="mono" fontSize={20}>
+        <text x={CW - M.r} y={M.t + 18} textAnchor="end" fill="var(--red-2)">
           {testLabel}
         </text>
-        <text x={CW - M.r} y={M.t + 38} textAnchor="end" fill="var(--data)">
+        <text x={CW - M.r} y={M.t + 46} textAnchor="end" fill="var(--data)">
           entrenamiento
         </text>
       </g>
@@ -108,26 +108,26 @@ function Esquema() {
       <text x={fx(9.7)} y={fy(te(9.7)) + 30} textAnchor="end" fontSize={20} fill="var(--red-2)">
         error de prueba
       </text>
-      <text x={m.l + 16} y={m.t + 30} className="mono" fontSize={15} fill="var(--text-2)" letterSpacing="0.1em">
+      <text x={m.l + 16} y={m.t + 30} className="mono" fontSize={20} fill="var(--text-2)" letterSpacing="0.1em">
         SUBAJUSTE
       </text>
-      <text x={m.l + 16} y={m.t + 54} fontSize={18} fill="var(--text-3)">
+      <text x={m.l + 16} y={m.t + 54} fontSize={20} fill="var(--text-3)">
         demasiado simple
       </text>
-      <text x={w - m.r - 16} y={m.t + 30} textAnchor="end" className="mono" fontSize={15} fill="var(--red-2)" letterSpacing="0.1em">
+      <text x={w - m.r - 16} y={m.t + 30} textAnchor="end" className="mono" fontSize={20} fill="var(--red-2)" letterSpacing="0.1em">
         SOBREAJUSTE
       </text>
-      <text x={w - m.r - 16} y={m.t + 54} textAnchor="end" fontSize={18} fill="var(--text-3)">
+      <text x={w - m.r - 16} y={m.t + 54} textAnchor="end" fontSize={20} fill="var(--text-3)">
         memoriza el ruido
       </text>
       <circle cx={fx(best)} cy={fy(te(best))} r={9} fill="var(--red)" />
-      <text x={fx(best)} y={fy(te(best)) + 34} textAnchor="middle" fontSize={18} fill="var(--text-2)">
+      <text x={fx(best)} y={fy(te(best)) + 34} textAnchor="middle" fontSize={20} fill="var(--text-2)">
         punto justo
       </text>
-      <text x={w - m.r} y={h - 16} textAnchor="end" className="mono" fontSize={15} fill="var(--text-3)">
+      <text x={w - m.r} y={h - 16} textAnchor="end" className="mono" fontSize={20} fill="var(--text-3)">
         complejidad del modelo →
       </text>
-      <text x={m.l - 14} y={m.t + 6} textAnchor="end" className="mono" fontSize={15} fill="var(--text-3)" transform={`rotate(-90 ${m.l - 14} ${m.t + 6})`}>
+      <text x={m.l - 14} y={m.t + 6} textAnchor="end" className="mono" fontSize={20} fill="var(--text-3)" transform={`rotate(-90 ${m.l - 14} ${m.t + 6})`}>
         error
       </text>
     </svg>
@@ -212,7 +212,7 @@ export default function ErrorEntrenamientoPrueba({ step, active }: SlideProps) {
               {defs.map(([t, d]) => (
                 <div key={t} style={{ borderLeft: "1px solid var(--line-2)", paddingLeft: 26 }}>
                   <div style={{ fontSize: 30, fontWeight: 600, letterSpacing: "-0.01em" }}>{t}</div>
-                  <div style={{ fontSize: 24, color: "var(--text-2)", lineHeight: 1.45, marginTop: 8 }}>{d}</div>
+                  <div style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.45, marginTop: 8 }}>{d}</div>
                 </div>
               ))}
             </div>
@@ -246,7 +246,7 @@ export default function ErrorEntrenamientoPrueba({ step, active }: SlideProps) {
                 )}
               </div>
               <div style={{ display: "grid", gridTemplateColumns: "300px 1fr 330px", alignItems: "center", gap: 24, marginTop: 6 }}>
-                <div style={{ fontSize: 24 }}>
+                <div style={{ fontSize: 26 }}>
                   Profundidad máxima{" "}
                   <span className="mono" style={{ color: "var(--red)", fontSize: 30, marginLeft: 8 }}>
                     {depth}
@@ -261,7 +261,7 @@ export default function ErrorEntrenamientoPrueba({ step, active }: SlideProps) {
                   onChange={(e) => setDepth(Number(e.target.value))}
                   onPointerUp={(e) => e.currentTarget.blur()}
                 />
-                <div className="mono" style={{ fontSize: 18, color: "var(--text-2)", textAlign: "right", lineHeight: 1.5 }}>
+                <div className="mono" style={{ fontSize: 20, color: "var(--text-2)", textAlign: "right", lineHeight: 1.5 }}>
                   <div>
                     error entrenamiento <span style={{ color: "var(--text)" }}>{cur ? pct(cur.train) : "—"}</span>
                   </div>
@@ -295,7 +295,7 @@ export default function ErrorEntrenamientoPrueba({ step, active }: SlideProps) {
                 </motion.div>
               </AnimatePresence>
               <Reveal step={step} at={3} style={{ marginTop: 26 }}>
-                <p className="takeaway" style={{ margin: 0, fontSize: 25 }}>
+                <p className="takeaway" style={{ margin: 0, fontSize: 26 }}>
                   Sin límite, el árbol acierta el <em>{pct(sinLimite.acc_entrenamiento, 2)}</em> de sus datos, pero solo el{" "}
                   <em>{pct(sinLimite.acc_cv)}</em> con personas nuevas. Con profundidad {mejorCompleta.profundidad} llega a{" "}
                   {pct(mejorCompleta.acc_cv)}.

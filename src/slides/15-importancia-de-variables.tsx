@@ -29,7 +29,7 @@ function ColumnaBarajada({ activa }: { activa: boolean }) {
   return (
     <svg width={440} height={alto * 6 + 10}>
       {["edad", "horas", "y"].map((t, c) => (
-        <text key={t} x={col[c] + 50} y={26} textAnchor="middle" className="mono" fontSize={16} fill={c === 0 ? "var(--red-2)" : "var(--text-3)"}>
+        <text key={t} x={col[c] + 50} y={26} textAnchor="middle" className="mono" fontSize={20} fill={c === 0 ? "var(--red-2)" : "var(--text-3)"}>
           {c === 0 ? "edad (barajada)" : t}
         </text>
       ))}
@@ -75,26 +75,31 @@ const lugarRuido = FILAS.indexOf(ruido) + 1;
 const tres = (v: number) => (Math.abs(v) < 0.0005 ? 0 : v).toFixed(3);
 
 function Barras({ conPermutacion }: { conPermutacion: boolean }) {
-  const h = 31;
+  const h = 32;
   const xNombre = 250;
-  const wBarra = 520;
-  const x2 = xNombre + wBarra + 130;
+  const wBarra = 500;
+  const x2 = xNombre + wBarra + 150;
+  // El título de la permutación no cabe en un renglón a tamaño de rótulo: va en dos.
+  const arriba = conPermutacion ? 58 : 34;
   return (
-    <svg width={1696} height={FILAS.length * h + 40} style={{ display: "block" }}>
-      <text x={xNombre} y={18} className="mono" fontSize={15} fill="var(--text-3)" letterSpacing="0.1em">
+    <svg width={1696} height={FILAS.length * h + 64} style={{ display: "block" }}>
+      <text x={xNombre} y={18} className="mono" fontSize={20} fill="var(--text-3)" letterSpacing="0.1em">
         MDI · SE MIDE AL ENTRENAR
       </text>
       {conPermutacion && (
-        <text x={x2} y={18} className="mono" fontSize={15} fill="var(--text-3)" letterSpacing="0.1em">
-          PERMUTACIÓN · CUÁNTO BAJAN LOS ACIERTOS EN DATOS NO VISTOS
+        <text x={x2} y={18} className="mono" fontSize={20} fill="var(--text-3)" letterSpacing="0.1em">
+          <tspan>PERMUTACIÓN ·</tspan>
+          <tspan x={x2} dy={24}>
+            CUÁNTO BAJAN LOS ACIERTOS EN DATOS NO VISTOS
+          </tspan>
         </text>
       )}
       {FILAS.map((f, i) => {
-        const y = 34 + i * h;
+        const y = arriba + i * h;
         const raro = SOSPECHOSAS.has(f.variable);
         return (
           <g key={f.variable}>
-            <text x={xNombre - 16} y={y + 18} textAnchor="end" fontSize={20} fill={raro ? "var(--red-2)" : "var(--text-2)"}>
+            <text x={xNombre - 16} y={y + 20} textAnchor="end" fontSize={22} fill={raro ? "var(--red-2)" : "var(--text-2)"}>
               {f.nombre_es}
             </text>
             <motion.rect
@@ -106,7 +111,7 @@ function Barras({ conPermutacion }: { conPermutacion: boolean }) {
               transition={{ duration: 0.6, delay: i * 0.03 }}
               fill={raro ? "var(--red)" : "var(--data-dim)"}
             />
-            <text x={xNombre + (f.mdi / MAX_MDI) * wBarra + 10} y={y + 18} className="mono" fontSize={16} fill="var(--text-3)">
+            <text x={xNombre + (f.mdi / MAX_MDI) * wBarra + 10} y={y + 20} className="mono" fontSize={20} fill="var(--text-3)">
               {f.mdi.toFixed(3)}
             </text>
             {conPermutacion && (
@@ -120,7 +125,7 @@ function Barras({ conPermutacion }: { conPermutacion: boolean }) {
                   transition={{ duration: 0.6, delay: i * 0.03 }}
                   fill={raro ? "var(--red)" : "var(--data)"}
                 />
-                <text x={x2 + Math.max(0, f.permutacion / MAX_PERM) * wBarra + 10} y={y + 18} className="mono" fontSize={16} fill={raro ? "var(--red-2)" : "var(--text-3)"}>
+                <text x={x2 + Math.max(0, f.permutacion / MAX_PERM) * wBarra + 10} y={y + 20} className="mono" fontSize={20} fill={raro ? "var(--red-2)" : "var(--text-3)"}>
                   {tres(f.permutacion)}
                 </text>
               </>
@@ -170,12 +175,12 @@ export default function ImportanciaDeVariables({ step, active }: SlideProps) {
           <motion.div key="caso" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
             <Barras conPermutacion={step >= 2} />
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, marginTop: 6 }}>
-              <p style={{ fontSize: 22, color: "var(--text-2)", lineHeight: 1.4, margin: 0 }}>
+              <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.4, margin: 0 }}>
                 Según MDI, el <b style={{ color: "var(--red-2)" }}>ruido</b> es la variable número {lugarRuido} de {FILAS.length}.
                 {step >= 2 && <> Al barajarlo, los aciertos casi no cambian ({tres(ruido.permutacion)}).</>}
               </p>
               <Reveal step={step} at={3}>
-                <p className="takeaway" style={{ margin: 0, fontSize: 24 }}>
+                <p className="takeaway" style={{ margin: 0, fontSize: 26 }}>
                   MDI premia a las variables con <em>muchos valores distintos</em>, aunque no sirvan. La permutación en datos no vistos es
                   más confiable.
                 </p>

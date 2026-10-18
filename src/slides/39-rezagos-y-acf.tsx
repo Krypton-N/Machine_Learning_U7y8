@@ -22,24 +22,24 @@ const ACF_OLA = acf(OLA, 4);
 const REZAGOS_OLA = [1, 2, 3, 4].map((k) => ({ valor: k, texto: `k = ${k}` }));
 
 function TablaRezagos({ k, productos }: { k: number; productos: boolean }) {
-  const celda = { padding: "7px 26px", fontSize: 25, borderBottom: "1px solid var(--line)", textAlign: "right" } as const;
+  const celda = { padding: "7px 26px", fontSize: 26, borderBottom: "1px solid var(--line)", textAlign: "right" } as const;
   const columnas = productos ? [k] : [1, 2];
   const prod = productosRezago(OLA, k);
   return (
     <table className="mono" style={{ borderCollapse: "collapse" }}>
       <thead>
         <tr style={{ color: "var(--text-3)" }}>
-          <th style={{ ...celda, fontSize: 18 }}>t</th>
-          <th style={{ ...celda, fontSize: 18 }}>
+          <th style={{ ...celda, fontSize: 26 }}>t</th>
+          <th style={{ ...celda, fontSize: 26 }}>
             <TeX>{"x_t"}</TeX>
           </th>
           {columnas.map((c) => (
-            <th key={c} style={{ ...celda, fontSize: 18, color: "var(--red-2)" }}>
+            <th key={c} style={{ ...celda, fontSize: 26, color: "var(--red-2)" }}>
               <TeX>{`x_{t-${c}}`}</TeX>
             </th>
           ))}
           {productos && (
-            <th style={{ ...celda, fontSize: 18 }}>
+            <th style={{ ...celda, fontSize: 26 }}>
               <TeX>{`(x_t - \\bar x)(x_{t-${k}} - \\bar x)`}</TeX>
             </th>
           )}
@@ -132,11 +132,11 @@ export default function RezagosYACF({ step, active }: SlideProps) {
               <TablaRezagos k={kOla} productos={step === 1} />
             </div>
             {step === 0 ? (
-              <p style={{ fontSize: 24, lineHeight: 1.4, marginTop: 18 }}>
+              <p style={{ fontSize: 26, lineHeight: 1.4, marginTop: 18 }}>
                 <b>Rezago k:</b> el valor de hace k pasos. Cada renglón junta el valor de hoy con el de ayer y el de antier.
               </p>
             ) : (
-              <p className="mono" style={{ fontSize: 23, marginTop: 16 }}>
+              <p className="mono" style={{ fontSize: 24, marginTop: 16 }}>
                 Σ productos = {productosRezago(OLA, kOla).reduce((s, v) => s + v, 0)} · Σ cuadrados = {CUADRADOS} ·{" "}
                 <span style={{ color: "var(--red-2)" }}>
                   r{"₀₁₂₃₄"[kOla]} = {ACF_OLA[kOla].toFixed(2)}
@@ -149,7 +149,7 @@ export default function RezagosYACF({ step, active }: SlideProps) {
               <p>Mide si dos listas suben y bajan juntas: +1 si van juntas, −1 si van al revés, 0 si no tienen relación.</p>
             </Recap>
             {step === 0 ? (
-              <p style={{ fontSize: 25, lineHeight: 1.42, marginTop: 26 }}>
+              <p style={{ fontSize: 26, lineHeight: 1.42, marginTop: 26 }}>
                 <b>Autocorrelación:</b> la correlación de la serie con su propia copia recorrida.
               </p>
             ) : (
@@ -157,7 +157,7 @@ export default function RezagosYACF({ step, active }: SlideProps) {
                 <div style={{ fontSize: 30 }}>
                   <TeX>{"r_k = \\dfrac{\\sum_{t=k+1}^{n}(x_t - \\bar x)(x_{t-k} - \\bar x)}{\\sum_{t=1}^{n}(x_t - \\bar x)^2}"}</TeX>
                 </div>
-                <p style={{ fontSize: 22, lineHeight: 1.4, color: "var(--text-2)", margin: "14px 0 10px" }}>
+                <p style={{ fontSize: 26, lineHeight: 1.4, color: "var(--text-2)", margin: "14px 0 10px" }}>
                   Un producto positivo quiere decir que los dos valores están del mismo lado de la media (aquí, x̄ = {MEDIA_OLA}). r suma esos acuerdos y los
                   divide entre la variación total.
                 </p>
@@ -203,7 +203,7 @@ export default function RezagosYACF({ step, active }: SlideProps) {
                 margen={{ l: 64, r: 10, t: 26, b: 8 }}
                 transicion={0.15}
               />
-              <p style={{ fontSize: 22, lineHeight: 1.4, margin: "8px 0 0" }}>
+              <p style={{ fontSize: 26, lineHeight: 1.4, margin: "8px 0 0" }}>
                 Con k = {k}: <span style={{ color: "var(--red-2)" }}>{positivos} de {prod.length}</span> productos son positivos.{" "}
                 {step === 3 && "Con tendencia, los primeros años quedan bajo la media y los últimos arriba: casi todo coincide, para cualquier k."}
               </p>
@@ -235,7 +235,7 @@ export default function RezagosYACF({ step, active }: SlideProps) {
                 y={diferenciada ? [-0.5, 0.5] : [-0.5, 1]}
                 titulo="ACF · una barra por rezago · ↑ ↓ cambian k"
               />
-              <div style={{ fontSize: 21, lineHeight: 1.4, marginTop: 6 }}>
+              <div style={{ fontSize: 26, lineHeight: 1.4, marginTop: 6 }}>
                 {step === 2 && (
                   <span style={{ color: "var(--text-2)" }}>
                     Cada barra es la suma de esos productos entre la suma de cuadrados. Con k = 1 da {ACF_Y[1].toFixed(3)}; en la 29 salió {PEARSON_1.toFixed(3)} porque
@@ -245,7 +245,7 @@ export default function RezagosYACF({ step, active }: SlideProps) {
                 {step === 3 && (
                   <>
                     <b>Baja muy lento:</b> tendencia. <b>Picos en {PERIODO} y {2 * PERIODO}:</b> estacionalidad.
-                    <div style={{ fontSize: 18, color: "var(--text-3)", marginTop: 6 }}>
+                    <div style={{ fontSize: 26, color: "var(--text-3)", marginTop: 6 }}>
                       Banda ±{banda95(Y.length).toFixed(3)}: si no hubiera relación alguna entre los meses (ruido blanco, diapositiva 41), 95 de cada 100 barras caerían ahí.
                     </div>
                   </>
@@ -254,7 +254,7 @@ export default function RezagosYACF({ step, active }: SlideProps) {
                   <>
                     Casi todo queda dentro de la banda. Las dos mayores: <span style={{ color: "var(--red-2)" }}>{MAYORES_DD.join(" y ")}</span>. Salen apenas{" "}
                     {APENAS.join(", ")}.
-                    <div style={{ fontSize: 18, color: "var(--text-3)", marginTop: 6 }}>
+                    <div style={{ fontSize: 26, color: "var(--text-3)", marginTop: 6 }}>
                       Con {K_MAX} barras, unas {Math.round(K_MAX * 0.05)} saldrían por puro azar.
                     </div>
                   </>
@@ -263,7 +263,7 @@ export default function RezagosYACF({ step, active }: SlideProps) {
             </div>
           </div>
           <Reveal step={step} at={4} style={{ marginTop: 10 }}>
-            <p className="takeaway" style={{ margin: 0, fontSize: 25 }}>
+            <p className="takeaway" style={{ margin: 0, fontSize: 26 }}>
               Una ACF que baja lento indica tendencia; picos cada {PERIODO}, estacionalidad. Después de diferenciar quedan <em>dos huellas, en {MAYORES_DD.join(" y en ")}</em>
               : es lo que un modelo puede aprender (46 y 47).
             </p>

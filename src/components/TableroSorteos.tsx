@@ -1,3 +1,4 @@
+import { TIPO } from "../deck/tipografia";
 import { motion } from "motion/react";
 import { useMemo } from "react";
 import { mulberry32 } from "../lib/rng";
@@ -18,7 +19,7 @@ export function TableroSorteos({ n = 5, semilla }: { n?: number; semilla: number
   const W = n * paso;
   return (
     <svg width={W} height={380} style={{ display: "block" }}>
-      <text x={0} y={18} className="mono" fontSize={15} fill="var(--text-3)" letterSpacing="0.1em">
+      <text x={0} y={18} className="mono" fontSize={TIPO.rotulo} fill="var(--text-3)" letterSpacing="0.1em">
         LA BOLSA
       </text>
       {veces.map((v, k) => (
@@ -36,14 +37,14 @@ export function TableroSorteos({ n = 5, semilla }: { n?: number; semilla: number
             y={158}
             textAnchor="middle"
             className="mono"
-            fontSize={18}
+            fontSize={TIPO.rotulo}
             fill={v === 0 ? "var(--red-2)" : "var(--text-3)"}
           >
             {v === 0 ? "nunca" : v === 1 ? "1 vez" : `${v} veces`}
           </motion.text>
         </g>
       ))}
-      <text x={0} y={222} className="mono" fontSize={15} fill="var(--text-3)" letterSpacing="0.1em">
+      <text x={0} y={222} className="mono" fontSize={TIPO.rotulo} fill="var(--text-3)" letterSpacing="0.1em">
         LO QUE SALIÓ EN {n} SORTEOS
       </text>
       {sorteos.map((s, i) => (

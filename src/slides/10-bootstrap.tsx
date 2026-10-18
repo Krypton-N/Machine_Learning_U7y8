@@ -48,11 +48,11 @@ function Histograma() {
         />
       ))}
       <line x1={fx(esperado)} x2={fx(esperado)} y1={4} y2={H - 40} stroke="var(--red)" strokeWidth={2} />
-      <text x={fx(esperado) + 8} y={18} className="mono" fontSize={15} fill="var(--red-2)">
+      <text x={fx(esperado) + 8} y={18} className="mono" fontSize={20} fill="var(--red-2)">
         esperado: {esperado.toFixed(1)} ({pct(esperado / N)})
       </text>
       {[min, Math.round((min + max) / 2), max].map((v) => (
-        <text key={v} x={fx(v)} y={H - 14} textAnchor="middle" className="mono" fontSize={15} fill="var(--text-3)">
+        <text key={v} x={fx(v)} y={H - 14} textAnchor="middle" className="mono" fontSize={20} fill="var(--text-3)">
           {v}
         </text>
       ))}
@@ -102,7 +102,7 @@ export default function Bootstrap({ step }: SlideProps) {
                 <div style={{ fontSize: 30 }}>
                   <TeX>{"P(\\text{no salir}) = \\left(1-\\tfrac{1}{n}\\right)^{n}"}</TeX>
                 </div>
-                <p style={{ fontSize: 23, color: "var(--text-2)", lineHeight: 1.5, margin: "16px 0 0" }}>
+                <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.5, margin: "16px 0 0" }}>
                   Con 5 pelotas es <b style={{ color: "var(--text)" }}>{pct((1 - 1 / 5) ** 5)}</b>. Con muchas se acerca a{" "}
                   <TeX>{"e^{-1}"}</TeX> ≈ <b style={{ color: "var(--red-2)" }}>{pct(Math.exp(-1))}</b>: cada muestra deja fuera a poco más
                   de un tercio.
@@ -137,7 +137,7 @@ export default function Bootstrap({ step }: SlideProps) {
                   Personas que quedan fuera en 200 muestras
                 </div>
                 <Histograma />
-                <p className="takeaway" style={{ margin: "14px 0 0", fontSize: 25 }}>
+                <p className="takeaway" style={{ margin: "14px 0 0", fontSize: 26 }}>
                   Cada muestra es un conjunto <em>parecido pero distinto</em>. Bagging entrena un árbol con cada una.
                 </p>
               </Reveal>

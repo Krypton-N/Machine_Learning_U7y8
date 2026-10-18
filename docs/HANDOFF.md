@@ -1,46 +1,103 @@
-# Handoff — estado al 2026-10-12
+# Handoff — estado al 2026-10-17
 
 Este archivo es para retomar el trabajo en una sesión nueva. Las reglas permanentes y el flujo de trabajo están en
 `CLAUDE.md`; qué lleva cada diapositiva, en `docs/PLAN-DIAPOSITIVAS.md`; el plan de cada hito, en `docs/hitos/`.
 
-## Qué toca en la siguiente sesión: cerrar el hito 4
+## Hito 6 (HMM): construido, falta la revisión del usuario
 
-El plan del hito 4 (`docs/hitos/HITO-4.md`) se aprobó el 2026-10-12 con la opción recomendada en sus cinco decisiones, y
-ese mismo día se construyeron **las 12 diapositivas (29–40)** en cinco tandas. Compila y `npm run verify` dice "Todo
-coincide". **El hito no está cerrado.** Falta, en este orden:
+**`docs/hitos/HITO-6.md`** (2026-10-17): el usuario aprobó el plan pidiendo "decide lo más recomendable y empieza"
+(opciones A de las 7 decisiones). **Las 10 diapositivas nuevas (51–59, 61) y los ajustes de la 60 están construidos**, con
+datos (`scripts/exportar_hito6.py` → `hmm_clima.json`, `referencias_hito6.json`), 20 comprobaciones nuevas en
+`npm run verify` ("Todo coincide") y `npm run build` sin errores. **El medidor `scripts/legibilidad.js` sobre los 82 clics
+de 51–61:** ningún texto < 18 px, ningún rótulo < 20, ninguna lectura < 26, ninguna fórmula < 28, nada fuera del cuerpo,
+ningún encimado y ningún clic con más de 40 palabras (detalle y lo que no se vio en captura, en la bitácora).
+Nada tiene commit. Falta: **que el usuario lo revise a tamaño real** y, al dar el visto bueno, el cierre (sección 8 del
+plan: estado *Cerrado*, subtarea 195 de ListKeeper). La tanda 4 de `HITO-LEGIBILIDAD.md` ya no necesita tocar la 60.
 
-1. **Verlas a tamaño real, clic por clic.** Todo se revisó en capturas de 626 × 391 px, que sirven para la distribución
-   pero no para leer el texto ni los ejes. La bitácora del plan (sección 9) lista qué pasos no se vieron, qué botones no
-   se probaron y qué ajustes se hicieron después de la última captura.
-2. **Revisión de rigor y de claridad** de las 12 (cada afirmación con su dato; que se entienda desde cero).
-3. **Volver a ver las 10 diapositivas que usan `Lineas`** (8, 11, 12, 14, 16, 18, 19, 21, 22 y 27): la pieza se amplió
-   con opciones optativas; se comprobó por DOM que 9 de ellas siguen trazando igual, pero no en captura, y falta la 11.
-4. Pasar el estado del plan a *Cerrado* y anotar el avance en la subtarea 195 de ListKeeper.
+- **Requisito nuevo del usuario (2026-10-17): diapositivas minimalistas** (la 48 quedó sobrecargada). Ya está en la regla 9
+  de `CLAUDE.md`: una idea por clic, 25–40 palabras, nunca tres paneles, nada fuera del cuerpo ni encimado, comprobado con
+  `scripts/legibilidad.js`. El plan del hito 6 dice qué hay en pantalla en cada uno de sus 82 clics.
+- **`hmmlearn 0.3.3` ya está instalado** en el `.venv` (pip lo compiló para Python 3.14) y reproduce todos los números del
+  ejemplo de tres días.
+- **Lo que contradijo la especificación** (detalle en la sección 2 del plan): con el λ del libro, Baum-Welch recupera mal B
+  y el HMM aprendido no le gana al modelo sin memoria en prueba (el clima cambia casi al azar); con un clima persistente sí
+  funciona. "El clima más probable de cada día" da S → L → L, igual que Viterbi, así que la pregunta del cierre de la 59 se
+  reformula. π̂ sale (0, 1) con una sola secuencia. El underflow cae en el día 681, no 686.
 
-**El usuario todavía no ha visto las diapositivas nuevas**: lo primero es enseñárselas y recoger sus cambios.
+## Qué toca en la siguiente sesión: cerrar el hito 5 con la revisión del usuario, luego el plan del hito 6
 
-### Lo que el hito 4 le hereda al hito 5
+El hito 4 (29–40) está **cerrado y publicado** (2026-10-13). **El hito 5 (41–50) está construido completo** (2026-10-14):
+las 10 diapositivas, sus datos y su verificación. Plan y bitácora en `docs/hitos/HITO-5.md`. Estado: *En construcción*,
+porque falta lo mismo que cerró el hito 4: **que el usuario lo revise a tamaño real** (lo hizo en GitHub Pages) y dé el
+visto bueno. Nada de esto tiene commit: lo sube el usuario cuando quiera.
 
-- **Dos tamaños de muestra.** Las 36–40 usan los 144 meses; la sección G ajusta con 1949–1959 (132). Los números no van a
-  coincidir y hay que decidir cómo se cuenta: ADF de `∇ log` da p = 0.071 con 144 meses y 0.029 con 132; las barras de
-  `∇∇₁₂ log` fuera de la banda son 1, 3, 9, 12, 23 y 32 con 144, y 1, 3, 12, 23, 32 y 35 con 132. Los rezagos 1 y 12 son
-  los mayores en los dos casos. `adf_pasajeros.json` ya trae `sensibilidad.sin_1960`.
+1. Si el usuario pide cambios, se hacen y se anotan en la bitácora.
+2. Al dar el visto bueno: estado *Cerrado* con la fecha en `HITO-5.md`, la subtarea 195 de ListKeeper y este handoff.
+   `CLAUDE.md` y el plan maestro ya están al día.
+3. Sigue el **hito 6, H. HMM (51–59, 61 y ajustes de la 60)**: construido el 2026-10-17, falta la revisión del usuario
+   (`docs/hitos/HITO-6.md`, ver arriba).
+
+**Lo que ya hay de la tanda 0:** `scripts/exportar_hito5.py` (≈ 1 min) → `series_modelos.json` y
+`referencias_hito5.json`; en `lib/series.ts`, todo lo que piden las diapositivas (ecos, ACF teórica, AR por mínimos
+cuadrados, filtro del MA(1), Bartlett, RMSE, MAPE, ingenuo estacional, Ljung-Box, simulación ARMA); en
+`lib/pasajeros.ts`, `entrenamiento`, `prueba`, `TRANSFORMACIONES_ENT`, `enMiles` y `modelos`; `SeriesChart` con
+`franjas` (banda del pronóstico); `Correlogram` con `teorica`, `banda="bartlett"`, `marcar`, `atenuar` y `contador`;
+`Barras` con `curvas`, `opacidad` y `senalar`. `npm run verify` pasa con 11 comprobaciones nuevas. **Las opciones nuevas
+de los componentes no se han visto en pantalla** (ninguna diapositiva las usa aún): revisarlas con cuidado en la tanda 1.
+
+**Lo que midieron las comprobaciones de planeación** (detalle en la sección 2 y en la bitácora de `HITO-5.md`): `SARIMAX`
+ajusta la aerolínea sin avisos (θ̂ = −0.348, Θ̂ = −0.562) y es el mínimo de AIC y de BIC entre los 16; en 1960, MAE 13.3
+contra 47.8 del ingenuo estacional. Seis cosas contradicen la especificación G: el caso de la 44 no demuestra parsimonia
+(un AR(2) empata con el ARMA(1,1)); el ARIMA de menor AIC de la 45 es degenerado y no "se queda corto"; ADF con 132 meses
+voltea las dos filas frágiles; los valores del libro no se reproducen a ±0.02; un ingenuo con crecimiento empata con
+SARIMA en 1960; y la semilla 41 estropea el esquema de la 43. Los scripts de comprobación eran temporales: no están en el
+repo.
+
+### Lo que el plan del hito 5 tenía que resolver (ya resuelto en `HITO-5.md`; se conserva como contexto)
+
+Alcance: **41–50** (10 diapositivas): ruido blanco, AR, MA, ARMA, ARIMA, identificación, SARIMA, elegir y evaluar, línea
+base y la demo. Regla de la sección: todo se ajusta con 1949–1959 (132 meses); 1960 aparece tapado con un bloque
+"PRUEBA · 1960" hasta que se evalúa.
+
+- **La especificación G es un borrador sin revisar**, igual que lo eran F1 y F2. En el hito 4 la revisión encontró tres
+  afirmaciones que los datos no sostenían: hay que comprobar cada número "esperado" con statsmodels antes de planear.
+- **Dos tamaños de muestra.** Las 36–40 usan los 144 meses; la sección G, 132. Los números no coinciden y hay que decidir
+  cómo se cuenta: ADF de `∇ log` da p = 0.071 con 144 meses y 0.029 con 132; las barras de `∇∇₁₂ log` fuera de la banda
+  son 1, 3, 9, 12, 23 y 32 con 144, y 1, 3, 12, 23, 32 y 35 con 132. Los rezagos 1 y 12 son los mayores en los dos casos.
+  `adf_pasajeros.json` ya trae `sensibilidad.sin_1960`. La 30 ya le avisó al público que "desde la 41, 1960 se guarda".
 - **La banda del correlograma.** `Correlogram` dibuja ±1.96/√n (ruido blanco). La especificación G pide la de Bartlett en
-  la 46: decidir si se agrega como opción.
+  la 46: decidir si se agrega como opción y cómo se explica que haya dos.
+- **Lo que no se puede calcular en el navegador.** Los ajustes de ARIMA y SARIMA (`SARIMAX` de statsmodels), AIC y BIC de
+  la rejilla de 16 modelos, Ljung-Box y los pronósticos con su banda van a `series_modelos.json`
+  (`scripts/exportar_hito5.py`). Decidir qué sí se calcula vivo (métricas, ACF teóricas, ecos de un choque) y contra qué
+  función exacta de statsmodels se verifica cada cosa.
+- **Convergencia y versiones.** `statsmodels` 0.15.0 en Python 3.14.2: comprobar que `SARIMAX` ajusta el "modelo de
+  aerolínea" (0,1,1)(0,1,1)₁₂ y los 16 de la rejilla sin avisos de convergencia; si alguno no converge, se dice.
+- **Números que la especificación da por buenos y hay que medir:** que el candidato salga de la ACF y la PACF (46), que
+  el ARIMA sin estacionalidad "se quede corto" (45), que SARIMA le gane al ingenuo estacional (49), y la tabla de origen
+  móvil 1958–1960 (50). Si sale distinto, se muestra el dato.
+- **Un dato ya medido para la 49:** el Random Forest de la 30, entrenado con 1949–1959, pronostica 1960 con MAE 44.1;
+  copiar 1959 da 47.8.
 - **PACF:** `pacf` de `lib/series.ts` es Durbin-Levinson sobre la ACF, idéntico a `method="ywm"` y a `"ldb"` de
   statsmodels (la especificación G nombra "ldb": es el mismo cálculo). Los demás métodos sacan otras barras de la banda.
-- **Piezas listas:** `SeriesChart`, `Barras` (sirve de `ImpulseResponse`), `Correlogram`, `Dispersion`, `SplitDiagram`,
-  `CalendarGrid`, `AnioMes3D` (falta la forma "cintas" de la 47), `LagCloud3D`, `OperacionAnimada`, `lib/series.ts`
-  (`simularAR` es de un solo coeficiente: la 42 necesita dos) y `lib/pasajeros.ts` (`nEntrenamiento` = 132).
-- **Un dato para la 49:** el Random Forest de la 30, entrenado con 1949–1959, pronostica 1960 con MAE 44.1; copiar 1959
-  da 47.8.
+- **Piezas que ya existen:** `SeriesChart`, `Barras` (sirve de `ImpulseResponse`), `Correlogram`, `Dispersion`,
+  `SplitDiagram` (la 50 lo reutiliza), `CalendarGrid`, `AnioMes3D`, `LagCloud3D` (la 42 lo reutiliza),
+  `OperacionAnimada`, `lib/series.ts` y `lib/pasajeros.ts` (`nEntrenamiento` = 132). **Lo que les falta:** la forma
+  "cintas" de `AnioMes3D` (47), curvas teóricas sobre el correlograma (43, 44, 46), bandas de pronóstico y el bloque
+  "PRUEBA · 1960" en `SeriesChart` (ya tiene `bandas`), y `simularAR` con más de un coeficiente (la 42 usa AR(2)).
+- **Términos que la sección F dejó prometidos:** ruido blanco (39 → 41), AR y MA como modelos (36, 38 → 42, 43), leer los
+  órdenes en ACF y PACF (39, 40 → 46), MAE con su fórmula (30 → 48) y la línea base (49).
+- **Lo aprendido al construir el hito 4:** ejes calculados de los datos (`ejeQueCubre`, `pasoRedondo`); textos con cifras
+  leídas de los datos; `label natural` cuando hay letras griegas (aquí φ, θ, ε); sin barridos automáticos (todo por clic,
+  botones o ↑ ↓); en 3D, cámara lejos y ángulo angosto para no deformar, y cuidar desde qué lado se mira.
+- **Son 10 diapositivas.** Conviene partir en tandas (base y datos, 41–44, 45–47, 48–50).
 
 ## Dónde estamos
 
-**40 de 64 diapositivas construidas:** 1, 3–40 y 60 (las 29–40, sin cerrar su revisión). Compila, `npm run verify` pasa completo y no hay errores en consola. **Lo del hito 4 está sin commit:** no se publica hasta que el usuario haga commit y push.
+**60 de 64 diapositivas construidas:** 1 y 3–61 (las 41–61 sin commit; 51–59 y 61 del 2026-10-17). Compila y `npm run verify` pasa completo. **El hito 4 ya está publicado** (commit `abe12f3`, 2026-10-13; lo subió Claude porque el usuario se lo pidió esa vez).
 **Ya está en su propio repo y publicado** (2026-10-12): `https://github.com/Krypton-N/Machine_Learning_U7y8`, rama `main`;
 cada push compila y publica en `https://krypton-n.github.io/Machine_Learning_U7y8/` (comprobado: la página carga y navega con
-`#/3/3`). **Los commits y los push los hace el usuario**; Claude no sube nada. No se sabe si ya sacó la carpeta del repo
+`#/3/3`). **Los commits y los push los hace el usuario**; Claude solo sube si él lo pide expresamente, cada vez. No se sabe si ya sacó la carpeta del repo
 grande (`git rm -r --cached` ahí): si `git status` en la carpeta abuela sigue listando estos archivos, falta ese paso.
 
 **Después de cerrar el hito 3 hubo una ronda de correcciones (misma fecha)** que cambió casi todos los números de Adult:
@@ -53,9 +110,9 @@ se quitó `fnlwgt` de las variables y se regeneraron todos los JSON. Los hallazg
 | 1 | A. Bases y B. Bagging | 3, 4, 6–12 | ✅ |
 | 2 | C. Random Forest y D. Boosting | 13–19, 21–24 | ✅ |
 | 3 | E. Cierre de la parte 1 | 25–28 | ✅ |
-| **4** | **Puente y F. Fundamentos de series** | **29–40** | **construido; falta el cierre** |
-| 5 | G. Modelos de series | 41–50 | pendiente |
-| 6 | H. HMM | 51–59, 61 y ajustes de la 60 | pendiente |
+| 4 | Puente y F. Fundamentos de series | 29–40 | ✅ |
+| **5** | **G. Modelos de series** | **41–50** | **construido; falta la revisión del usuario** |
+| 6 | H. HMM | 51–59, 61 y ajustes de la 60 | **construido; falta la revisión del usuario** (`HITO-6.md`) |
 | 7 | Apertura, cierre y respaldo | 2, 62–64, R1–R4, ajuste de la 1 | pendiente |
 | 8 | Ensayo | cronometrar las 3 clases, exportar a PDF | pendiente |
 
@@ -95,12 +152,13 @@ Pedida por el usuario después de preguntar si los datos seguían buenas prácti
 - **No se hizo:** la revisión de rigor y de claridad "al cerrar el hito" fue una sola pasada propia, no una revisión aparte.
   El puente de la 28 ("¿y si el orden importa?") es una frase; la 29 debe retomarla.
 
-## Después del hito 4
+## Después del hito 5
 
-- **Hitos 5 y 6 (modelos de series y HMM):** mismas condiciones. Sus especificaciones (`G-modelos-series-41-50.md` y
-  `H-hmm-51-61.md`) también son borradores sin revisar; cada uno arranca escribiendo su `docs/hitos/HITO-N.md`. Solo
-  `apertura-cierre-respaldo.md` tiene revisión (`apertura-revisiones.md`), ya incorporada al plan maestro.
-- **Dependencias Python:** `statsmodels` (hitos 4, 5 y R3; ya instalado, 0.15.0) y `hmmlearn` (hito 6 y R4; falta probarlo).
+- **Hito 6 (HMM):** plan escrito en `docs/hitos/HITO-6.md` (construido el 2026-10-17); la especificación
+  `H-hmm-51-61.md` ya se revisó ahí. Solo `apertura-cierre-respaldo.md` tiene además su revisión aparte
+  (`apertura-revisiones.md`), ya incorporada al plan maestro.
+- **Dependencias Python:** `statsmodels` (hitos 4, 5 y R3; ya instalado, 0.15.0) y `hmmlearn` (hito 6 y R4; 0.3.3,
+  instalado el 2026-10-17: pip lo compila en Python 3.14).
 - **Hito 7:** saltos entre diapositivas (`IrA` + contexto en `Deck`), `MapaExposicion` con la marca "vamos aquí" para abrir
   las clases 2 y 3, diapositivas de respaldo con `num` tipo "R1" (hoy `SlideDef.num` es numérico), `src/deck/meta.ts` con
   equipo, grupo, profesor y fecha.
@@ -187,7 +245,7 @@ Todos con Adult **sin `fnlwgt`** (13 variables), 5 pliegues estratificados, semi
 ## ListKeeper (MCP `list-keeper`)
 
 - Tarea **#255** "Exposición ML — Unidades 7 y 8", en la lista 50 ("5 Semestre").
-- Subtarea **195** (diapositivas): ahí se anota el avance al cerrar cada hito. El cierre del hito 3 ya quedó anotado.
+- Subtarea **195** (diapositivas): ahí se anota el avance al cerrar cada hito. El cierre del hito 4 ya quedó anotado (2026-10-13).
 - Subtarea **190** (bloque, equipo, fecha, duración): la duración ya quedó resuelta.
 - Nota **80** "Handoff — Estructura exposición ML U7 y U8": la estructura original (v4). El plan vigente es
   `docs/PLAN-DIAPOSITIVAS.md`; la nota no se ha vuelto a actualizar desde entonces.

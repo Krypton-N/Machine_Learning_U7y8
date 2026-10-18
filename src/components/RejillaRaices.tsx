@@ -30,7 +30,7 @@ export function RejillaRaices({ porArbol, nombres, lado = 40 }: { porArbol: stri
           />
         ))}
       </svg>
-      <div style={{ display: "grid", gap: 12, fontSize: 22 }}>
+      <div data-rotulo style={{ display: "grid", gap: 12, fontSize: 22 }}>
         {orden.slice(0, TONOS.length).map(([v, c], k) => (
           <div key={v} style={{ display: "flex", alignItems: "center", gap: 14 }}>
             <i style={{ width: 20, height: 20, background: TONOS[k], display: "inline-block" }} />

@@ -31,8 +31,24 @@ Solo la editamos el usuario y Claude. Responder siempre en español.
    es público: no dejar en él notas privadas (`.remember/` está en `.gitignore`).
 8. **El dataset se enseña crudo antes de usarlo.** La primera vez que un tema usa un dataset se muestran sus primeras 5
    filas tal como llegan (como `df.head()`, con `TablaCruda`), explicando ese dataset en concreto: de dónde sale, qué es
-   cada columna y qué se quiere predecir. Luego, qué se le cambia. Solo después va el método. Ya está en la 3 (Adult) y
-   en la 4 (Adult con 3 columnas); falta en pasajeros aéreos (29–31) y en cualquier dato que use HMM.
+   cada columna y qué se quiere predecir. Luego, qué se le cambia. Solo después va el método. Ya está en la 3 (Adult), en
+   la 4 (Adult con 3 columnas) y en la 29 (pasajeros aéreos); falta en cualquier dato que use HMM.
+9. **Se proyecta en un cañón, en un salón: legible desde el fondo y sin saturar** (pedido del usuario, 2026-10-14, al
+   revisar la 48). Medidas sobre el lienzo de 1920 × 1080:
+   - **Tamaños mínimos:** texto de lectura ≥ 26 px; etiquetas, números de ejes, leyendas y rótulos ≥ 20 px; **nada por
+     debajo de 18 px**. Las fórmulas, ≥ 28 px.
+   - **Una idea por clic, minimalista** (endurecido por el usuario, 2026-10-17, porque la 48 quedó sobrecargada). En
+     pantalla, a lo más una gráfica principal (o dos hermanas que se comparan) y un bloque de texto de 25–40 palabras. A lo
+     más dos fórmulas a la vista. **Nunca tres paneles o columnas a la vez.** Si no cabe a esos tamaños, se parte en más
+     clics (no están limitados, regla 5) o, si de verdad hace falta, en más diapositivas; nunca se aprieta.
+   - **Nada se sale del cuerpo útil (≈ 1696 × 640 px) ni se encima** con otro texto, ni con la ayuda de navegación.
+   - **Sin notas al pie diminutas.** Si un dato importa, va en el texto; si es para una pregunta, se lleva preparado y se
+     dice de palabra (va en "De palabra" o en las respuestas preparadas del plan del hito, o en la bitácora).
+   - **El plan de cada hito dice, por diapositiva y por clic, qué hay en pantalla** (gráfica, texto con sus palabras,
+     fórmulas), para que se vea que cada clic queda ligero antes de construirlo.
+   - **Se comprueba por DOM** con `scripts/legibilidad.js` (instrucciones en su encabezado): cero textos menores a 18 px,
+     cero rótulos menores a 20, cero textos fuera del cuerpo y cero encimados en todos los clics. Además se mira a tamaño
+     real.
 
 ## Cómo se trabaja: un plan por hito
 
@@ -83,7 +99,9 @@ npm run verify   # compara src/lib contra las referencias de Python; debe decir 
 
 - **Una diapositiva = un archivo** `src/slides/NN-nombre.tsx` que recibe `{ step, active }`. Se registra en
   `src/slides/index.ts` con su `num` (el de la estructura de 64) y su número de `steps` (clics).
-- **Lienzo fijo de 1920×1080** escalado. El cuerpo útil mide ≈ 1696 × 640 px. Texto de lectura ≥ 22 px; etiquetas ≥ 14 px.
+- **Lienzo fijo de 1920×1080** escalado. El cuerpo útil mide ≈ 1696 × 640 px. Tamaños mínimos y densidad: regla 9
+  (lectura ≥ 26 px, etiquetas ≥ 20 px, nada menor a 18 px). Las diapositivas 1–50 se hicieron con la regla anterior
+  (lectura ≥ 22, etiquetas ≥ 14) y todavía no se ajustan.
 - **Color con significado fijo:** rojo = clase positiva, datos de prueba o lo que se resalta; gris claro (`--data`) = contra
   qué se compara. Tokens en `src/theme.css`.
 - **`.label` pasa el texto a mayúsculas.** Si lleva letras griegas hay que usar `className="label natural"`
@@ -93,7 +111,7 @@ npm run verify   # compara src/lib contra las referencias de Python; debe decir 
 - **Toda escena 3D va dentro de `Scene3D`:** así hereda el giro, el zoom con la rueda (acotado) y el doble clic que
   regresa a la vista inicial.
 - **Los archivos de `src/lib/` son puros** (no importan JSON) y se importan entre sí con extensión `.ts`, para que
-  `node scripts/verificar.ts` los pueda ejecutar. Solo `lib/adult.ts` y `lib/pasajeros.ts` leen los JSON.
+  `node scripts/verificar.ts` los pueda ejecutar. Solo `lib/adult.ts`, `lib/pasajeros.ts` y `lib/climaSimulado.ts` leen los JSON.
 - **Cálculo pesado al montar:** dentro de `useEffect` con `setTimeout`, o por tandas (ver `11-agregacion.tsx`). No usar
   guardas con `useRef` que rompan en StrictMode.
 - **Semillas fijas** (`mulberry32`) en todo lo aleatorio: la exposición debe ser repetible.
@@ -101,7 +119,7 @@ npm run verify   # compara src/lib contra las referencias de Python; debe decir 
 
 ## Piezas disponibles
 
-- `deck/`: `SlideFrame` (encabezado con la unidad y el tema en rojo, título, lede, `caso`), `useFlechas` (↑ ↓ propios de una diapositiva).
+- `deck/`: `SlideFrame` (encabezado con la unidad y el tema en rojo, título, lede, `caso`), `useFlechas` (↑ ↓ propios de una diapositiva). `Deck` también avanza en el celular: toque en la mitad derecha o deslizar a la izquierda avanza; lo contrario regresa (no cuenta sobre botones, escenas 3D, con dos dedos ni con la pantalla acercada).
 - `components/`: `Reveal`, `Recap`, `TeX`, `Piezas` (`Def`, `BarraClases`, `Chips`, `Boton`, `Dato`, `pct`), `Lineas`
   (gráfica de líneas con marcas, líneas horizontales y recorte), `PuntosIntervalo` (un renglón por modelo: puntos por
   pliegue y media ± desviación; se desliza si cambia la escala), `TablaCruda` (un dataset tal como llega, por bloques de
@@ -115,15 +133,40 @@ npm run verify   # compara src/lib contra las referencias de Python; debe decir 
   (particiones de validación con fuga; + `futuroUsado`), `CalendarGrid` (rejilla año × mes en números, calor o puntos, que
   vuela a la línea de tiempo y de regreso), `AnioMes3D` (barras o superficie; + `VISTAS_ANIO_MES`), `OperacionAnimada`
   (diferencia o ventana, paso a paso, sobre una serie de juguete), `LagCloud3D` (nube antier–ayer–hoy con sombra y plano).
-  `Lineas` acepta además `NaN` (corta la línea), `bandas`, `segmentos`, `escalaY` y `transicion`.
+  `Lineas` acepta además `NaN` (corta la línea), `bandas`, `segmentos`, `escalaY`, `transicion` y `areas` (franja entre
+  dos curvas, siempre recortada).
+- `components/` para modelos de series (hito 5): `AicGrid` (los 16 SARIMA con la diferencia de AIC o BIC al mejor),
+  `MetricTable` (métricas con el mejor de cada columna en rojo, `textos` para "media ± desv" y renglones que se pueden
+  escoger), `PValueScale` (escala logarítmica de p con la zona que se quiere; exporta `formatoP`). Además: `SeriesChart`
+  acepta `franjas` (banda de un pronóstico; no cuentan para el eje); `Correlogram`, `teorica` (curvas con `guion`; **no
+  en rojo**, el rojo ya es "fuera de la banda"), `banda: "blanco" | "bartlett"`, `marcar`, `atenuar` y `contador`;
+  `Barras`, `curvas`, `opacidad`, `senalar` y `banda` por barra; `AnioMes3D`, la forma `"cintas"` y `flechas`;
+  `LagCloud3D`, `centro`, `recta` y `residuos`. Si una serie empieza antes de la `ventana` de `SeriesChart`, hay que pasar
+  `recortar` (o mandar solo el tramo visible, si la línea lleva `etiqueta`, que se recortaría).
+- `components/` para HMM (hito 6): `RedTemporal` (red desplegada en el tiempo: `"ar" | "hmm" | "cadena"`, `cortina`,
+  `resaltar` un supuesto y sus flechas `prohibidas`; exporta `sub`), `DiagramaClima` (estados con A, π y B, grosor =
+  probabilidad, ficha que recorre un `camino`; exporta `estiloEstado`: Lluvioso relleno, Soleado con borde), `TiraDias`
+  (clima y actividad por día, `ocultarEstados`), `TablasLambda` (π, A, B simbólicas o con números, `sumas`, `comparar`
+  real → aprendido), `ArbolCaminos` (las Nᵀ historias con su barra; etapas hasta la suma y la más alta), `BarrasForward`
+  (predecir y corregir con trozos que viajan), `TablaAMano` (tabla de pizarrón de Forward o Viterbi con candidatos,
+  flechas ψ, `regreso` y `masAlta`). Las tablas de datos llevan `data-rotulo` (el medidor no las cuenta como lectura).
+- `src/slides/choquesG.ts`: los 132 choques que comparten 41–45 (semilla 170, con el porqué).
 - `lib/`: `tree` (CART Gini), `bagging`, `adaboost`, `gboost`, `logistic`, `metricas` (matriz de confusión, accuracy,
   precision, recall, F1, F1-macro, media y desviación), `hmm`, `rng`, `scale`, `adult` (los JSON de Adult), `series`
   (diferencias, promedio móvil, descomposición clásica, ACF, PACF, mínimos cuadrados, particiones temporales, simulación;
-  verificada contra numpy, pandas, statsmodels y sklearn), `pasajeros` (los JSON de pasajeros, fechas y transformaciones).
+  y desde el hito 5: ecos y ACF teóricas de un ARMA, AR por mínimos cuadrados y su pronóstico, filtro del MA(1), banda de
+  Bartlett, RMSE, MAPE, ingenuo estacional, Ljung-Box con la cola de la χ², simulación ARMA con choques dados; verificada
+  contra numpy, pandas, statsmodels, scipy y sklearn), `pasajeros` (los JSON de pasajeros, fechas, transformaciones; desde
+  el hito 5, `entrenamiento`, `prueba`, `TRANSFORMACIONES_ENT`, `modelos`, `enMiles` y `MESES_COMPLETOS`). Del hito 6:
+  `hmm` con caminos, `pasosForward`, `forwardEscalado`, `viterbiLog`, `suavizado`, `simular`, `rachas`, underflow y
+  conteo de multiplicaciones (verificado contra numpy y hmmlearn); `clima` (el único λ de la sección, `OBS_EJEMPLO`,
+  `fmtP` para probabilidades sin ruido de punto flotante, `fmtEntero`); `climaSimulado` (el JSON de la 61: diario
+  simulado y Baum-Welch de hmmlearn).
 
 ## Cómo se da por terminada una diapositiva
 
 1. `npm run build` sin errores y `npm run verify` con "Todo coincide".
-2. Revisada en el navegador clic por clic, sin errores en consola ni textos encimados.
+2. Revisada en el navegador clic por clic, sin errores en consola, y medida con `scripts/legibilidad.js`: sin textos
+   chicos, encimados ni fuera del cuerpo (regla 9).
 3. Lo que cambió respecto al plan se anota en la bitácora del hito (`docs/hitos/HITO-N.md`, sección 9). Si cambió lo que
    lleva la diapositiva, se corrige además su entrada en `docs/PLAN-DIAPOSITIVAS.md`.

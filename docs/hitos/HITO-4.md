@@ -1,7 +1,7 @@
 # Hito 4 — Puente y fundamentos de series (diapositivas 29–40)
 
-**Estado:** En construcción · *(Borrador → Aprobado el 2026-10-12 → En construcción → Cerrado el AAAA-MM-DD)*
-**Última actualización:** 2026-10-12
+**Estado:** Cerrado · *(Borrador → Aprobado el 2026-10-12 → En construcción → Cerrado el 2026-10-13)*
+**Última actualización:** 2026-10-13
 
 ## 1. Alcance
 
@@ -539,8 +539,7 @@ aparece abajo es la medida hoy; en pantalla se lee de los datos.
 - [x] **Tanda 2 · 32, 33, 34 y 35.** Con ellas: `vista` en `Scene3D`, `AnioMes3D` (barras), `Barras` y el modo "calor".
 - [x] **Tanda 3 · 36, 37 y 38.** Con ellas: `OperacionAnimada` y `AnioMes3D` (superficie).
 - [x] **Tanda 4 · 39 y 40.** Con ellas: `Correlogram` y `LagCloud3D`.
-- [ ] **Cierre del hito** (ver sección 8). **Aquí se quedó el 2026-10-12:** las 12 diapositivas están construidas y
-  compilan; falta la revisión a tamaño real, clic por clic, y la de rigor y claridad (ver la bitácora).
+- [x] **Cierre del hito** (ver sección 8). Cerrado el 2026-10-13 con el visto bueno del usuario (ver la bitácora).
 
 Cada tanda termina con `npm run build`, `npm run verify` y sus diapositivas vistas clic por clic. Es probable que el hito
 lleve más de una sesión: al cortar, se marcan las casillas y se anota en la bitácora por dónde seguir.
@@ -650,3 +649,16 @@ lleve más de una sesión: al cortar, se marcan las casillas y se anota en la bi
   - En la consola quedó un solo error en toda la sesión, de un estado intermedio mientras se editaba la 30
     (`FUTURO_R1 is not defined`, con la marca de tiempo del módulo viejo). Con el código actual no aparece.
   - No se actualizó la subtarea 195 de ListKeeper: toca al cerrar.
+
+### 2026-10-13 · Cierre
+
+- **Publicado.** A petición del usuario, Claude hizo commit (`abe12f3`) y push a `main`; el despliegue terminó en verde y la
+  página publicada trae las 29–40.
+- **Revisión a tamaño real: la hizo el usuario** en GitHub Pages. Su veredicto: "me parece todo bien", sin cambios. No
+  detalló qué pasos ni qué botones recorrió, así que la lista de arriba ("lo que no se revisó") queda como registro de lo
+  que Claude no vio por su cuenta.
+- **Lo que sigue sin hacerse y se hereda:**
+  - La revisión de rigor y de claridad como pasada aparte (sección 8, punto 3). Se cierra con el visto bueno del usuario.
+  - Ver en captura las 10 diapositivas que usan `Lineas`; la 11 ni siquiera se comprobó por DOM.
+  - Legibilidad en proyector: nunca se ha probado.
+- **Lo que el hito 5 tiene que decidir** está en `docs/HANDOFF.md` ("Lo que el plan del hito 5 tiene que resolver").

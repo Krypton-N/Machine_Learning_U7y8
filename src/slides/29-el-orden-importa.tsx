@@ -38,7 +38,7 @@ function Tira({ titulo, valores, orden, piso, veredicto, visible }: { titulo: Re
   orden.forEach((original, pos) => (lugar[original] = pos));
   return (
     <div>
-      <div style={{ fontSize: 22, color: "var(--text-2)", marginBottom: 6 }}>{titulo}</div>
+      <div style={{ fontSize: 26, color: "var(--text-2)", marginBottom: 6 }}>{titulo}</div>
       <svg width={W} height={H} style={{ display: "block" }}>
         <line x1={0} x2={W} y1={H - 0.5} y2={H - 0.5} stroke="var(--line-2)" />
         {valores.map((v, i) => {
@@ -57,7 +57,7 @@ function Tira({ titulo, valores, orden, piso, veredicto, visible }: { titulo: Re
           );
         })}
       </svg>
-      <motion.div initial={false} animate={{ opacity: visible ? 1 : 0 }} style={{ fontSize: 23, marginTop: 8, minHeight: 32 }}>
+      <motion.div initial={false} animate={{ opacity: visible ? 1 : 0 }} style={{ fontSize: 26, marginTop: 8, minHeight: 32 }}>
         {veredicto}
       </motion.div>
     </div>
@@ -74,8 +74,8 @@ const cod = { fontFamily: "var(--mono)", color: "var(--red-2)" } as const;
 function Nota({ titulo, children }: { titulo: ReactNode; children: ReactNode }) {
   return (
     <div style={{ borderTop: "1px solid var(--line-2)", paddingTop: 10 }}>
-      <div style={{ fontSize: 23, fontWeight: 600 }}>{titulo}</div>
-      <div style={{ fontSize: 22, color: "var(--text-2)", lineHeight: 1.38, marginTop: 4 }}>{children}</div>
+      <div style={{ fontSize: 26, fontWeight: 600 }}>{titulo}</div>
+      <div style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.38, marginTop: 4 }}>{children}</div>
     </div>
   );
 }
@@ -124,7 +124,7 @@ export default function ElOrdenImporta({ step }: SlideProps) {
                 <b>Idénticamente distribuidos:</b> todos salen de la misma urna.
               </p>
             </Recap>
-            <Reveal step={step} at={1} style={{ marginTop: 26, fontSize: 24, lineHeight: 1.42, color: "var(--text-2)" }}>
+            <Reveal step={step} at={1} style={{ marginTop: 26, fontSize: 26, lineHeight: 1.42, color: "var(--text-2)" }}>
               Si los datos son i.i.d., cualquier orden es igual de probable: barajarlos no quita información. Así tratamos a las personas de Adult.
             </Reveal>
           </div>
@@ -171,7 +171,7 @@ export default function ElOrdenImporta({ step }: SlideProps) {
               <TablaCruda datos={C} anotada={step >= 3} objetivo="value" tamano={27} />
             </div>
             <div className="mono" style={{ marginTop: 26 }}>
-              <div style={{ fontSize: 22, color: "var(--red-2)" }}>pasajeros.shape</div>
+              <div style={{ fontSize: 26, color: "var(--red-2)" }}>pasajeros.shape</div>
               <div style={{ fontSize: 36, lineHeight: 1.2 }}>
                 ({Y.length}, {C.columnas.length})
               </div>
@@ -259,7 +259,7 @@ export default function ElOrdenImporta({ step }: SlideProps) {
                 />
                 <div style={{ paddingTop: 20 }}>
                   <Dato valor={r.toFixed(3)} rotulo="correlación r" rojo={!barajada} />
-                  <div style={{ fontSize: 20, color: "var(--text-2)", lineHeight: 1.4, marginTop: 18 }}>
+                  <div style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.4, marginTop: 18 }}>
                     r = 1: los puntos caen sobre una recta que sube.
                     <br />r = 0: nube sin forma.
                   </div>
@@ -268,7 +268,7 @@ export default function ElOrdenImporta({ step }: SlideProps) {
             )}
           </div>
           {step < 6 ? (
-            <div style={{ fontSize: 25, color: "var(--text-2)", marginTop: 16, minHeight: 36 }}>
+            <div style={{ fontSize: 26, color: "var(--text-2)", marginTop: 16, minHeight: 36 }}>
               {step === 4 && barajada && "Barajados, desaparecen la subida de los años y la onda de cada verano."}
               {step === 5 && (barajada ? "Al barajar, la nube se deshace: lo que unía a un mes con el siguiente era el orden." : "Cada mes se parece al anterior: los puntos siguen la diagonal.")}
             </div>

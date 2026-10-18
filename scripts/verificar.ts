@@ -4,28 +4,59 @@ import { readFileSync } from "node:fs";
 import { adaboost, errorPorRonda } from "../src/lib/adaboost.ts";
 import { accuracyPorTamano, arbolBootstrap } from "../src/lib/bagging.ts";
 import { logLossDe, puntajeInicial, rondaLogLoss, valorArbol } from "../src/lib/gboost.ts";
-import { forward, viterbi } from "../src/lib/hmm.ts";
+import { CLIMA, CLIMA_PERSISTENTE, OBS_EJEMPLO, fmtP } from "../src/lib/clima.ts";
+import {
+  casillaMasAlta,
+  conteoMultiplicaciones,
+  diaUnderflow,
+  enumerarCaminos,
+  forward,
+  forwardEscalado,
+  pasosForward,
+  probConjunta,
+  rachas,
+  simular,
+  suavizado,
+  viterbi,
+  viterbiLog,
+  type HMM,
+} from "../src/lib/hmm.ts";
 import { logLoss, logLossGrad, type Grupo } from "../src/lib/logistic.ts";
 import { contar, desdeSklearn, desviacion, exactitud, f1Macro, media, sumar, total } from "../src/lib/metricas.ts";
 import { mulberry32 } from "../src/lib/rng.ts";
 import {
   acf,
+  acfTeorica,
+  acumular,
+  ajustarAR,
   banda95,
+  bandaBartlett,
   barajar,
   caminata,
+  choques,
+  colaChi2,
   descomponer,
   desviacionMuestral,
   diferencia,
+  filtroMA1,
+  ingenuoEstacional,
   kfoldBarajado,
+  ljungBox,
   mae,
+  mape,
   minimosCuadrados,
   pacf,
   particionTemporal,
   pearson,
+  pesosPi,
+  pesosPsi,
   porPeriodo,
   productosRezago,
   promedioMovil,
+  pronosticarAR,
+  rmse,
   simularAR,
+  simularARMA,
 } from "../src/lib/series.ts";
 import { accuracy, fitClassifier, predictProba, type ClassNode } from "../src/lib/tree.ts";
 
@@ -383,6 +414,276 @@ comprobar(
     [...perm].sort((a, b) => a - b).every((v, i) => v === i) && [0, 1, 2, 3, 4].every((f) => pliegues.filter((p) => p === f).length === 4) && reconstruye < 1e-12 && dentro,
     `varianza en t = 50: estacionaria ${varEn(historias, 49).toFixed(2)} (teórica ${(1 / 0.51).toFixed(2)}) · paseo ${varEn(paseos, 49).toFixed(1)} (teórica 50)`,
   );
+}
+
+// ---------- Modelos de series (41–50, con 1949–1959) contra statsmodels, scipy y sklearn ----------
+{
+  const y: number[] = leer("pasajeros.json").valores;
+  const n: number = leer("pasajeros.json").n_entrenamiento;
+  const ref = leer("referencias_hito5.json");
+  const mod = leer("series_modelos.json");
+  const ent = y.slice(0, n);
+  const real = y.slice(n);
+  const dif = (mio: number[], suyo: (number | null)[]) =>
+    mio.length !== suyo.length ? Infinity : Math.max(...mio.map((v, i) => (suyo[i] === null ? (Number.isNaN(v) ? 0 : Infinity) : Math.abs(v - (suyo[i] as number)))));
+  const exp = (v: number[]) => v.map(Math.exp);
+
+  const le = ent.map(Math.log);
+  const d12 = diferencia(le, 12);
+  const tr: Record<string, number[]> = { original: ent, log: le, dlog: diferencia(le, 1), d12log: d12, dd12log: diferencia(d12, 1) };
+  const acfs = Object.fromEntries(Object.entries(tr).map(([k, v]) => [k, acf(v, 36)]));
+  const dAcf = Math.max(...Object.keys(tr).map((k) => Math.max(dif(acfs[k], ref.acf[k]), dif(pacf(acfs[k]), ref.pacf[k]))));
+  comprobar("ACF y PACF de las cinco transformaciones con 132 meses vs statsmodels", dAcf < 1e-10, `diferencia máxima ${dAcf.toExponential(1)}`);
+
+  const w = tr.dd12log;
+  const aW = acfs.dd12log;
+  const pW = pacf(aW);
+  const bart = bandaBartlett(aW, w.length);
+  const dBart = dif(bart, ref.bartlett_dd12log);
+  const fuera = (v: number[], banda: (k: number) => number) => v.flatMap((x, k) => (k > 0 && Math.abs(x) > banda(k) ? [k] : []));
+  comprobar(
+    "banda de Bartlett vs statsmodels (acf con bartlett_confint)",
+    dBart < 1e-10,
+    `fuera con ruido blanco: ${fuera(aW, () => banda95(w.length)).join(", ")} · con Bartlett: ${fuera(aW, (k) => bart[k]).join(", ")} · diferencia máxima ${dBart.toExponential(1)}`,
+  );
+
+  let dTeo = 0;
+  for (const t of ref.teoricas) {
+    const rho = acfTeorica(t.ar, t.ma, 20);
+    dTeo = Math.max(dTeo, dif(pesosPsi(t.ar, t.ma, 20), t.psi), dif(pesosPi(t.ar, t.ma, 20), t.pi), dif(rho, t.acf), dif(pacf(rho), t.pacf));
+  }
+  comprobar(`eco, forma AR, ACF y PACF teóricas de ${ref.teoricas.length} modelos vs ArmaProcess`, dTeo < 1e-10, `diferencia máxima ${dTeo.toExponential(1)}`);
+
+  let dAR = 0;
+  for (const p of [1, 2]) {
+    const a = ajustarAR(d12, p);
+    dAR = Math.max(dAR, dif([a.c, ...a.phis], ref.autoreg[p].params), dif(pronosticarAR(a, d12, 12), ref.autoreg[p].pronostico));
+  }
+  const ar2 = ajustarAR(d12, 2);
+  comprobar("AR(1) y AR(2) del crecimiento anual, con su pronóstico, vs AutoReg", dAR < 1e-10, `AR(2): ${ar2.phis.map((v) => v.toFixed(4)).join(" y ")} · diferencia máxima ${dAR.toExponential(1)}`);
+
+  // statsmodels no arranca la recursión del MA(1) en 0: las dos predicciones se juntan después de unos meses.
+  const f = filtroMA1(w, mod.ma1.theta);
+  const dMA = Math.max(...f.prediccion.slice(20).map((v, i) => Math.abs(v - mod.ma1.ajustados[i + 20])));
+  // El pronóstico: el primer mes, θ por el último error; después, la media (0).
+  const pronMA = [mod.ma1.theta * f.choques[w.length - 1], ...new Array(11).fill(0)];
+  const dPronMA = Math.max(...pronMA.map((v, i) => Math.abs(v - mod.ma1.pronostico[i])));
+  comprobar(
+    "predicción a un paso y pronóstico de 1960 del MA(1) vs statsmodels",
+    dMA < 1e-6 && dPronMA < 1e-6 && Math.abs(mod.ma1.theta) < 1,
+    `θ = ${mod.ma1.theta.toFixed(4)} · pronóstico del primer mes ${pronMA[0].toFixed(4)} · diferencias máximas ${dMA.toExponential(1)} y ${dPronMA.toExponential(1)}`,
+  );
+
+  const pronosticos: Record<string, number[]> = {
+    ingenuo: ingenuoEstacional(ent, 12),
+    crec: ingenuoEstacional(ent, 12).map((v) => (v * ent.slice(n - 12).reduce((s, x) => s + x, 0)) / ent.slice(n - 24, n - 12).reduce((s, x) => s + x, 0)),
+    bosque: mod.linea_base.bosque.pronostico,
+    arima: exp(mod.arima.pronostico_log),
+    sarima: exp(mod.elegido.pronostico_log),
+  };
+  let dMet = 0;
+  for (const [k, pred] of Object.entries(pronosticos)) {
+    const r = ref.metricas_1960[k];
+    dMet = Math.max(dMet, Math.abs(mae(real, pred) - r.mae), Math.abs(rmse(real, pred) - r.rmse), Math.abs(mape(real, pred) - r.mape));
+  }
+  const crecio = real.filter((v, i) => v > pronosticos.ingenuo[i]).length;
+  comprobar(
+    "MAE, RMSE y MAPE de 1960 vs sklearn (ingenuo, ingenuo con crecimiento, bosque, ARIMA y SARIMA)",
+    dMet < 1e-9 && crecio === 12 && mae(real, pronosticos.sarima) < mae(real, pronosticos.ingenuo),
+    `MAE: ingenuo ${mae(real, pronosticos.ingenuo).toFixed(1)}, bosque ${mae(real, pronosticos.bosque).toFixed(1)}, ARIMA ${mae(real, pronosticos.arima).toFixed(1)}, SARIMA ${mae(real, pronosticos.sarima).toFixed(1)} · diferencia máxima ${dMet.toExponential(1)}`,
+  );
+
+  const dChi = Math.max(...ref.chi2.map(([x, k, sf]: number[]) => Math.abs(colaChi2(x, k) - sf)));
+  let dLB = 0;
+  ref.ljungbox.rezagos.forEach((h: number, i: number) => {
+    const lb = ljungBox(mod.elegido.residuos, h, 2);
+    dLB = Math.max(dLB, Math.abs(lb.Q - ref.ljungbox.Q[i]), Math.abs(lb.p - ref.ljungbox.p[i]), Math.abs(lb.gl - ref.ljungbox.gl[i]));
+  });
+  const lb24 = ljungBox(mod.elegido.residuos, 24, 2);
+  comprobar("cola de la χ² vs scipy y Ljung-Box vs acorr_ljungbox", dChi < 1e-10 && dLB < 1e-8, `Q(24) = ${lb24.Q.toFixed(2)}, p = ${lb24.p.toFixed(3)} · diferencias máximas ${dChi.toExponential(1)} y ${dLB.toExponential(1)}`);
+
+  const d = descomponer(ent, 12, "multiplicativa");
+  const rd = ref.descomposicion_multiplicativa;
+  const dDesc = Math.max(dif(d.tendencia, rd.tendencia), dif(d.indices, rd.indices), dif(d.residuo, rd.residuo));
+  comprobar("descomposición multiplicativa de 1949–1959 vs seasonal_decompose", dDesc < 1e-9, `diferencia máxima ${dDesc.toExponential(1)}`);
+
+  // Origen móvil (50): las métricas de cada año se recalculan de los pronósticos guardados.
+  let dMovil = 0;
+  let gana = 0;
+  let pierde: number[] = [];
+  let pMin = 1;
+  mod.origen_movil.forEach((o: { anio: number; n_entrenamiento: number; sarima: { pronostico_log: number[]; residuos: number[] }; arima: { pronostico_log: number[] } }, i: number) => {
+    const r = ref.origen_movil[i];
+    const obs = y.slice(o.n_entrenamiento, o.n_entrenamiento + 12);
+    const preds = { ingenuo: ingenuoEstacional(y.slice(0, o.n_entrenamiento), 12), arima: exp(o.arima.pronostico_log), sarima: exp(o.sarima.pronostico_log) };
+    for (const k of ["ingenuo", "arima", "sarima"] as const) {
+      dMovil = Math.max(dMovil, Math.abs(mae(obs, preds[k]) - r[k].mae), Math.abs(rmse(obs, preds[k]) - r[k].rmse), Math.abs(mape(obs, preds[k]) - r[k].mape));
+    }
+    const lb = ljungBox(o.sarima.residuos, 24, 2);
+    dMovil = Math.max(dMovil, Math.abs(lb.p - r.ljungbox.p[1]));
+    pMin = Math.min(pMin, lb.p);
+    if (mape(obs, preds.sarima) < mape(obs, preds.ingenuo)) gana++;
+    else pierde.push(o.anio);
+  });
+  comprobar(
+    "origen móvil: métricas vs sklearn y Ljung-Box de cada ajuste",
+    dMovil < 1e-8 && gana === 5 && pierde.join() === "1958" && pMin > 0.05,
+    `SARIMA le gana al ingenuo en ${gana} de ${mod.origen_movil.length} años (pierde ${pierde.join(", ")}) · p mínimo de Ljung-Box ${pMin.toFixed(2)} · diferencia máxima ${dMovil.toExponential(1)}`,
+  );
+
+  // Afirmaciones que sostienen un texto en pantalla.
+  const aY = acfs.original;
+  const todasFuera = aY.slice(1, 25).every((v) => Math.abs(v) > banda95(n));
+  const b = banda95(w.length);
+  const mayores = aW
+    .map((v, k) => ({ k, v: Math.abs(v) }))
+    .slice(1)
+    .sort((p, q) => q.v - p.v)
+    .slice(0, 2)
+    .map((o) => o.k)
+    .sort((p, q) => p - q);
+  const cortes = Math.abs(aW[2]) < b && Math.abs(pW[2]) < b && Math.abs(aW[24]) < b && Math.abs(aW[36]) < b;
+  const porAic = [...mod.sarima_rejilla].sort((p, q) => p.aic - q.aic);
+  const porBic = [...mod.sarima_rejilla].sort((p, q) => p.bic - q.bic);
+  const esAerolinea = (m: { orden: number[]; estacional: number[] }) => m.orden.join() === "0,1,1" && m.estacional.join() === "0,1,1,12";
+  const mejores = mod.sarima_rejilla.filter((m: { pronostico_log: number[] }) => mae(real, exp(m.pronostico_log)) < mae(real, pronosticos.sarima)).length;
+  comprobar(
+    "pasajeros 1949–1959: 24 barras fuera, huellas en 1 y 12, cortes en 2, 24 y 36, y la aerolínea como mínimo de AIC y BIC",
+    todasFuera && mayores.join() === "1,12" && cortes && esAerolinea(porAic[0]) && esAerolinea(porBic[0]),
+    `segundo por AIC a ${(porAic[1].aic - porAic[0].aic).toFixed(2)} · ${mod.sarima_rejilla.filter((m: { aic: number }) => m.aic - porAic[0].aic < 2).length} modelos a menos de 2 · ${mejores} de 15 con menor MAE en 1960`,
+  );
+
+  // Sin referencia externa: propiedades de lo que se simula o se arma aquí.
+  const eps = choques(132, mulberry32(41));
+  const x = simularARMA([0.5, 0.3], [0.4], eps);
+  const reconstruye = Math.max(...x.map((v, t) => Math.abs(v - 0.5 * (x[t - 1] ?? 0) - 0.3 * (x[t - 2] ?? 0) - 0.4 * (eps[t - 1] ?? 0) - eps[t])));
+  const ida = Math.max(...acumular(diferencia(le, 1), le[0]).map((v, i) => Math.abs(v - le[i + 1])));
+  const copia = ingenuoEstacional(ent, 12).every((v, i) => v === ent[n - 12 + i]);
+  comprobar(
+    "simulación ARMA, suma acumulada e ingenuo estacional",
+    reconstruye < 1e-12 && ida < 1e-12 && copia && simularARMA([], [], eps).every((v, i) => v === eps[i]),
+    `la serie reproduce sus choques (${reconstruye.toExponential(1)}) · sumar las diferencias devuelve la serie (${ida.toExponential(1)})`,
+  );
+}
+
+// ---------- Modelos ocultos de Markov (51–61) contra numpy y hmmlearn ----------
+{
+  const ref = leer("referencias_hito6.json");
+  const pag = leer("hmm_clima.json");
+  const E6 = ref.ejemplo;
+  const maxDifM = (a: number[][], b: number[][]) => Math.max(...a.flatMap((r, i) => r.map((v, j) => Math.abs(v - b[i][j]))));
+  const lam = pag.lambda;
+  comprobar(
+    "el λ de lib/clima.ts es el del script",
+    JSON.stringify([CLIMA.pi, CLIMA.A, CLIMA.B]) === JSON.stringify([lam.pi, lam.A, lam.B]) &&
+      JSON.stringify(CLIMA_PERSISTENTE.A) === JSON.stringify(pag.escenarios.persistente.A),
+    "π, A, B y el A persistente",
+  );
+
+  const pf = pasosForward(CLIMA, OBS_EJEMPLO);
+  const dA = Math.max(maxDifM(pf.alpha, E6.alpha), maxDifM(pf.predicho.slice(1), E6.predicho));
+  comprobar("α y predicho del ejemplo vs numpy", dA < 1e-15, `diferencia máxima ${dA.toExponential(1)}`);
+  const prodC = pf.c.reduce((a, b) => a * b, 1);
+  comprobar("Π c_t = P(O) = Σ α₃", Math.abs(prodC - E6.P) < 1e-15, `${fmtP(prodC)} contra ${fmtP(E6.P)}`);
+
+  const v6 = viterbi(CLIMA, OBS_EJEMPLO);
+  comprobar(
+    "δ, ψ y camino de Viterbi vs numpy y hmmlearn",
+    maxDifM(v6.delta, E6.delta) < 1e-15 &&
+      JSON.stringify(v6.psi.slice(1)) === JSON.stringify(E6.psi) &&
+      v6.path.join() === E6.decode_hmmlearn.camino.join() &&
+      Math.abs(Math.log(v6.best) - E6.decode_hmmlearn.logprob) < 1e-12,
+    `camino ${v6.path.join("")}, ln P* = ${Math.log(v6.best).toFixed(6)} (hmmlearn ${E6.decode_hmmlearn.logprob.toFixed(6)})`,
+  );
+
+  const cam = enumerarCaminos(CLIMA, OBS_EJEMPLO);
+  const dCam = Math.max(...cam.map((c, i) => Math.max(Math.abs(c.pQ - E6.caminos[i].pQ), Math.abs(c.pOdadoQ - E6.caminos[i].pOdadoQ), Math.abs(c.conjunta - E6.caminos[i].conjunta))));
+  const sumaCam = cam.reduce((s, c) => s + c.conjunta, 0);
+  comprobar("los 8 caminos vs numpy y su suma = Forward", dCam < 1e-15 && Math.abs(sumaCam - E6.P) < 1e-15, `diferencia ${dCam.toExponential(1)}, Σ = ${fmtP(sumaCam)}`);
+  comprobar("probConjunta(S, L, L) = δ₃(L)", Math.abs(probConjunta(CLIMA, [1, 0, 0], OBS_EJEMPLO).conjunta - v6.best) < 1e-15, fmtP(v6.best));
+
+  const g = suavizado(CLIMA, OBS_EJEMPLO);
+  comprobar(
+    "suavizado vs numpy y predict_proba de hmmlearn",
+    maxDifM(g, E6.suavizado) < 1e-12 && maxDifM(g, E6.suavizado_hmmlearn) < 1e-12 && casillaMasAlta(g).join() === v6.path.join(),
+    `clima más probable de cada día: ${casillaMasAlta(g).join("")} (igual que Viterbi)`,
+  );
+  const codicioso = casillaMasAlta(v6.delta);
+  comprobar("casilla más alta de cada columna de δ", codicioso.join("") === "110" && Math.abs(probConjunta(CLIMA, codicioso, OBS_EJEMPLO).conjunta - 0.00864) < 1e-15, "S → S → L, 0.00864");
+  comprobar("ln P(O) escalado vs score de hmmlearn", Math.abs(forwardEscalado(CLIMA, OBS_EJEMPLO).logP - E6.score_hmmlearn) < 1e-12, E6.score_hmmlearn.toFixed(6));
+
+  const cm3 = conteoMultiplicaciones(2, 3);
+  const cm100 = conteoMultiplicaciones(2, 100);
+  comprobar(
+    "conteo de multiplicaciones",
+    cm3.forward === 14 && cm3.bruta === 40n && cm100.forward === 596 && cm100.bruta === 199n * 2n ** 100n,
+    "14 y 40 con T = 3; 596 y 199·2¹⁰⁰ con T = 100",
+  );
+
+  // Simulación en el navegador (mulberry32): frecuencias y rachas cerca de lo teórico
+  const sim = simular(CLIMA, 10000, mulberry32(52));
+  const frecA = [0, 1].map((i) => {
+    const desde = sim.estados.slice(0, -1).map((q, t) => [q, sim.estados[t + 1]]).filter(([q]) => q === i);
+    return [0, 1].map((j) => desde.filter(([, r]) => r === j).length / desde.length);
+  });
+  const frecB = [0, 1].map((i) => {
+    const en = sim.obs.filter((_, t) => sim.estados[t] === i);
+    return [0, 1, 2].map((k) => en.filter((o) => o === k).length / en.length);
+  });
+  const ra = rachas(sim.estados).map((r) => r.reduce((a, b) => a + b, 0) / r.length);
+  comprobar(
+    "simular(): 10 000 días de mulberry32",
+    maxDifM(frecA, CLIMA.A) < 0.02 && maxDifM(frecB, CLIMA.B) < 0.02 && Math.abs(ra[0] - 1 / 0.3) < 0.15 && Math.abs(ra[1] - 1 / 0.4) < 0.15,
+    `transición ±${maxDifM(frecA, CLIMA.A).toFixed(3)}, emisión ±${maxDifM(frecB, CLIMA.B).toFixed(3)}, rachas ${ra.map((r) => r.toFixed(2)).join(" y ")}`,
+  );
+
+  // Las dos secuencias de prueba de 1 000 días y el λ aprendido
+  const digitos = (s: string) => [...s].map(Number);
+  for (const [nombre, base] of [
+    ["base", CLIMA],
+    ["persistente", CLIMA_PERSISTENTE],
+  ] as [string, HMM][]) {
+    const esc = pag.escenarios[nombre];
+    const r = ref.escenarios[nombre];
+    const op = digitos(esc.prueba.obs);
+    const qp = digitos(esc.prueba.estados);
+    const bw = esc.baum_welch;
+    const aprendido: HMM = { ...base, pi: bw.pi, A: bw.A, B: bw.B };
+    const lpR = forwardEscalado(base, op).logP;
+    const vR = viterbiLog(base, op);
+    const vA = viterbiLog(aprendido, op);
+    comprobar(
+      `${nombre}: Forward escalado y Viterbi en 1 000 días vs hmmlearn`,
+      Math.abs(lpR - r.score_prueba_real) < 1e-9 &&
+        Math.abs(vR.logMejor - r.decode_prueba_real.logprob) < 1e-9 &&
+        vR.camino.join("") === r.decode_prueba_real.camino &&
+        vA.camino.join("") === r.decode_prueba_aprendido.camino,
+      `ln P = ${lpR.toFixed(4)} (hmmlearn ${r.score_prueba_real.toFixed(4)}); caminos idénticos`,
+    );
+    const lpE = forwardEscalado(aprendido, digitos(r.entrenamiento_obs)).logP;
+    comprobar(`${nombre}: λ aprendido sobre el entrenamiento vs score de hmmlearn`, Math.abs(lpE - r.score_entrenamiento_aprendido) < 1e-6, `${lpE.toFixed(4)}`);
+    const acierto = (c: number[]) => c.filter((q, t) => q === qp[t]).length / qp.length;
+    const regla = [0, 1, 2].map((k) => (bw.B[0][k] >= bw.B[1][k] ? 0 : 1));
+    const pr = r.prueba_ref;
+    const sinMem = op.reduce((s, o) => s + Math.log(esc.entrenamiento.frecuencias[o]), 0) / op.length;
+    comprobar(
+      `${nombre}: aciertos y log-verosimilitud por día vs hmmlearn`,
+      Math.abs(acierto(vR.camino) - pr.acierto_viterbi_real) < 1e-12 &&
+        Math.abs(acierto(vA.camino) - pr.acierto_viterbi_aprendido) < 1e-12 &&
+        Math.abs(acierto(op.map((o) => regla[o])) - pr.acierto_actividad) < 1e-12 &&
+        Math.abs(acierto(qp.map(() => esc.entrenamiento.mas_comun)) - pr.acierto_mas_comun) < 1e-12 &&
+        Math.abs(forwardEscalado(aprendido, op).logP / op.length - pr.logP_dia_aprendido) < 1e-9 &&
+        Math.abs(sinMem - pr.logP_dia_sin_memoria) < 1e-12,
+      `Viterbi ${(100 * acierto(vA.camino)).toFixed(1)} %, actividad ${(100 * pr.acierto_actividad).toFixed(1)} %, más común ${(100 * pr.acierto_mas_comun).toFixed(1)} %`,
+    );
+    const dia = diaUnderflow(base, op);
+    comprobar(`${nombre}: día en que Forward sin escalar da 0`, dia !== null && Math.abs(dia - r.underflow_dia) <= 1, `día ${dia} (numpy ${r.underflow_dia})`);
+    comprobar(
+      `${nombre}: Baum-Welch de hmmlearn contra el propio en numpy`,
+      r.numpy_contra_hmmlearn.final < 1e-6,
+      `mismo λ inicial: diferencia final ${r.numpy_contra_hmmlearn.final.toExponential(1)}`,
+    );
+  }
 }
 
 console.log(fallos ? `\n${fallos} comprobación(es) fallaron` : "\nTodo coincide");

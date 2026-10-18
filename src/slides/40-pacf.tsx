@@ -74,7 +74,7 @@ function Cadena() {
         <text x={(xs[1] + xs[2]) / 2} y={116} textAnchor="middle" fontSize={24} fill="var(--red-2)">
           φ
         </text>
-        <text x={xs[1]} y={186} textAnchor="middle" className="mono" fontSize={19} fill="var(--red-2)">
+        <text x={xs[1]} y={186} textAnchor="middle" className="mono" fontSize={20} fill="var(--red-2)">
           de rebote, pasando por ayer: φ · φ = φ²
         </text>
       </svg>
@@ -122,11 +122,11 @@ export default function PACF({ step }: SlideProps) {
         <motion.div key="cadena" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: "grid", gridTemplateColumns: "800px 1fr", gap: 80 }}>
           <div>
             <Cadena />
-            <p style={{ fontSize: 24, lineHeight: 1.42, marginTop: 30 }}>
+            <p style={{ fontSize: 26, lineHeight: 1.42, marginTop: 30 }}>
               Si cada valor depende del anterior, antier se parece a hoy <b>aunque no lo toque</b>: su efecto llega pasando por ayer. La ACF en 2 cuenta ese
               parecido completo.
             </p>
-            <p style={{ fontSize: 24, lineHeight: 1.42, marginTop: 14 }}>
+            <p style={{ fontSize: 26, lineHeight: 1.42, marginTop: 14 }}>
               <span style={{ color: "var(--red-2)" }}>PACF en k:</span> el coeficiente del valor de hace k pasos cuando la regresión también incluye a todos los de
               en medio. Lo que antier aporta además de lo que ya dijo ayer.
             </p>
@@ -152,7 +152,7 @@ export default function PACF({ step }: SlideProps) {
             <div style={{ paddingTop: 30 }}>
               <Boton onClick={() => setSemilla((s) => s + 1)}>otra muestra</Boton>
               {step === 1 ? (
-                <p style={{ fontSize: 25, lineHeight: 1.42, marginTop: 22 }}>
+                <p style={{ fontSize: 26, lineHeight: 1.42, marginTop: 22 }}>
                   De frente solo se ven antier y hoy. La nube y su sombra en la pared suben juntas: pendiente{" "}
                   <span className="mono" style={{ color: "var(--red-2)" }}>
                     {m.sombra.b.toFixed(2)}
@@ -163,7 +163,7 @@ export default function PACF({ step }: SlideProps) {
                   <span style={{ color: "var(--text-2)" }}>Si se ignora ayer, antier y hoy parecen muy relacionados. Eso es la ACF en 2.</span>
                 </p>
               ) : (
-                <p style={{ fontSize: 25, lineHeight: 1.42, marginTop: 22 }}>
+                <p style={{ fontSize: 26, lineHeight: 1.42, marginTop: 22 }}>
                   Ahora se mira a lo largo del eje de antier y aparece el plano que predice hoy con ayer y antier:
                   <br />
                   <span className="mono" style={{ fontSize: 23 }}>
@@ -184,7 +184,7 @@ export default function PACF({ step }: SlideProps) {
                 <Correlogram valores={ACF_TEORICA} ancho={450} alto={300} titulo="ACF: se apaga poco a poco" rotular={[1, 2, 3]} cada={1} y={[0, 1]} />
                 <Correlogram valores={PACF_TEORICA.map((v) => (Math.abs(v) < 1e-12 ? 0 : v))} ancho={450} alto={300} titulo="PACF: se corta después de 1" rotular={[1, 2]} cada={1} y={[0, 1]} />
               </div>
-              <p style={{ fontSize: 24, lineHeight: 1.42, marginTop: 18 }}>
+              <p style={{ fontSize: 26, lineHeight: 1.42, marginTop: 18 }}>
                 Así se reconoce una serie con memoria de un paso: <b>la ACF decae y la PACF se corta.</b> Si la memoria fuera de p pasos, la PACF se cortaría
                 después de p. Se usa en la diapositiva 46.
               </p>
@@ -196,7 +196,7 @@ export default function PACF({ step }: SlideProps) {
       {step >= 4 && (
         <motion.div key="caso" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-            <span style={{ fontSize: 24 }}>
+            <span style={{ fontSize: 26 }}>
               Pasajeros, {SERIES[cual].titulo} · {C.n} valores
             </span>
             <Chips opciones={CUALES} valor={cual} onChange={setCual} />
@@ -205,7 +205,7 @@ export default function PACF({ step }: SlideProps) {
             <Correlogram valores={C.acf} n={C.n} ancho={820} alto={380} titulo="ACF" rotular={[1, PERIODO]} y={cual === "log" ? [-0.5, 1] : [-0.5, 0.5]} />
             <Correlogram valores={C.pacf} n={C.n} ancho={820} alto={380} titulo="PACF" rotular={[1, PERIODO]} y={cual === "log" ? [-0.5, 1] : [-0.5, 0.5]} />
           </div>
-          <p className="mono" style={{ fontSize: 19, color: "var(--text-2)", margin: "8px 0 0" }}>
+          <p className="mono" style={{ fontSize: 20, color: "var(--text-2)", margin: "8px 0 0" }}>
             PACF por Durbin-Levinson · su primer valor siempre coincide con el de la ACF ({C.pacf[1].toFixed(2)}) · fuera de la banda en la PACF: {fueraPacf.join(", ")}
             {cual === "log" && ` · sin diferenciar, la PACF empieza en ${C.pacf[1].toFixed(2)}`}
           </p>

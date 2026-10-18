@@ -134,7 +134,7 @@ export default function SesgoYVarianza({ step }: SlideProps) {
               </div>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 26, paddingTop: 34 }}>
-              <div style={{ fontSize: 24, lineHeight: 1.5, color: "var(--text-2)" }}>
+              <div style={{ fontSize: 26, lineHeight: 1.5, color: "var(--text-2)" }}>
                 <p style={{ margin: "0 0 14px" }}>
                   <b style={{ color: "var(--text)", fontWeight: 600 }}>Sesgo:</b> el modelo es demasiado simple y, en promedio, apunta lejos
                   del centro.
@@ -151,11 +151,11 @@ export default function SesgoYVarianza({ step }: SlideProps) {
                 <div style={{ fontSize: 27, borderTop: "1px solid var(--line)", paddingTop: 26 }}>
                   <TeX block>
                     {
-                      "\\mathbb{E}\\big[(y-\\hat f(x))^2\\big] = \\underbrace{\\big(\\mathbb{E}[\\hat f(x)]-f(x)\\big)^2}_{\\text{sesgo}^2} + \\underbrace{{\\color{#e5383b}\\mathrm{Var}[\\hat f(x)]}}_{\\text{varianza}} + \\underbrace{\\sigma^2}_{\\text{ruido}}"
+                      "\\mathbb{E}\\big[(y-\\hat f(x))^2\\big] = \\underbrace{\\big(\\mathbb{E}[\\hat f(x)]-f(x)\\big)^2}_{\\text{sesgo²}} + \\underbrace{{\\color{#e5383b}\\mathrm{Var}[\\hat f(x)]}}_{\\text{varianza}} + \\underbrace{\\sigma^2}_{\\text{ruido}}"
                     }
                   </TeX>
                 </div>
-                <p style={{ fontSize: 21, color: "var(--text-3)", margin: "14px 0 0", lineHeight: 1.45 }}>
+                <p style={{ fontSize: 26, color: "var(--text-3)", margin: "14px 0 0", lineHeight: 1.45 }}>
                   Es exacta para el error cuadrático. Es la curva de la diapositiva 5: a la izquierda domina el sesgo y a la
                   derecha, la varianza.
                 </p>
@@ -165,20 +165,22 @@ export default function SesgoYVarianza({ step }: SlideProps) {
         ) : (
           <motion.div
             key="caso"
-            style={{ display: "grid", gridTemplateColumns: "860px 740px", justifyContent: "space-between" }}
+            style={{ display: "grid", gridTemplateColumns: "900px 720px", justifyContent: "space-between" }}
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45 }}
           >
             <div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <span className="label">5 de los 25 árboles</span>
-                <Chips opciones={PROFUNDIDADES} valor={profundidad} onChange={setProfundidad} />
+              <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
+                <div style={{ flexShrink: 0 }}>
+                  <Chips opciones={PROFUNDIDADES} valor={profundidad} onChange={setProfundidad} />
+                </div>
+                <span className="label" style={{ whiteSpace: "nowrap" }}>5 de los 25 árboles</span>
               </div>
-              <div style={{ height: 480, marginTop: 8 }}>
+              <div style={{ height: 420, marginTop: 8 }}>
                 <Adult3DScene cajas={cajas} planos={planos} estilo={() => ({ tenue: true })} />
               </div>
-              <div style={{ fontSize: 22, color: "var(--text-2)" }}>
+              <div style={{ fontSize: 26, color: "var(--text-2)" }}>
                 {profundidad === 1
                   ? "Con una sola pregunta el corte puede caer en otro lugar, pero la respuesta casi no cambia: poca varianza, mucho sesgo."
                   : profundidad === 3
@@ -189,13 +191,13 @@ export default function SesgoYVarianza({ step }: SlideProps) {
             <div>
               <Reveal step={step} at={3}>
                 <span className="label">Error cuadrático con 5,000 personas nuevas</span>
-                <div style={{ display: "grid", gap: 26, marginTop: 22 }}>
+                <div style={{ display: "grid", gap: 20, marginTop: 18 }}>
                   {PROFUNDIDADES.map((p) => {
                     const r = res?.[p.valor];
                     const activo = p.valor === profundidad;
                     return (
                       <div key={p.valor} style={{ opacity: activo ? 1 : 0.55 }}>
-                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 22, marginBottom: 8 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 26, marginBottom: 8 }}>
                           <span>{p.texto}</span>
                           <span className="mono" style={{ color: "var(--text-2)" }}>
                             {r ? `${r.errPromedio.toFixed(3)} + ${r.varianza.toFixed(3)} = ${r.errMedio.toFixed(3)}` : "…"}
@@ -209,7 +211,7 @@ export default function SesgoYVarianza({ step }: SlideProps) {
                     );
                   })}
                 </div>
-                <div className="label" style={{ display: "flex", gap: 26, marginTop: 20, fontSize: 15 }}>
+                <div className="label" style={{ display: "flex", gap: 26, marginTop: 20, fontSize: 20 }}>
                   <span>
                     <i style={{ display: "inline-block", width: 14, height: 14, background: "var(--data-dim)", marginRight: 8, verticalAlign: -2 }} />
                     error del promedio de los 25
@@ -219,7 +221,7 @@ export default function SesgoYVarianza({ step }: SlideProps) {
                     varianza entre árboles
                   </span>
                 </div>
-                <p style={{ fontSize: 20, color: "var(--text-3)", margin: "14px 0 0", lineHeight: 1.45 }}>
+                <p style={{ fontSize: 26, color: "var(--text-3)", margin: "14px 0 0", lineHeight: 1.4 }}>
                   La barra completa es el error promedio de un árbol. Las dos partes suman exacto: no es una aproximación.
                 </p>
               </Reveal>

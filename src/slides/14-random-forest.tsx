@@ -34,7 +34,7 @@ function Sorteo({ corte }: { corte: number }) {
             initial={false}
             animate={{ opacity: on ? 1 : 0.32, borderColor: on ? "#e5383b" : "#3a3a41", backgroundColor: on ? "rgba(229,56,59,0.14)" : "rgba(0,0,0,0)" }}
             transition={{ duration: 0.35 }}
-            style={{ border: "1px solid", padding: "10px 18px", fontSize: 22 }}
+            style={{ border: "1px solid", padding: "10px 18px", fontSize: 26 }}
           >
             {v}
           </motion.div>
@@ -87,23 +87,30 @@ export default function RandomForest({ step }: SlideProps) {
                 <Boton onClick={() => setCorte((c) => c + 1)}>siguiente pregunta: sortear otra vez</Boton>
               </div>
             </div>
+            {/* Un clic para la idea y otro para el recordatorio: juntos pasan de 70 palabras. */}
             <div style={{ display: "flex", flexDirection: "column", gap: 28, paddingTop: 30 }}>
+              {step === 0 && (
+              <>
               <p style={{ fontSize: 26, lineHeight: 1.45, margin: 0 }}>
                 El árbol elige el mejor corte <b style={{ color: "var(--red-2)" }}>solo entre las sorteadas</b>. En la siguiente pregunta se
                 sortea de nuevo.
               </p>
-              <p style={{ fontSize: 24, color: "var(--text-2)", lineHeight: 1.45, margin: 0 }}>
+              <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.45, margin: 0 }}>
                 Así, la variable más fuerte queda fuera de muchas preguntas y otras variables tienen su oportunidad: los árboles salen
                 distintos.
               </p>
-              <Reveal step={step} at={1}>
+              </>
+              )}
+              {step === 1 && (
+              <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
                 <Recap title="cuántas sortear">
                   <p>
                     Breiman sugiere <TeX>{"\\sqrt{p}"}</TeX> en clasificación y <TeX>{"p/3"}</TeX> en regresión. En sklearn el clasificador
                     usa <TeX>{"\\sqrt{p}"}</TeX> (aquí, {M} de {P}); el regresor usa todas por omisión.
                   </p>
                 </Recap>
-              </Reveal>
+              </motion.div>
+              )}
             </div>
           </motion.div>
         ) : (
@@ -119,16 +126,19 @@ export default function RandomForest({ step }: SlideProps) {
               <div style={{ marginTop: 16 }}>
                 <RejillaRaices porArbol={raices.random_forest.por_arbol} nombres={NOMBRE_ES} lado={36} />
               </div>
-              <Reveal step={step} at={4} style={{ marginTop: 22 }}>
+              <Reveal step={step} at={5} style={{ marginTop: 22 }}>
                 <p className="takeaway" style={{ margin: 0, fontSize: 26 }}>
                   Cada árbol es un poco peor, pero <em>se parecen menos</em> y juntos aciertan más. En Adult la ganancia es pequeña.
                 </p>
               </Reveal>
             </div>
-            <Reveal step={step} at={3}>
-              <table style={{ borderCollapse: "collapse", width: "100%", fontSize: 22 }}>
+            {/* Derecha: primero la comparación con bagging (3) y luego la curva de variables sorteadas (4). */}
+            <div>
+            {step === 3 && (
+              <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
+              <table style={{ borderCollapse: "collapse", width: "100%", fontSize: 26 }}>
                 <thead>
-                  <tr className="mono" style={{ color: "var(--text-3)", fontSize: 15, textAlign: "right" }}>
+                  <tr className="mono" style={{ color: "var(--text-3)", fontSize: 20, textAlign: "right" }}>
                     <th style={{ textAlign: "left", padding: "0 0 10px", fontWeight: 400 }} />
                     <th style={{ padding: "0 0 10px", fontWeight: 400 }}>BAGGING</th>
                     <th style={{ padding: "0 0 10px 24px", fontWeight: 400 }}>RANDOM FOREST</th>
@@ -148,12 +158,16 @@ export default function RandomForest({ step }: SlideProps) {
                   ))}
                 </tbody>
               </table>
-              <div className="label" style={{ margin: "26px 0 8px" }}>
+              </motion.div>
+            )}
+            {step >= 4 && (
+              <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
+              <div className="label" style={{ margin: "0 0 8px" }}>
                 Aciertos según cuántas variables se sortean · CV de 5 pliegues
               </div>
               <Lineas
                 ancho={720}
-                alto={250}
+                alto={330}
                 x={[1, P]}
                 y={[EJE.dominio[0] - 0.001, EJE.dominio[1] + 0.001]}
                 ticksX={[1, M, 6, 8, 10, P]}
@@ -163,14 +177,16 @@ export default function RandomForest({ step }: SlideProps) {
                 series={[{ id: "mf", pts: curva, color: "var(--red)", grosor: 3, puntos: true }]}
                 marcas={[
                   { x: M, y: curva[M - 1][1], texto: "sklearn" },
-                  { x: P, y: curva[P - 1][1], texto: "= bagging" },
+                  { x: P, y: curva[P - 1][1], texto: "= bagging", ancla: "end" },
                 ]}
               />
-              <p style={{ fontSize: 19, color: "var(--text-3)", margin: "6px 0 0", lineHeight: 1.4 }}>
+              <p style={{ fontSize: 26, color: "var(--text-3)", margin: "6px 0 0", lineHeight: 1.4 }}>
                 El máximo está en {mejor.valor} ({pct(mejor.acc, 2)}), pero las diferencias son del tamaño de la variación entre pliegues (±
                 {(desvTipica * 100).toFixed(2)} puntos).
               </p>
-            </Reveal>
+              </motion.div>
+            )}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

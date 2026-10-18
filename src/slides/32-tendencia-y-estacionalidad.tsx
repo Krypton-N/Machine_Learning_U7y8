@@ -20,7 +20,7 @@ const Y_ESQ = T_ESQ.map((v, t) => v + S_ESQ[t]);
 function Esquema({ titulo, valores, y, rojo }: { titulo: string; valores: number[]; y: [number, number]; rojo?: boolean }) {
   return (
     <div>
-      <div style={{ fontSize: 21, color: "var(--text-2)" }}>{titulo}</div>
+      <div style={{ fontSize: 26, color: "var(--text-2)" }}>{titulo}</div>
       <SeriesChart ancho={880} alto={130} series={[{ id: titulo, valores, color: rojo ? "var(--red)" : "var(--data)" }]} y={y} ticksY={[]} sinMarcasX margen={{ l: 8, r: 8, t: 8, b: 8 }} />
     </div>
   );
@@ -78,7 +78,7 @@ export default function TendenciaYEstacionalidad({ step }: SlideProps) {
             <Def termino="Estacionalidad">
               Un patrón que se repite cada periodo fijo, ligado al calendario: <TeX>{"S_{t+m} = S_t"}</TeX>. El periodo m puede ser 12 meses, 7 días o 24 horas.
             </Def>
-            <p style={{ fontSize: 22, color: "var(--text-3)", margin: 0 }}>Aquí se sumaron. Si se suman o se multiplican se decide en la diapositiva 34.</p>
+            <p style={{ fontSize: 26, color: "var(--text-3)", margin: 0 }}>Aquí se sumaron. Si se suman o se multiplican se decide en la diapositiva 34.</p>
           </div>
         </motion.div>
       )}
@@ -95,7 +95,7 @@ export default function TendenciaYEstacionalidad({ step }: SlideProps) {
             segmentos={MEDIAS.map((v, a) => ({ x0: a * 12, x1: a * 12 + 11, y: v, texto: a === 0 || a === U ? v.toFixed(1) : undefined, abajo: true }))}
             marcas={PICOS.flatMap((meses, a) => meses.map((mes, k) => ({ x: a * 12 + mes, y: M[a][mes], texto: k === 0 ? meses.map((i) => MESES[i]).join(" = ") : undefined, r: 5 })))}
           />
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, marginTop: 18, fontSize: 25, lineHeight: 1.4 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, marginTop: 18, fontSize: 26, lineHeight: 1.4 }}>
             <div>
               <b>Tendencia:</b> el promedio de cada año (tramos rojos) sube de {MEDIAS[0].toFixed(1)} a {MEDIAS[U].toFixed(1)} mil: se multiplica por{" "}
               {(MEDIAS[U] / MEDIAS[0]).toFixed(1)}.
@@ -126,12 +126,12 @@ export default function TendenciaYEstacionalidad({ step }: SlideProps) {
             <div style={{ marginTop: 12 }}>
               <Chips opciones={VISTAS} valor={vista} onChange={setVista} />
             </div>
-            <p style={{ fontSize: 25, lineHeight: 1.42, marginTop: 22, minHeight: 110 }}>{LECTURA[vista]}</p>
+            <p style={{ fontSize: 26, lineHeight: 1.42, marginTop: 22, minHeight: 110 }}>{LECTURA[vista]}</p>
             <Reveal step={step} at={3} style={{ marginTop: 10 }}>
               <p className="takeaway" style={{ margin: 0, fontSize: 26 }}>
                 <em>Tendencia:</em> cómo cambia el nivel de un año a otro. <em>Estacionalidad:</em> la forma dentro del año, siempre en los mismos meses.
               </p>
-              <p style={{ fontSize: 23, color: "var(--text-2)", lineHeight: 1.4, marginTop: 16 }}>
+              <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.4, marginTop: 16 }}>
                 Un aviso para la 34: la onda no mide siempre lo mismo. En {ANIOS[0]}, del mes más bajo al más alto hay {ANCHO_ONDA[0]} mil pasajeros; en {ANIOS[U]},{" "}
                 {ANCHO_ONDA[U]}.
               </p>

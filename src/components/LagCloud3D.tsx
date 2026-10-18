@@ -31,11 +31,20 @@ export function LagCloud3D({
   plano,
   vista = "sombra",
   nombres = ["antier", "ayer", "hoy"],
+  centro = 0,
+  recta,
+  residuos = false,
 }: {
   /** [antier, ayer, hoy] de cada momento. */
   puntos: [number, number, number][];
-  /** Valor que queda en el borde de la caja (los ejes van de −radio a radio). */
+  /** Distancia del centro al borde de la caja (los ejes van de centro − radio a centro + radio). */
   radio: number;
+  /** Valor que queda en medio de la caja (para series que no giran alrededor del 0). */
+  centro?: number;
+  /** Recta de "hoy contra ayer": hoy ≈ a + b · ayer. Se dibuja en la cara que se ve en la vista "canto". */
+  recta?: { a: number; b: number };
+  /** Un segmento de cada punto al plano: lo que el plano no explica. */
+  residuos?: boolean;
   /** Recta de "hoy contra antier", ignorando ayer: hoy ≈ a + b · antier. */
   sombra?: { a: number; b: number };
   /** Plano de regresión: hoy ≈ c + b1 · ayer + b2 · antier. */
@@ -43,17 +52,25 @@ export function LagCloud3D({
   vista?: keyof typeof VISTAS_REZAGOS;
   nombres?: [string, string, string];
 }) {
-  const e = (v: number) => (v / radio) * L;
+  const e = (v: number) => ((v - centro) / radio) * L;
+  const bajo = centro - radio;
+  const alto = centro + radio;
   const etiquetas: Etiqueta[] = [
     { pos: [0, Y0 - L - 0.32, L], contenido: <b>{nombres[0]} →</b> },
-    { pos: [-L - 0.1, Y0 - L - 0.32, 0], contenido: <b>{nombres[1]} →</b> },
+    // La de "ayer" va un poco a la izquierda del centro: de canto queda abajo y no choca con el aviso de la rueda.
+    { pos: [-L - 0.1, Y0 - L - 0.32, -0.45 * L], contenido: <b>{nombres[1]} →</b> },
     { pos: [-L - 0.1, Y0 + L + 0.28, -L], contenido: <b>{nombres[2]} ↑</b> },
   ];
   const lineaSombra = useMemo(() => {
     if (!sombra) return null;
-    const g = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-L, Y0 + e(sombra.a - sombra.b * radio), -L), new THREE.Vector3(L, Y0 + e(sombra.a + sombra.b * radio), -L)]);
+    const g = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-L, Y0 + e(sombra.a + sombra.b * bajo), -L), new THREE.Vector3(L, Y0 + e(sombra.a + sombra.b * alto), -L)]);
     return g;
-  }, [sombra?.a, sombra?.b, radio]);
+  }, [sombra?.a, sombra?.b, radio, centro]);
+  const lineaRecta = useMemo(() => {
+    if (!recta) return null;
+    // En la cara de x = −L, que es la que mira a la cámara de la vista "canto": ahí "ayer" va a lo ancho.
+    return new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-L - 0.02, Y0 + e(recta.a + recta.b * bajo), -L), new THREE.Vector3(-L - 0.02, Y0 + e(recta.a + recta.b * alto), L)]);
+  }, [recta?.a, recta?.b, radio, centro]);
   const mallaPlano = useMemo(() => {
     if (!plano) return null;
     const y = (ayer: number, antier: number) => Y0 + e(plano.c + plano.b1 * ayer + plano.b2 * antier);
@@ -61,11 +78,19 @@ export function LagCloud3D({
     // Esquinas: (antier, ayer) en (−, −), (+, −), (+, +), (−, +).
     g.setAttribute(
       "position",
-      new THREE.BufferAttribute(new Float32Array([-L, y(-radio, -radio), -L, L, y(-radio, radio), -L, L, y(radio, radio), L, -L, y(radio, -radio), L]), 3),
+      new THREE.BufferAttribute(new Float32Array([-L, y(bajo, bajo), -L, L, y(bajo, alto), -L, L, y(alto, alto), L, -L, y(alto, bajo), L]), 3),
     );
     g.setIndex([0, 1, 2, 0, 2, 3]);
     return g;
-  }, [plano?.c, plano?.b1, plano?.b2, radio]);
+  }, [plano?.c, plano?.b1, plano?.b2, radio, centro]);
+  const segmentos = useMemo(() => {
+    if (!plano || !residuos) return null;
+    const v = puntos.flatMap(([antier, ayer, hoy]) => [
+      new THREE.Vector3(e(antier), Y0 + e(hoy), e(ayer)),
+      new THREE.Vector3(e(antier), Y0 + e(plano.c + plano.b1 * ayer + plano.b2 * antier), e(ayer)),
+    ]);
+    return new THREE.BufferGeometry().setFromPoints(v);
+  }, [plano?.c, plano?.b1, plano?.b2, residuos, puntos, radio, centro]);
 
   return (
     <Scene3D camera={VISTAS_REZAGOS.libre.camera} target={VISTAS_REZAGOS.libre.target} fov={16} etiquetas={etiquetas} vista={VISTAS_REZAGOS[vista]}>
@@ -91,6 +116,16 @@ export function LagCloud3D({
         <mesh geometry={mallaPlano}>
           <meshBasicMaterial color="#e5383b" transparent opacity={0.3} side={THREE.DoubleSide} depthWrite={false} />
         </mesh>
+      )}
+      {segmentos && (
+        <lineSegments geometry={segmentos}>
+          <lineBasicMaterial color="#f07a7c" transparent opacity={0.7} />
+        </lineSegments>
+      )}
+      {lineaRecta && (
+        <lineSegments geometry={lineaRecta}>
+          <lineBasicMaterial color="#e5383b" />
+        </lineSegments>
       )}
     </Scene3D>
   );

@@ -1,7 +1,6 @@
 import { motion } from "motion/react";
 import { useState, type ReactNode } from "react";
 import { Chips, pct } from "../components/Piezas";
-import { Reveal } from "../components/Reveal";
 import { SlideFrame } from "../deck/SlideFrame";
 import type { SlideProps } from "../deck/types";
 import { comparacion, curvasArboles, matrices, rfHiper, ruidoEtiquetas, xgbFaltantes } from "../lib/adult";
@@ -56,8 +55,8 @@ const TICKS_S = [0.1, 0.3, 1, 3, 10, 30];
 
 function Dispersion({ unNucleo, resaltar }: { unNucleo: boolean; resaltar: string[] }) {
   const W = 680;
-  const H = 440;
-  const m = { l: 70, r: 30, t: 20, b: 52 };
+  const H = 400;
+  const m = { l: 70, r: 30, t: 30, b: 70 };
   const fx = linear([Math.log10(0.05), Math.log10(45)], [m.l, W - m.r]);
   const fy = linear([0.735, 0.825], [H - m.b, m.t]);
   return (
@@ -65,7 +64,7 @@ function Dispersion({ unNucleo, resaltar }: { unNucleo: boolean; resaltar: strin
       {[0.74, 0.76, 0.78, 0.8, 0.82].map((v) => (
         <g key={v}>
           <line x1={m.l} x2={W - m.r} y1={fy(v)} y2={fy(v)} stroke="var(--line)" />
-          <text x={m.l - 12} y={fy(v) + 5} textAnchor="end" className="mono" fontSize={15} fill="var(--text-3)">
+          <text x={m.l - 12} y={fy(v) + 5} textAnchor="end" className="mono" fontSize={20} fill="var(--text-3)">
             {v.toFixed(2)}
           </text>
         </g>
@@ -73,15 +72,15 @@ function Dispersion({ unNucleo, resaltar }: { unNucleo: boolean; resaltar: strin
       {TICKS_S.map((s) => (
         <g key={s}>
           <line x1={fx(Math.log10(s))} x2={fx(Math.log10(s))} y1={m.t} y2={H - m.b} stroke="var(--line)" />
-          <text x={fx(Math.log10(s))} y={H - m.b + 26} textAnchor="middle" className="mono" fontSize={15} fill="var(--text-3)">
+          <text x={fx(Math.log10(s))} y={H - m.b + 26} textAnchor="middle" className="mono" fontSize={20} fill="var(--text-3)">
             {s} s
           </text>
         </g>
       ))}
-      <text x={m.l} y={m.t - 6} className="mono" fontSize={14} fill="var(--text-3)">
+      <text x={m.l} y={m.t - 6} className="mono" fontSize={20} fill="var(--text-3)">
         F1-macro
       </text>
-      <text x={W - m.r} y={H - 2} textAnchor="end" className="mono" fontSize={14} fill="var(--text-3)">
+      <text x={W - m.r} y={H - 2} textAnchor="end" className="mono" fontSize={20} fill="var(--text-3)">
         segundos de un ajuste (escala logarítmica)
       </text>
       {PUNTOS.map((p) => {
@@ -95,7 +94,7 @@ function Dispersion({ unNucleo, resaltar }: { unNucleo: boolean; resaltar: strin
             transition={{ duration: 0.8, ease: [0.2, 0.7, 0.2, 1] }}
           >
             <motion.circle r={9} initial={false} animate={{ fill: on ? "#e5383b" : "#55555d" }} />
-            <motion.text key={e.ancla + e.dy} x={e.dx} y={e.dy} textAnchor={e.ancla} fontSize={19} initial={false} animate={{ fill: on ? "#ededee" : "#a3a3ab" }}>
+            <motion.text key={e.ancla + e.dy} x={e.dx} y={e.dy} textAnchor={e.ancla} fontSize={20} initial={false} animate={{ fill: on ? "#ededee" : "#a3a3ab" }}>
               {p.nombre}
             </motion.text>
           </motion.g>
@@ -184,42 +183,44 @@ export default function CuandoUsarCadaUno({ step }: SlideProps) {
       lede="No hay un ganador para todo. Cada recomendación sale de algo que ya medimos en Adult."
     >
       <div style={{ display: "grid", gridTemplateColumns: "1fr 680px", gap: 60 }}>
+        {/* Cada clic agrega un renglón con su evidencia; los anteriores quedan en una línea (situación → modelo).
+            La guía completa con todas las evidencias no cabe a 26 px. */}
         <div>
-          {GUIA.map((g, i) => (
-            <Reveal key={g.si} step={step} at={i}>
+          {GUIA.slice(0, step + 1).map((g, i) => (
+            <motion.div key={g.si} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
               <motion.div
                 initial={false}
-                animate={{ opacity: i === actual || step >= GUIA.length ? 1 : 0.45 }}
+                animate={{ opacity: i === actual || step >= GUIA.length ? 1 : 0.55 }}
                 style={{ borderTop: "1px solid var(--line)", padding: "10px 0 11px" }}
               >
                 <div style={{ display: "flex", alignItems: "baseline", gap: 16, whiteSpace: "nowrap" }}>
-                  <span style={{ fontSize: 25 }}>{g.si}</span>
+                  <span style={{ fontSize: 26 }}>{g.si}</span>
                   <span className="mono" style={{ color: "var(--red)", fontSize: 22 }}>
                     →
                   </span>
                   <span style={{ fontSize: 27, fontWeight: 600, letterSpacing: "-0.01em" }}>{g.usa}</span>
                 </div>
-                <div style={{ fontSize: 21, color: "var(--text-2)", lineHeight: 1.38, marginTop: 4 }}>{g.evidencia}</div>
+                {i === step && <div style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.38, marginTop: 4 }}>{g.evidencia}</div>}
               </motion.div>
-            </Reveal>
+            </motion.div>
           ))}
+          {step >= GUIA.length && (
+            <motion.p className="takeaway" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} style={{ margin: "34px 0 0", fontSize: 28 }}>
+              Todo esto supuso que las filas se pueden barajar. <em>¿Y si el orden importa?</em>
+            </motion.p>
+          )}
         </div>
         <div>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
-            <span className="label">Arriba y a la izquierda es mejor</span>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 10, marginBottom: 6 }}>
             <Chips opciones={NUCLEOS} valor={nucleos} onChange={setNucleos} />
+            <span className="label">Arriba y a la izquierda es mejor</span>
           </div>
           <Dispersion unNucleo={nucleos === "uno"} resaltar={step >= GUIA.length ? [] : GUIA[actual].puntos} />
-          <div className="label" style={{ fontSize: 14, marginTop: 4 }}>
+          <div className="label" style={{ fontSize: 20, marginTop: 4 }}>
             un solo ajuste · cada modelo como en la comparación
           </div>
         </div>
       </div>
-      <Reveal step={step} at={GUIA.length} style={{ marginTop: 14 }}>
-        <p className="takeaway" style={{ margin: 0, fontSize: 27 }}>
-          Todo esto supuso que las filas se pueden barajar. <em>¿Y si el orden importa?</em>
-        </p>
-      </Reveal>
     </SlideFrame>
   );
 }

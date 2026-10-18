@@ -30,7 +30,7 @@ const memorion = (h: number, t: number) => ESTUDIADOS.find((a) => a[0] === h && 
 const aciertos = (filas: number[][]) => filas.filter(([h, t, y]) => memorion(h, t) === y).length;
 
 function TablaAlumnos({ titulo, filas, nuevos }: { titulo: string; filas: number[][]; nuevos?: boolean }) {
-  const celda = { padding: "10px 24px", fontSize: 25, borderBottom: "1px solid var(--line)" } as const;
+  const celda = { padding: "10px 24px", fontSize: 26, borderBottom: "1px solid var(--line)" } as const;
   return (
     <div>
       <div className="label" style={{ marginBottom: 12 }}>
@@ -38,7 +38,7 @@ function TablaAlumnos({ titulo, filas, nuevos }: { titulo: string; filas: number
       </div>
       <table style={{ borderCollapse: "collapse" }}>
         <thead>
-          <tr className="mono" style={{ color: "var(--text-3)", fontSize: 15, textAlign: "left" }}>
+          <tr className="mono" style={{ color: "var(--text-3)", fontSize: 20, textAlign: "left" }}>
             <th style={celda}>horas</th>
             <th style={celda}>tareas</th>
             <th style={celda}>¿aprobó?</th>
@@ -81,7 +81,7 @@ function KFoldEsquema() {
     <svg width={1100} height={k * 62 + 10} style={{ display: "block" }}>
       {Array.from({ length: k }, (_, ronda) => (
         <motion.g key={ronda} initial={{ opacity: 0, x: -14 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.25 * ronda }}>
-          <text x={0} y={ronda * 62 + 32} className="mono" fontSize={17} fill="var(--text-3)">
+          <text x={0} y={ronda * 62 + 32} className="mono" fontSize={20} fill="var(--text-3)">
             ronda {ronda + 1}
           </text>
           {Array.from({ length: k }, (_, pliegue) => {
@@ -120,14 +120,15 @@ const CON_FALTANTES = M.columnas.filter((c) => c.faltantes > 0).map((c) => c.nom
 function Nota({ titulo, children }: { titulo: ReactNode; children: ReactNode }) {
   return (
     <div style={{ borderTop: "1px solid var(--line-2)", paddingTop: 10 }}>
-      <div style={{ fontSize: 22, fontWeight: 600 }}>{titulo}</div>
-      <div style={{ fontSize: 21, color: "var(--text-2)", lineHeight: 1.38, marginTop: 4 }}>{children}</div>
+      <div style={{ fontSize: 26, fontWeight: 600 }}>{titulo}</div>
+      <div style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.38, marginTop: 4 }}>{children}</div>
     </div>
   );
 }
 const cod = { fontFamily: "var(--mono)", color: "var(--red-2)" } as const;
 
-function DatasetCrudo({ anotada }: { anotada: boolean }) {
+// `parte` elige cuáles dos de los cuatro cambios se ven (0 o 1): los cuatro juntos no caben a tamaño de lectura.
+function DatasetCrudo({ anotada, parte = 0 }: { anotada: boolean; parte?: number }) {
   const tabla = { datos: C, anotada, quitadas: C.excluidas, objetivo: C.objetivo, tamano: 20 };
   return (
     <div>
@@ -141,7 +142,7 @@ function DatasetCrudo({ anotada }: { anotada: boolean }) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: 12 }}>
         <TablaCruda {...tabla} desde={CORTE} />
         <div className="mono" style={{ textAlign: "right" }}>
-          <div style={{ fontSize: 22, color: "var(--red-2)" }}>adult.shape</div>
+          <div style={{ fontSize: 26, color: "var(--red-2)" }}>adult.shape</div>
           <div style={{ fontSize: 36, lineHeight: 1.2 }}>
             ({M.n}, {C.columnas.length})
           </div>
@@ -162,8 +163,10 @@ function DatasetCrudo({ anotada }: { anotada: boolean }) {
             </Nota>
           </motion.div>
         ) : (
-          <motion.div key="cambios" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 36, marginTop: 20 }}>
+          <motion.div key={`cambios-${parte}`} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 60, marginTop: 20 }}>
+            {[
             <Nota
+              key="y"
               titulo={
                 <>
                   <span style={cod}>class</span> pasa a ser y
@@ -171,8 +174,9 @@ function DatasetCrudo({ anotada }: { anotada: boolean }) {
               }
             >
               Vale 1 si dice &gt;50K y 0 si no. En {pct(M.positivos / M.n)} de las filas vale 1.
-            </Nota>
+            </Nota>,
             <Nota
+              key="fnlwgt"
               titulo={
                 <>
                   <span style={cod}>{C.excluidas.join(", ")}</span> se quita
@@ -180,8 +184,9 @@ function DatasetCrudo({ anotada }: { anotada: boolean }) {
               }
             >
               Es el peso censal: a cuántas personas de la población representa esa fila. Habla del muestreo, no de la persona.
-            </Nota>
+            </Nota>,
             <Nota
+              key="nan"
               titulo={
                 <>
                   <span style={cod}>NaN</span> es una categoría más
@@ -189,10 +194,11 @@ function DatasetCrudo({ anotada }: { anotada: boolean }) {
               }
             >
               Falta el dato en {CON_FALTANTES.join(", ")}. En vez de rellenarlo se marca como «faltante».
-            </Nota>
-            <Nota titulo="El texto pasa a códigos">
+            </Nota>,
+            <Nota key="codigos" titulo="El texto pasa a códigos">
               Cada categoría recibe un número entero. A un árbol le basta: solo pregunta si un valor es menor o mayor que otro.
-            </Nota>
+            </Nota>,
+            ].slice(parte * 2, parte * 2 + 2)}
           </motion.div>
         )}
       </AnimatePresence>
@@ -204,11 +210,11 @@ const PERSONAS = M.ejemplos.map((_, i) => ({ valor: i, texto: `Persona ${"ABC"[i
 function FichaPersona({ k }: { k: number }) {
   const p = M.ejemplos[k];
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", columnGap: 40 }}>
+    <div data-rotulo style={{ display: "grid", gridTemplateColumns: "1fr 1fr", columnGap: 40 }}>
       {M.columnas.map((c) => {
         const v = p.valores[c.nombre];
         return (
-          <div key={c.nombre} style={{ display: "flex", justifyContent: "space-between", gap: 16, padding: "7px 0", borderBottom: "1px solid var(--line)", fontSize: 20 }}>
+          <div key={c.nombre} style={{ display: "flex", justifyContent: "space-between", gap: 16, padding: "7px 0", borderBottom: "1px solid var(--line)", fontSize: 22 }}>
             <span style={{ color: "var(--text-3)" }}>{c.nombre_es}</span>
             <span className="mono" style={{ color: v === null ? "var(--red-2)" : "var(--text)", textAlign: "right" }}>
               {v === null ? "falta el dato" : typeof v === "number" ? v.toLocaleString("es-MX") : v}
@@ -234,10 +240,10 @@ function PlieguesReales() {
           <g key={i}>
             <rect x={x0 + 3} y={30} width={w - 6} height={26} fill="var(--data-dim)" />
             <rect x={x0 + 3 + (w - 6 - wp)} y={30} width={wp} height={26} fill="var(--red)" />
-            <text x={x0 + 3} y={20} className="mono" fontSize={16} fill="var(--text-2)">
+            <text x={x0 + 3} y={20} className="mono" fontSize={20} fill="var(--text-2)">
               pliegue {i + 1} · {f.n.toLocaleString("es-MX")} personas
             </text>
-            <text x={x0 + w - 3} y={80} textAnchor="end" className="mono" fontSize={16} fill="var(--red-2)">
+            <text x={x0 + w - 3} y={80} textAnchor="end" className="mono" fontSize={20} fill="var(--red-2)">
               {pct(f.positivos / f.n)} gana &gt; 50K
             </text>
           </g>
@@ -257,7 +263,8 @@ const RECETA_ADULT = [
 export default function ComoSabemosSiSirve({ step }: SlideProps) {
   const [persona, setPersona] = useState(0);
   const caso = step >= 3;
-  const crudo = step === 3 || step === 4;
+  // 3: el archivo crudo; 4 y 5: lo que se le cambia, dos cambios por clic; 6: una persona; 7 y 8: la receta con Adult.
+  const crudo = step >= 3 && step <= 5;
   const ejemplo = M.ejemplos[persona];
 
   return (
@@ -271,7 +278,7 @@ export default function ComoSabemosSiSirve({ step }: SlideProps) {
           ? step === 3
             ? "El caso de toda la parte 1 es Adult (Census Income). Antes de usarlo, así se ve el archivo tal como llega."
             : "Lo único que se le cambia antes de entrenar. Todo lo demás se usa tal cual."
-          : step === 5
+          : step === 6
             ? "Así queda una persona después de esos cambios, con los nombres de las columnas en español."
             : caso
               ? "La receta de todo experimento, ahora con los datos de Adult."
@@ -284,7 +291,7 @@ export default function ComoSabemosSiSirve({ step }: SlideProps) {
             <TablaAlumnos titulo="Esquema · los 6 alumnos que el modelo se aprendió de memoria" filas={ESTUDIADOS} />
             <div>
               <TablaAlumnos titulo="4 alumnos que nunca vio" filas={NUEVOS} nuevos />
-              <p style={{ fontSize: 24, color: "var(--text-2)", lineHeight: 1.45, margin: "22px 0 0", maxWidth: 640 }}>
+              <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.45, margin: "22px 0 0", maxWidth: 640 }}>
                 Memorizar no es aprender. Lo que importa es cómo responde con <b style={{ color: "var(--text)" }}>casos nuevos</b>.
               </p>
             </div>
@@ -311,7 +318,7 @@ export default function ComoSabemosSiSirve({ step }: SlideProps) {
                   <KFoldEsquema />
                 </div>
               </div>
-              <div style={{ fontSize: 23, color: "var(--text-2)", lineHeight: 1.5, display: "flex", flexDirection: "column", gap: 18, paddingTop: 30 }}>
+              <div style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.5, display: "flex", flexDirection: "column", gap: 18, paddingTop: 30 }}>
                 <p style={{ margin: 0 }}>
                   Se parte la tabla en 5 pliegues. En cada ronda uno sirve de <b style={{ color: "var(--red-2)" }}>examen</b> y con los
                   otros 4 se entrena.
@@ -326,10 +333,10 @@ export default function ComoSabemosSiSirve({ step }: SlideProps) {
         )}
         {crudo && (
           <motion.div key="crudo" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, transition: { duration: 0.2 } }}>
-            <DatasetCrudo anotada={step === 4} />
+            <DatasetCrudo anotada={step >= 4} parte={step - 4} />
           </motion.div>
         )}
-        {step === 5 && (
+        {step === 6 && (
           <motion.div
             key="ficha"
             style={{ display: "grid", gridTemplateColumns: "980px 1fr", gap: 80 }}
@@ -357,20 +364,20 @@ export default function ComoSabemosSiSirve({ step }: SlideProps) {
                   <BarraClases positivos={M.positivos} total={M.n} ancho={560} alto={22} />
                 </div>
               </div>
-              <p style={{ fontSize: 22, color: "var(--text-2)", lineHeight: 1.5, margin: 0 }}>
+              <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.5, margin: 0 }}>
                 Solo 1 de cada 4 gana más de 50K: las clases están <b style={{ color: "var(--text)" }}>desbalanceadas</b>.
               </p>
-              <p style={{ fontSize: 22, color: "var(--text-2)", lineHeight: 1.5, margin: 0 }}>
+              <p style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.5, margin: 0 }}>
                 A {M.filas_con_faltantes.toLocaleString("es-MX")} personas les falta algún dato.
               </p>
-              <p style={{ fontSize: 20, color: "var(--text-3)", lineHeight: 1.45, margin: 0 }}>
+              <p style={{ fontSize: 26, color: "var(--text-3)", lineHeight: 1.45, margin: 0 }}>
                 Los datos incluyen sexo y raza. Aquí se usan tal cual para comparar modelos; en un sistema real habría que revisar que no
                 discrimine.
               </p>
             </div>
           </motion.div>
         )}
-        {step >= 6 && (
+        {step >= 7 && (
           <motion.div key="receta-adult" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }} style={{ paddingTop: 10 }}>
             <Receta textos={RECETA_ADULT} resaltar={2} />
             <div style={{ marginTop: 60 }}>
@@ -379,7 +386,7 @@ export default function ComoSabemosSiSirve({ step }: SlideProps) {
               </div>
               <PlieguesReales />
             </div>
-            <Reveal step={step} at={7} style={{ marginTop: 40 }}>
+            <Reveal step={step} at={8} style={{ marginTop: 40 }}>
               <p className="takeaway" style={{ margin: 0 }}>
                 Un modelo se juzga con <em>datos que no vio</em>. Esta receta nos acompaña toda la exposición.
               </p>

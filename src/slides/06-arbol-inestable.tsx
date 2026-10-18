@@ -30,7 +30,7 @@ const JUGUETE = {
 function Juguete({ sinPunto }: { sinPunto: boolean }) {
   const idx = JUGUETE.X.map((_, i) => i).filter((i) => !sinPunto || i !== JUGUETE.quitar);
   const arbol = fitClassifier(JUGUETE.X, JUGUETE.y, 1, idx);
-  const S = 520;
+  const S = 460;
   const f = linear([0, 7], [40, S - 20]);
   const fy = linear([0, 7], [S - 40, 20]);
   const errores = idx.filter((i) => predictClass(arbol, JUGUETE.X[i]) !== JUGUETE.y[i]).length;
@@ -67,10 +67,10 @@ function Juguete({ sinPunto }: { sinPunto: boolean }) {
             />
           );
         })}
-        <text x={S - 20} y={S - 12} textAnchor="end" className="mono" fontSize={15} fill="var(--text-3)">
+        <text x={S - 20} y={S - 12} textAnchor="end" className="mono" fontSize={20} fill="var(--text-3)">
           variable 1 →
         </text>
-        <text x={34} y={16} className="mono" fontSize={15} fill="var(--text-3)">
+        <text x={34} y={16} className="mono" fontSize={20} fill="var(--text-3)">
           ↑ variable 2
         </text>
       </svg>

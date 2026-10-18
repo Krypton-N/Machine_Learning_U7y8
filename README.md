@@ -91,10 +91,13 @@ Los JSON de `src/data/` se generan con Python (entorno propio en `.venv`):
 .venv/Scripts/python scripts/exportar_hito3.py      # comparación de los 7 modelos, matrices, curvas y ruido (≈ 15 min)
 .venv/Scripts/python scripts/comparar_ensambles.py  # solo imprime la comparación; no escribe JSON
 .venv/Scripts/python scripts/exportar_hito4.py      # pasajeros aéreos: dataset, validación temporal, ADF y referencias (≈ 1.5 min)
+.venv/Scripts/python scripts/exportar_hito5.py      # modelos de series: MA, ARMA, ARIMA, rejilla de SARIMA, origen móvil y referencias (≈ 1 min)
 ```
 
 Los scripts de series necesitan `statsmodels` (`.venv/Scripts/python -m pip install statsmodels`; probado con 0.15.0 en
 Python 3.14). El dataset de pasajeros se descarga una sola vez de Rdatasets y queda en `scripts/cache/rdatasets/`.
+El de modelos ocultos de Markov (`exportar_hito6.py`) necesita `hmmlearn` (`.venv/Scripts/python -m pip install hmmlearn`;
+con Python 3.14 pip lo compila, probado con 0.3.3).
 
 Para comprobar que los cálculos del navegador coinciden con los de Python:
 

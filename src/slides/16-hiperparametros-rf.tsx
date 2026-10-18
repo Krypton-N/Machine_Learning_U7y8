@@ -56,23 +56,24 @@ export default function HiperparametrosRF({ step }: SlideProps) {
               >
                 <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between" }}>
                   <span style={{ fontSize: 30, fontWeight: 600, letterSpacing: "-0.01em" }}>{nombre}</span>
-                  <span className="mono" style={{ fontSize: 17, color: "var(--red-2)" }}>
+                  <span className="mono" style={{ fontSize: 20, color: "var(--red-2)" }}>
                     {codigo}
                   </span>
                 </div>
-                <div style={{ fontSize: 24, color: "var(--text-2)", lineHeight: 1.45, marginTop: 10 }}>{texto}</div>
+                <div style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.45, marginTop: 10 }}>{texto}</div>
               </motion.div>
             ))}
           </motion.div>
         ) : (
           <motion.div key="caso" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45 }}>
+            {/* Las tres gráficas comparten escala y se comparan entre sí: aparecen una por clic y se quedan. */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 540px)", justifyContent: "space-between" }}>
               <div>
                 <span className="label">Cuántos árboles</span>
                 <Lineas ancho={540} alto={360} x={[0, 300]} y={Y} ticksX={[10, 100, 200, 300]} ticksY={TICKS_Y} fmtY={fmt} margen={margen} series={[{ id: "n", pts: arboles, color: "var(--red)", grosor: 3, puntos: true }]} />
-                <div style={{ fontSize: 21, color: "var(--text-2)", lineHeight: 1.4 }}>Sube rápido y se aplana. No baja.</div>
+                <div style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.4 }}>Sube rápido y se aplana. No baja.</div>
               </div>
-              <div>
+              <Reveal step={step} at={2}>
                 <span className="label">Cuántas variables se sortean</span>
                 <Lineas
                   ancho={540}
@@ -85,9 +86,9 @@ export default function HiperparametrosRF({ step }: SlideProps) {
                   margen={margen}
                   series={[{ id: "m", pts: variables, color: "var(--red)", grosor: 3, puntos: true }]}
                 />
-                <div style={{ fontSize: 21, color: "var(--text-2)", lineHeight: 1.4 }}>Casi plana: toda la curva cabe en {anchoCurva(variables)} puntos.</div>
-              </div>
-              <div>
+                <div style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.4 }}>Casi plana: toda la curva cabe en {anchoCurva(variables)} puntos.</div>
+              </Reveal>
+              <Reveal step={step} at={3}>
                 <span className="label">Tamaño mínimo de hoja</span>
                 <Lineas
                   ancho={540}
@@ -101,12 +102,12 @@ export default function HiperparametrosRF({ step }: SlideProps) {
                   series={[{ id: "h", pts: hojas, color: "var(--red)", grosor: 3, puntos: true }]}
                   marcas={[{ x: rfHiper.min_samples_leaf.indexOf(mejorHoja), y: mejorHoja.acc, texto: pct(mejorHoja.acc, 2) }]}
                 />
-                <div style={{ fontSize: 21, color: "var(--text-2)", lineHeight: 1.4 }}>
+                <div style={{ fontSize: 26, color: "var(--text-2)", lineHeight: 1.4 }}>
                   La que más mueve: de {pct(hoja1.acc, 2)} con hojas de 1 a {pct(mejorHoja.acc, 2)} con hojas de {mejorHoja.valor}.
                 </div>
-              </div>
+              </Reveal>
             </div>
-            <Reveal step={step} at={2} style={{ marginTop: 30 }}>
+            <Reveal step={step} at={4} style={{ marginTop: 30 }}>
               <p className="takeaway" style={{ margin: 0 }}>
                 Si se ajusta una sola cosa, que sea esta: <em>no dejar hojas de una sola persona</em>. Con hojas de 1, el bosque que viene por
                 omisión memoriza.
