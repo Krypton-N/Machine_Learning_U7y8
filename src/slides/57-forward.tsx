@@ -171,7 +171,7 @@ export default function Forward({ step }: SlideProps) {
                   </span>
                 </div>
                 <p className="takeaway" style={{ margin: 0, fontSize: 28 }}>
-                  Igual que las 8 barras de la 56, pero sin recorrer historias: <em>un número por estado y día</em>.
+                  Igual que las 8 barras de la 51, pero sin recorrer historias: <em>un número por estado y día</em>.
                 </p>
               </Entra>
             )}

@@ -151,7 +151,7 @@ export default function SARIMA({ step }: SlideProps) {
                 <TeX>{"\\text{SARIMA}(p,d,q)\\,\\textcolor{#e5383b}{(P,D,Q)_{s}}"}</TeX>
               </div>
               <p style={{ ...TXT, marginTop: 20 }}>
-                (p, d, q): la parte de meses, como en la 45. <span style={ROJO}>(P, D, Q)ₛ</span>: lo mismo, contando de s en s. D es la diferencia estacional de la 36:
+                (p, d, q): la parte de meses, como en la 43. <span style={ROJO}>(P, D, Q)ₛ</span>: lo mismo, contando de s en s. D es la diferencia estacional de la 36:
               </p>
               <div style={{ fontSize: 30, marginTop: 20 }}>
                 <TeX>{"\\nabla_{s}\\, y_t = y_t - y_{t-s} \\qquad (s = 12)"}</TeX>
@@ -256,7 +256,7 @@ export default function SARIMA({ step }: SlideProps) {
           </div>
           {step === 7 && (
             <Entra style={{ paddingTop: 40 }}>
-              <p style={TXT}>Entrenado solo con 1949–1959. Con dos coeficientes, el pronóstico ya tiene la onda que al ARIMA de la 45 le faltaba.</p>
+              <p style={TXT}>Entrenado solo con 1949–1959. Con dos coeficientes, el pronóstico ya tiene la onda que al ARIMA de la 43 le faltaba.</p>
               <p style={{ ...TXT, marginTop: 18, color: "var(--text-2)" }}>1960 sigue tapado.</p>
             </Entra>
           )}
@@ -274,7 +274,7 @@ export default function SARIMA({ step }: SlideProps) {
           {step >= 9 && (
             <Entra style={{ paddingTop: 40 }}>
               <p className="takeaway" style={{ margin: 0 }}>
-                Un reloj de meses y otro de años. <em>Con dos coeficientes, el pronóstico tiene la onda del verano.</em> ¿Es el mejor? ¿Qué tan bueno? 48.
+                Un reloj de meses y otro de años. <em>Con dos coeficientes, el pronóstico tiene la onda del verano.</em> ¿Es el mejor? ¿Qué tan bueno? 46.
               </p>
             </Entra>
           )}

@@ -28,8 +28,8 @@ const PRONOSTICOS: Record<Id, { nombre: string; corto: string; valores: number[]
   ingenuo: { nombre: "Ingenuo estacional: copiar 1959", corto: "ingenuo", valores: INGENUO },
   crec: { nombre: `Ingenuo con crecimiento: 1959 × ${CRECIMIENTO.toFixed(3)}`, corto: "con crecimiento", valores: INGENUO.map((v) => v * CRECIMIENTO) },
   bosque: { nombre: "Random Forest de la 30", corto: "bosque", valores: modelos.linea_base.bosque.pronostico },
-  arima: { nombre: "ARIMA(0,1,1) con deriva (45)", corto: "ARIMA", valores: enMiles(modelos.arima.pronostico_log) },
-  sarima: { nombre: "SARIMA, modelo de aerolínea (47)", corto: "SARIMA", valores: enMiles(modelos.elegido.pronostico_log) },
+  arima: { nombre: "ARIMA(0,1,1) con deriva (43)", corto: "ARIMA", valores: enMiles(modelos.arima.pronostico_log) },
+  sarima: { nombre: "SARIMA, modelo de aerolínea (45)", corto: "SARIMA", valores: enMiles(modelos.elegido.pronostico_log) },
 };
 const IDS = Object.keys(PRONOSTICOS) as Id[];
 const M = Object.fromEntries(IDS.map((id) => [id, { mae: mae(prueba, PRONOSTICOS[id].valores), rmse: rmse(prueba, PRONOSTICOS[id].valores), mape: mape(prueba, PRONOSTICOS[id].valores) }])) as Record<
@@ -145,7 +145,7 @@ export default function LineaBase({ step }: SlideProps) {
           {step >= 5 && (
             <Entra style={{ paddingTop: 40 }}>
               <p className="takeaway" style={{ margin: 0 }}>
-                Un modelo que no le gana a la regla más simple no aporta. <em>Y la vara debe ser la más alta que salga gratis.</em> ¿Fue suerte de 1960? 50.
+                Un modelo que no le gana a la regla más simple no aporta. <em>Y la vara debe ser la más alta que salga gratis.</em> ¿Fue suerte de 1960?
               </p>
             </Entra>
           )}

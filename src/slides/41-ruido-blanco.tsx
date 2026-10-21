@@ -187,7 +187,7 @@ export default function RuidoBlanco({ step }: SlideProps) {
           ) : (
             <Entra>
               <p className="takeaway" style={{ margin: "18px 0 0" }}>
-                Pasajeros está muy lejos del ruido blanco; transformada, casi. <em>Un modelo sirve si lo que le sobra parece ruido blanco.</em> Se revisa en la 48.
+                Pasajeros está muy lejos del ruido blanco; transformada, casi. <em>Un modelo sirve si lo que le sobra parece ruido blanco.</em> Se revisa en la 46.
               </p>
             </Entra>
           )}

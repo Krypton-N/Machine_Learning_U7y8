@@ -188,14 +188,14 @@ export default function ARMA({ step }: SlideProps) {
                     Después, ninguno: las barras se vuelven negativas y la del 12 sale de la banda ({f2(ACF_Z[12])}).
                   </p>
                   <p style={{ ...TXT, marginTop: 18 }}>
-                    Eso no es de corto plazo: <span style={ROJO}>es del año</span>. Diapositiva 47.
+                    Eso no es de corto plazo: <span style={ROJO}>es del año</span>. Diapositiva 45.
                   </p>
                 </Entra>
               )}
               {step >= 5 && (
                 <Entra>
                   <p className="takeaway" style={{ margin: 0 }}>
-                    Mezclar AR y MA da formas que cada uno solo imita con muchos coeficientes. <em>En pasajeros, dos bastan para el corto plazo.</em> Cómo elegir: 48.
+                    Mezclar AR y MA da formas que cada uno solo imita con muchos coeficientes. <em>En pasajeros, dos bastan para el corto plazo.</em> Cómo elegir: 46.
                   </p>
                 </Entra>
               )}

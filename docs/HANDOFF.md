@@ -1,7 +1,20 @@
-# Handoff — estado al 2026-10-17
+# Handoff — estado al 2026-10-20
 
 Este archivo es para retomar el trabajo en una sesión nueva. Las reglas permanentes y el flujo de trabajo están en
 `CLAUDE.md`; qué lleva cada diapositiva, en `docs/PLAN-DIAPOSITIVAS.md`; el plan de cada hito, en `docs/hitos/`.
+
+## Estado al 2026-10-20: clase 3 recortada a 15 diapositivas (hito 8)
+
+- **Ya se expuso hasta la 40.** El usuario pidió dejar lo que falta en 15 diapositivas como máximo, más cortas y sin
+  perder temas. **Hecho** (`docs/hitos/HITO-8.md`, que lleva la tabla de qué clics se quedan): las 41–55 juntan clics
+  escogidos de las viejas 41–62 con `recorte()`; la 63 y la 64 se fueron. 22 diapositivas y 166 clics pasaron a 15 y 81.
+  El total es 55. (El "hito 8" de ensayo que se había descartado no es este.)
+- Build, verify ("Todo coincide") y medidor de legibilidad en las 81 posiciones: sin errores.
+- **Guía de la clase 3 recortada** (artifact aparte, `https://claude.ai/artifact/Fbk1UvB23GU61NBUwCcVak`, 2026-10-20):
+  una ficha por diapositiva 41–55 con sus clics tal como quedaron (texto sacado de la página), qué decir, datos, lo que
+  ahora va "de palabra", las tablas de Forward y Viterbi a mano y preguntas probables. La guía de las 63 se dejó igual.
+- **Falta:** que el usuario lo vea clic por clic a tamaño real y lo suba (commit y push); las ligas "abrir" de la guía
+  nueva apuntan a la numeración nueva.
 
 ## Estado al 2026-10-17 (noche): la exposición ya empezó; solo falta actualizar la guía de estudio
 

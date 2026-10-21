@@ -377,6 +377,10 @@ Especificaciones detalladas: `docs/especificaciones/F1-…`, `F2-…`, `G-…` y
 - **Cierre:** "ACF y PACF son las huellas para elegir el modelo" (46).
 - **Gráficos:** `LagCloud3D` (se reutiliza en 42), `Correlogram`. **Datos:** PACF por Durbin-Levinson (vivo; se compara con statsmodels).
 
+> **Recorte del 2026-10-20 (`docs/hitos/HITO-8.md`, manda sobre lo de abajo):** lo que sigue de 41 a 64 es el plan
+> original. Se expuso así hasta la 40; las 41–62 se juntaron en 15 diapositivas (41–55) con menos clics, y la 63 y la 64
+> se quitaron. Qué vieja va en cada nueva y qué clics se quedan: tabla de la sección 3 de `HITO-8.md`.
+
 ## G. Modelos de series (41–50)
 
 Regla de la sección: todo se ajusta con 1949–1959 (132 meses). 1960 aparece tapado con un bloque "PRUEBA · 1960" hasta que se evalúa. Los números cambian un poco respecto a 36–40 (144 meses) y la 41 lo dice. Plan y bitácora: `docs/hitos/HITO-5.md`.

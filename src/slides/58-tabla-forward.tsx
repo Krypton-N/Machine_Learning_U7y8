@@ -44,7 +44,7 @@ export default function TablaForward({ step }: SlideProps) {
             <div style={{ fontSize: 32 }}>
               <TeX>{`P(O \\mid \\lambda) = ${alpha[T - 1].map((v) => fmtP(v)).join(" + ")} = ${fmtP(P)}`}</TeX>
             </div>
-            <p style={TXT}>Igual que la suma de las 8 historias de la 56.</p>
+            <p style={TXT}>Igual que la suma de las 8 historias de la 51.</p>
           </Entra>
         )}
         {step >= 5 && (

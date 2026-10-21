@@ -56,12 +56,11 @@ import Lambda from "./54-lambda";
 import TresPreguntas from "./55-tres-preguntas";
 import FuerzaBruta from "./56-fuerza-bruta";
 import Forward from "./57-forward";
-import TablaForward from "./58-tabla-forward";
 import Viterbi from "./59-viterbi";
 import ForwardVsViterbi from "./60-forward-vs-viterbi";
 import PizarronPractica from "./61-pizarron-practica";
 import RecetaTresCasos from "./62-receta-tres-casos";
-import Referencias from "./63-referencias";
+import { recorte } from "./recorte";
 
 // Orden de la exposición. `num` es el número en la estructura completa (docs/PLAN-DIAPOSITIVAS.md).
 export const slides: SlideDef[] = [
@@ -105,27 +104,20 @@ export const slides: SlideDef[] = [
   { id: "promedio-movil", num: 38, steps: 4, Component: PromedioMovil },
   { id: "rezagos-y-acf", num: 39, steps: 5, Component: RezagosYACF },
   { id: "pacf", num: 40, steps: 5, Component: PACF },
-  { id: "ruido-blanco", num: 41, steps: 8, Component: RuidoBlanco },
-  { id: "ar", num: 42, steps: 7, Component: AR },
-  { id: "ma", num: 43, steps: 7, Component: MA },
-  { id: "arma", num: 44, steps: 6, Component: ARMA },
-  { id: "arima", num: 45, steps: 8, Component: ARIMA },
-  { id: "identificacion", num: 46, steps: 7, Component: Identificacion },
-  { id: "sarima", num: 47, steps: 10, Component: SARIMA },
-  { id: "elegir-y-evaluar", num: 48, steps: 10, Component: ElegirYEvaluar },
-  { id: "linea-base", num: 49, steps: 6, Component: LineaBase },
-  { id: "demo-series", num: 50, steps: 9, Component: DemoSeries },
-  { id: "causas-ocultas", num: 51, steps: 6, Component: CausasOcultas },
-  { id: "cadena-markov", num: 52, steps: 7, Component: CadenaMarkov },
-  { id: "estados-ocultos", num: 53, steps: 8, Component: EstadosOcultos },
-  { id: "lambda", num: 54, steps: 7, Component: Lambda },
-  { id: "tres-preguntas", num: 55, steps: 5, Component: TresPreguntas },
-  { id: "fuerza-bruta", num: 56, steps: 8, Component: FuerzaBruta },
-  { id: "forward", num: 57, steps: 8, Component: Forward },
-  { id: "tabla-forward", num: 58, steps: 6, Component: TablaForward },
-  { id: "viterbi", num: 59, steps: 7, Component: Viterbi },
-  { id: "forward-vs-viterbi", num: 60, steps: 6, Component: ForwardVsViterbi },
-  { id: "pizarron-practica", num: 61, steps: 14, Component: PizarronPractica },
-  { id: "receta-tres-casos", num: 62, steps: 6, Component: RecetaTresCasos },
-  { id: "referencias", num: 63, steps: 4, Component: Referencias },
+  // Clase 3 recortada a 15 (docs/hitos/HITO-8.md): cada una junta clics escogidos de las viejas 41–62.
+  { id: "ruido-blanco-y-ar", num: 41, steps: 8, Component: recorte([[RuidoBlanco, 0], [RuidoBlanco, 2], [RuidoBlanco, 5], [RuidoBlanco, 7], [AR, 0], [AR, 1], [AR, 3], [AR, 4]]) },
+  { id: "ma-y-arma", num: 42, steps: 6, Component: recorte([[MA, 0], [MA, 1], [MA, 6], [ARMA, 0], [ARMA, 3], [ARMA, 4]]) },
+  { id: "arima", num: 43, steps: 4, Component: recorte([[ARIMA, 1], [ARIMA, 2], [ARIMA, 5], [ARIMA, 7]]) },
+  { id: "identificacion", num: 44, steps: 4, Component: recorte([[Identificacion, 0], [Identificacion, 2], [Identificacion, 4], [Identificacion, 6]]) },
+  { id: "sarima", num: 45, steps: 6, Component: recorte([[SARIMA, 0], [SARIMA, 1], [SARIMA, 2], [SARIMA, 4], [SARIMA, 5], [SARIMA, 8]]) },
+  { id: "elegir-y-evaluar", num: 46, steps: 6, Component: recorte([[ElegirYEvaluar, 0], [ElegirYEvaluar, 1], [ElegirYEvaluar, 2], [ElegirYEvaluar, 3], [ElegirYEvaluar, 5], [ElegirYEvaluar, 7]]) },
+  { id: "linea-base-y-validacion", num: 47, steps: 6, Component: recorte([[LineaBase, 0], [LineaBase, 3], [LineaBase, 5], [DemoSeries, 0], [DemoSeries, 5], [DemoSeries, 6]]) },
+  { id: "ocultas-y-markov", num: 48, steps: 6, Component: recorte([[CausasOcultas, 1], [CausasOcultas, 4], [CadenaMarkov, 1], [CadenaMarkov, 2], [CadenaMarkov, 3], [CadenaMarkov, 4]]) },
+  { id: "estados-ocultos", num: 49, steps: 5, Component: recorte([[EstadosOcultos, 0], [EstadosOcultos, 1], [EstadosOcultos, 2], [EstadosOcultos, 3], [EstadosOcultos, 5]]) },
+  { id: "lambda", num: 50, steps: 4, Component: recorte([[Lambda, 0], [Lambda, 3], [Lambda, 4], [Lambda, 6]]) },
+  { id: "preguntas-y-fuerza-bruta", num: 51, steps: 5, Component: recorte([[TresPreguntas, 4], [FuerzaBruta, 2], [FuerzaBruta, 3], [FuerzaBruta, 4], [FuerzaBruta, 7]]) },
+  { id: "forward", num: 52, steps: 5, Component: recorte([[Forward, 0], [Forward, 3], [Forward, 4], [Forward, 5], [Forward, 7]]) },
+  { id: "viterbi", num: 53, steps: 5, Component: recorte([[Viterbi, 0], [Viterbi, 3], [Viterbi, 5], [Viterbi, 6], [ForwardVsViterbi, 5]]) },
+  { id: "pizarron-practica", num: 54, steps: 7, Component: recorte([[PizarronPractica, 1], [PizarronPractica, 2], [PizarronPractica, 3], [PizarronPractica, 4], [PizarronPractica, 6], [PizarronPractica, 11], [PizarronPractica, 13]]) },
+  { id: "receta-tres-casos", num: 55, steps: 4, Component: recorte([[RecetaTresCasos, 1], [RecetaTresCasos, 2], [RecetaTresCasos, 3], [RecetaTresCasos, 5]]) },
 ];

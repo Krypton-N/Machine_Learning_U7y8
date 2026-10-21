@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "motion/react";
-import type { ReactNode } from "react";
+import { useContext, type ReactNode } from "react";
+import { NumeroVisible } from "./numero";
 import { TOTAL_PLANNED } from "./types";
 
 type Props = {
@@ -14,6 +15,7 @@ type Props = {
 };
 
 export function SlideFrame({ section, num, title, lede, caso, children }: Props) {
+  const visible = useContext(NumeroVisible) ?? num;
   return (
     <div className="slide">
       <header className="slide-head">
@@ -36,7 +38,7 @@ export function SlideFrame({ section, num, title, lede, caso, children }: Props)
             )}
           </AnimatePresence>
           <span className="num">
-            <em>{String(num).padStart(2, "0")}</em> / {TOTAL_PLANNED}
+            <em>{String(visible).padStart(2, "0")}</em> / {TOTAL_PLANNED}
           </span>
         </span>
       </header>

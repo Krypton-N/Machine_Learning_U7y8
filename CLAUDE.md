@@ -18,8 +18,9 @@ Solo la editamos el usuario y Claude. Responder siempre en español.
 4. **Rigor: ningún número se escribe a mano.** Lo exacto se calcula en el navegador (`src/lib/`); lo demás se precalcula con
    Python a `src/data/*.json`. Todo cálculo en TypeScript se compara contra sklearn / statsmodels / hmmlearn en
    `scripts/verificar.ts`. Si un dato contradice lo planeado, se muestra el dato y se reescribe el texto.
-5. **Sin recortes por tiempo.** Hay hasta 3 clases de 1.5 h (máximo 4 h). Reparto: clase 1 = 1–19, clase 2 = 20–40,
-   clase 3 = 41–64. No proponer versiones cortas.
+5. **Reparto en clases.** Clase 1 = 1–19, clase 2 = 20–40, clase 3 = 41–55. La clase 3 se recortó por tiempo a pedido
+   del usuario (2026-10-20, `docs/hitos/HITO-8.md`): de 22 diapositivas a 15, sin perder temas; la 63 (referencias) y la
+   64 (preguntas) se fueron. No recortar más sin que el usuario lo pida.
 6. **Estilo:** negro/gris oscuro con acento rojo, sobrio y editorial. Prohibido el estilo genérico "AI slop": nada de
    degradados de colores, tarjetas con íconos, emojis ni glassmorphism. 3D solo cuando ayuda a entender.
 7. **Git lo maneja el usuario.** Él hace los commits y los push; Claude no sube nada y solo hace commit si se le pide.
@@ -69,7 +70,7 @@ Qué es cada documento, para no duplicar:
 | Documento | Qué contiene | Cuándo se toca |
 |---|---|---|
 | `CLAUDE.md` | Reglas permanentes, convenciones y piezas disponibles | Cuando cambia una regla o se agrega una pieza |
-| `docs/PLAN-DIAPOSITIVAS.md` | Plan maestro: qué lleva cada una de las 64 diapositivas | Si cambia lo que lleva una diapositiva |
+| `docs/PLAN-DIAPOSITIVAS.md` | Plan maestro: qué lleva cada una de las 64 diapositivas originales (la clase 3 recortada: `HITO-8.md`) | Si cambia lo que lleva una diapositiva |
 | `docs/especificaciones/` | Borradores largos de diseño de F, G, H y apertura/cierre. **Son insumo, no verdad** | No se editan; lo que se corrige va al plan del hito |
 | `docs/hitos/HITO-N.md` | Plan de trabajo de un hito y su bitácora | Durante todo el hito |
 | `docs/HANDOFF.md` | Estado actual y qué toca en la siguiente sesión. Corto: apunta al hito vigente | Al terminar cada sesión |
@@ -98,7 +99,9 @@ npm run verify   # compara src/lib contra las referencias de Python; debe decir 
 ## Convenciones del código
 
 - **Una diapositiva = un archivo** `src/slides/NN-nombre.tsx` que recibe `{ step, active }`. Se registra en
-  `src/slides/index.ts` con su `num` (el de la estructura de 64) y su número de `steps` (clics).
+  `src/slides/index.ts` con su `num` y su número de `steps` (clics). Desde el hito 8, las 41–55 se arman con
+  `recorte([[Vieja, paso], …])` (`src/slides/recorte.tsx`): clics escogidos de los archivos viejos 41–62, que se
+  conservan. El número del encabezado lo pone el `Deck` (contexto `NumeroVisible`), no el `num` que trae cada archivo.
 - **Lienzo fijo de 1920×1080** escalado. El cuerpo útil mide ≈ 1696 × 640 px. Tamaños mínimos y densidad: regla 9
   (lectura ≥ 26 px, etiquetas ≥ 20 px, nada menor a 18 px). Las diapositivas 1–50 se hicieron con la regla anterior
   (lectura ≥ 22, etiquetas ≥ 14) y todavía no se ajustan.

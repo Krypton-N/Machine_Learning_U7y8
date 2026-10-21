@@ -102,7 +102,7 @@ export default function Viterbi({ step }: SlideProps) {
               <Entra>
                 <p style={TXT}>
                   Se lee al revés, siguiendo las flechas: <b style={{ color: "var(--red-2)" }}>{nombres(vit.path)}</b>, con P = {fmtP(vit.best)}: la barra más
-                  alta de la 56.
+                  alta de la 51.
                 </p>
               </Entra>
             )}

@@ -47,10 +47,10 @@ const borde = (num: number, lado: "ini" | "fin") => {
 
 const CASOS = [
   { nombre: "Adult", pregunta: "¿La persona gana más de 50K al año?", desde: 4, hasta: 28 },
-  { nombre: "Pasajeros aéreos", pregunta: "¿Cuántos pasajeros habrá el próximo año?", desde: 29, hasta: 50 },
-  { nombre: "Clima oculto", pregunta: "¿Qué clima hubo cada día?", desde: 51, hasta: 61 },
+  { nombre: "Pasajeros aéreos", pregunta: "¿Cuántos pasajeros habrá el próximo año?", desde: 29, hasta: 47 },
+  { nombre: "Clima oculto", pregunta: "¿Qué clima hubo cada día?", desde: 48, hasta: 54 },
 ];
-// El hilo baja al centro del tramo Cierre (ahí está la 62, que junta la receta de los tres casos): así no cruza
+// El hilo baja al centro del tramo Cierre (ahí está la 55, que junta la receta de los tres casos): así no cruza
 // el nombre de la sección H.
 const X_CIERRE = INICIOS[SECCIONES.length - 1] + ANCHOS[SECCIONES.length - 1] / 2;
 
@@ -101,7 +101,7 @@ export default function Mapa({ step, active }: SlideProps) {
                   {s.nombre}
                 </text>
                 <text x={cx} y={yNombre + 28} textAnchor="middle" className="mono" fontSize={R} fill="var(--text-2)">
-                  {s.desde}–{s.hasta}
+                  {s.desde === s.hasta ? s.desde : `${s.desde}–${s.hasta}`}
                 </text>
               </motion.g>
             );
@@ -122,7 +122,7 @@ export default function Mapa({ step, active }: SlideProps) {
               );
             })}
 
-          {/* La misma receta en todo: un hilo que termina en la 62 */}
+          {/* La misma receta en todo: un hilo que termina en la 55 */}
           {step >= 3 && (
             <g>
               <motion.path
@@ -176,7 +176,7 @@ export default function Mapa({ step, active }: SlideProps) {
           {step >= 3 && (
             <Entra>
               <p className="takeaway" style={{ margin: 0 }}>
-                En cada parte, la misma receta: qué <em>modelo</em>, cómo se <em>valida</em> y con qué se <em>mide</em>. En la 62 lo juntamos.
+                En cada parte, la misma receta: qué <em>modelo</em>, cómo se <em>valida</em> y con qué se <em>mide</em>. En la 55 lo juntamos.
               </p>
             </Entra>
           )}

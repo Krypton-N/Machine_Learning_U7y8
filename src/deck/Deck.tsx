@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useCallback, useEffect, useState } from "react";
+import { NumeroVisible } from "./numero";
 import { Stage } from "./Stage";
 import { TOTAL_PLANNED, type SlideDef } from "./types";
 
@@ -151,7 +152,9 @@ export function Deck({ slides }: { slides: SlideDef[] }) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25 }}
         >
-          <Component step={pos.step} active />
+          <NumeroVisible.Provider value={slide.num}>
+            <Component step={pos.step} active />
+          </NumeroVisible.Provider>
         </motion.div>
       </AnimatePresence>
 

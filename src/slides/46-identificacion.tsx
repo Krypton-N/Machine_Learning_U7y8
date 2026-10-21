@@ -162,7 +162,7 @@ export default function Identificacion({ step }: SlideProps) {
               <p style={{ ...TXT, marginTop: 28 }}>
                 La que se corta dice el orden. Pero <span style={ROJO}>con datos, las barras tiemblan</span>: esta lectura propone candidatos, no decide.
               </p>
-              <p style={{ ...TXT, marginTop: 18, color: "var(--text-2)" }}>Si ninguna se corta, es un ARMA y el orden se decide de otra forma (48).</p>
+              <p style={{ ...TXT, marginTop: 18, color: "var(--text-2)" }}>Si ninguna se corta, es un ARMA y el orden se decide de otra forma (46).</p>
             </Entra>
           )}
         </Entra>
@@ -233,7 +233,7 @@ export default function Identificacion({ step }: SlideProps) {
             {step >= 6 && (
               <Entra>
                 <p className="takeaway" style={{ margin: 0 }}>
-                  La que se corta dice el orden. En pasajeros: <em>un MA(1) de meses, o un AR(1), y un MA(1) de años.</em> Qué es lo de años: 47. Cuál de los dos: 48.
+                  La que se corta dice el orden. En pasajeros: <em>un MA(1) de meses, o un AR(1), y un MA(1) de años.</em> Qué es lo de años: 45. Cuál de los dos: 46.
                 </p>
               </Entra>
             )}

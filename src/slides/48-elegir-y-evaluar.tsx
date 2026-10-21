@@ -118,7 +118,7 @@ export default function ElegirYEvaluar({ step }: SlideProps) {
             </p>
           </div>
           <Recap title="verosimilitud">
-            <p>Qué tan creíbles resultan los datos con unos coeficientes. Estimar es buscar los que la hacen máxima: así salieron los coeficientes de la 43 a la 47.</p>
+            <p>Qué tan creíbles resultan los datos con unos coeficientes. Estimar es buscar los que la hacen máxima: así salieron los coeficientes de la 42 a la 45.</p>
           </Recap>
         </Entra>
       )}
@@ -144,7 +144,7 @@ export default function ElegirYEvaluar({ step }: SlideProps) {
               Todos con d = D = 1 y la misma serie: así sí se comparan. El mínimo con AIC y con BIC: <span style={ROJO}>la aerolínea</span>.
             </p>
             <p style={{ ...TXT, marginTop: 18 }}>
-              El otro candidato de la 46, <span className="mono">{orden(SEGUNDO)}</span>, queda a +{f1(SEGUNDO.aic - POR_AIC[0].aic)}. Hay {EMPATADOS} a menos de 2: no se distinguen.
+              El otro candidato de la 44, <span className="mono">{orden(SEGUNDO)}</span>, queda a +{f1(SEGUNDO.aic - POR_AIC[0].aic)}. Hay {EMPATADOS} a menos de 2: no se distinguen.
             </p>
           </div>
         </Entra>
@@ -283,7 +283,7 @@ export default function ElegirYEvaluar({ step }: SlideProps) {
             ))}
           </div>
           <p className="takeaway" style={{ margin: "40px 0 0" }}>
-            <em>¿{f1(MAE_ELEGIDO)} mil es poco o mucho?</em> Depende de contra qué se compare: 49.
+            <em>¿{f1(MAE_ELEGIDO)} mil es poco o mucho?</em> Depende de contra qué se compare: 47.
           </p>
         </Entra>
       )}

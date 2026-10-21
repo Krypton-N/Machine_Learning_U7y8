@@ -13,7 +13,7 @@ const PREGUNTAS = [
     formula: "P(O \\mid \\lambda)",
     algoritmo: "Forward",
     caso: "¿Qué tan probable es caminar, comprar, limpiar?",
-    donde: "56–58",
+    donde: "51–52",
   },
   {
     n: "02",
@@ -22,7 +22,7 @@ const PREGUNTAS = [
     formula: "Q^* = \\arg\\max_Q P(Q \\mid O, \\lambda)",
     algoritmo: "Viterbi",
     caso: "¿Qué clima hubo esos tres días?",
-    donde: "59",
+    donde: "53",
   },
   {
     n: "03",
@@ -31,7 +31,7 @@ const PREGUNTAS = [
     formula: "\\lambda^* = \\arg\\max_\\lambda P(O \\mid \\lambda)",
     algoritmo: "Baum-Welch",
     caso: "¿Cómo sacamos π, A y B de meses de relatos?",
-    donde: "61",
+    donde: "54",
   },
 ];
 

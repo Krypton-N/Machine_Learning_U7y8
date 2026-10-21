@@ -16,4 +16,5 @@ export type SlideDef = {
   Component: ComponentType<SlideProps>;
 };
 
-export const TOTAL_PLANNED = 64;
+// 64 en el plan original; 55 desde el recorte de la clase 3 (hito 8).
+export const TOTAL_PLANNED = 55;

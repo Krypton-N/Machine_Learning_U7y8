@@ -18,10 +18,10 @@ import { acf, descomponer, ingenuoEstacional, ljungBox, mape, pacf } from "../li
 const ESTACIONES = [
   { nombre: "Transformar", donde: "34 y 36", texto: "logaritmo, una diferencia y una estacional" },
   { nombre: "¿Estacionaria?", donde: "37", texto: "ADF sobre cada transformación" },
-  { nombre: "Identificar", donde: "46", texto: "ACF y PACF proponen candidatos" },
-  { nombre: "Elegir", donde: "48", texto: "AIC entre los 16 SARIMA" },
-  { nombre: "Pronosticar y comparar", donde: "47 y 49", texto: "contra la línea base, en varios años" },
-  { nombre: "Diagnosticar", donde: "48", texto: "Ljung-Box sobre los residuos" },
+  { nombre: "Identificar", donde: "44", texto: "ACF y PACF proponen candidatos" },
+  { nombre: "Elegir", donde: "46", texto: "AIC entre los 16 SARIMA" },
+  { nombre: "Pronosticar y comparar", donde: "45 y 47", texto: "contra la línea base, en varios años" },
+  { nombre: "Diagnosticar", donde: "46", texto: "Ljung-Box sobre los residuos" },
 ];
 
 /** La receta completa (clic 0): seis tarjetas de texto, tres por renglón. */
@@ -191,7 +191,7 @@ export default function DemoSeries({ step, active }: SlideProps) {
           </div>
           <div style={{ paddingTop: 40 }}>
             <p style={TXT}>
-              Las huellas en <span style={ROJO}>1 y en 12</span>: un MA(1) de meses (o un AR(1)) y un MA(1) de años. Dos candidatos (46).
+              Las huellas en <span style={ROJO}>1 y en 12</span>: un MA(1) de meses (o un AR(1)) y un MA(1) de años. Dos candidatos (44).
             </p>
           </div>
         </Entra>

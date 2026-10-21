@@ -45,7 +45,7 @@ export default function FuerzaBruta({ step, active }: SlideProps) {
   const nombre = (q: number[]) => q.map((j) => "LS"[j]).join(" ");
   const textos: Record<number, string> = {
     1: "Si no sabemos el clima, sumamos sobre todas las historias posibles: con dos climas, 2 → 4 → 8.",
-    2: "Cada historia, con su probabilidad: la multiplicación de la 54.",
+    2: "Cada historia, con su probabilidad: la multiplicación de la 50.",
     3: "Sumadas, responden la pregunta 1:",
     4: `La más alta, ${nombre(mejor.q)}, explica el ${((100 * mejor.conjunta) / P).toFixed(1)} % del total: ni la mejor historia es segura.`,
     5: `${nombre(apriori.q)} es la más probable sin ver nada (${fmtP(apriori.pQ)}), pero explica mal lo que se vio (${fmtP(apriori.pOdadoQ)}).`,
